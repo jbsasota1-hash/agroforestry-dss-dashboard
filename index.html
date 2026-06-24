@@ -1,253 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Smart Agriculture Monitoring Dashboard</title>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Agriculture DSS Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     *{box-sizing:border-box}
-    :root{--forest:#0f3d22;--leaf:#15803d;--blue:#2563eb;--amber:#d97706;--red:#b91c1c;--purple:#6d28d9;--ink:#0f172a;--muted:#52677f;--glass:rgba(255,255,255,.42);--line:rgba(255,255,255,.42);--shadow:0 16px 34px rgba(15,23,42,.13)}
+    :root{--forest:#0f3d22;--leaf:#16a34a;--blue:#2563eb;--amber:#d97706;--red:#b91c1c;--purple:#6d28d9;--ink:#0f172a;--muted:#5b7185;--glass:rgba(255,255,255,.55);--border:rgba(255,255,255,.5);--shadow:0 20px 55px rgba(15,23,42,.12)}
     html{scroll-behavior:smooth}
-    body{margin:0;min-height:100vh;font-family:Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 15% 12%,rgba(255,255,255,.45),transparent 22%),radial-gradient(circle at 90% 8%,rgba(37,99,235,.13),transparent 24%),linear-gradient(135deg,#dff3e4 0%,#f7fbff 42%,#cce7d5 100%);background-attachment:fixed}
-    body:before{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.06));pointer-events:none}
-    .app{display:grid;grid-template-columns:285px 1fr;min-height:100vh;position:relative;z-index:1}
-    .glass{background:var(--glass);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .sidebar{position:sticky;top:0;height:100vh;padding:20px}
-    .side-panel{height:100%;border-radius:30px;padding:20px;overflow:auto}
-    .brand-mini{font-size:12px;font-weight:bold;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-    .brand-title{font-size:23px;font-weight:bold;color:var(--forest);line-height:1.15;margin-bottom:22px}
-    .nav-label{font-size:12px;font-weight:bold;color:#466176;letter-spacing:.8px;text-transform:uppercase;margin:18px 0 8px}
-    .nav-btn{width:100%;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.24);border-radius:18px;padding:13px 14px;margin-bottom:8px;text-align:left;font-weight:bold;color:#173f2b;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-    .nav-btn.active,.nav-btn:hover{background:rgba(255,255,255,.58)}
-    .dot{width:9px;height:9px;border-radius:50%;background:#94a3b8}.dot.live{background:var(--leaf)}.dot.pending{background:var(--amber)}
-    .main{padding:24px 26px 40px 0;min-width:0}
-    .logos{display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:18px}.logos img{height:54px;max-width:118px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(15,23,42,.12))}
-    .page{display:none}.page.active{display:block}
-    .hero{border-radius:34px;padding:30px;margin-bottom:22px;text-align:center}
-    h1{margin:0;color:var(--forest);font-size:clamp(30px,3.5vw,50px);line-height:1.05;white-space:nowrap}
-    .subtitle{margin:12px auto 0;max-width:760px;color:#35566b;font-size:17px;line-height:1.5}
-    .systems,.stats,.monitor,.planned,.chart-grid,.info-grid{display:grid;gap:16px}
-    .systems{grid-template-columns:repeat(3,1fr);margin-bottom:22px}.stats,.monitor{grid-template-columns:repeat(4,1fr);margin-bottom:22px}.planned{grid-template-columns:repeat(3,1fr);margin-bottom:22px}.chart-grid{grid-template-columns:1fr 1fr}.info-grid{grid-template-columns:1.2fr .8fr}
-    .card,.system-card,.sensor-card,.chart-card,.info-card,.decision,.connection,.alert-panel{border-radius:28px;padding:22px;position:relative;overflow:hidden}
-    .system-card{min-height:205px;cursor:pointer;transition:.25s}.system-card:hover{transform:translateY(-5px)}
-    .icon{font-size:36px;margin-bottom:14px}.title{font-size:22px;font-weight:bold;color:var(--forest);margin-bottom:8px}.desc,.note,.small{color:#466176;font-size:14px;line-height:1.55}
-    .pill{display:inline-block;border-radius:999px;padding:8px 11px;background:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.32);font-size:12px;font-weight:bold;color:var(--forest);margin-top:14px}.pending-pill{color:#92400e}
-    .label{font-size:14px;font-weight:bold;color:#456073;margin-bottom:10px}.value{font-size:36px;font-weight:bold;color:var(--forest);line-height:1}.note{margin-top:9px}
-    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.tab{border:1px solid rgba(255,255,255,.32);border-radius:999px;background:rgba(255,255,255,.28);padding:11px 15px;font-weight:bold;color:var(--forest);cursor:pointer}.tab.active{background:rgba(255,255,255,.58)}
-    .agro-tab{display:none}.agro-tab.active{display:block}
-    .sensor-value{font-size:44px;font-weight:bold;color:var(--forest);line-height:1}.sensor-status{font-weight:bold;margin-top:10px}
-    .track{height:12px;border-radius:999px;background:rgba(255,255,255,.45);overflow:hidden;margin-top:18px}.bar{height:100%;width:0%;transition:.5s}.bar-vd{background:var(--red)}.bar-d{background:var(--amber)}.bar-n{background:var(--leaf)}.bar-w{background:var(--blue)}.bar-s{background:var(--purple)}
-    .very-dry{color:var(--red)}.dry{color:var(--amber)}.normal{color:var(--leaf)}.wet{color:var(--blue)}.saturated{color:var(--purple)}.alert-on{color:var(--red)}.alert-off{color:var(--leaf)}
-    .decision{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;margin-bottom:22px;border-left:10px solid var(--leaf)}.decision-text{font-size:30px;font-weight:bold;line-height:1.15}.code{min-width:120px;border-radius:22px;padding:18px;text-align:center;background:rgba(255,255,255,.38)}.code span{display:block;font-size:12px;color:#486678;font-weight:bold}.code strong{font-size:28px;color:var(--forest)}
-    .connection{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-bottom:22px}.connection-status{padding:11px 14px;border-radius:999px;background:rgba(255,255,255,.42);font-weight:bold;color:var(--forest);white-space:nowrap}
-    .tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px;border-radius:24px;padding:16px}.tools select,.tools button{border:1px solid rgba(255,255,255,.38);border-radius:999px;padding:10px 13px;background:rgba(255,255,255,.42);font-weight:bold;color:var(--forest);cursor:pointer}
-    .chart-title{font-size:20px;font-weight:bold;color:var(--forest);margin-bottom:4px}.chart-sub{font-size:13px;color:#587386;margin-bottom:12px}.chart-box{height:315px}
-    .alert-list{display:grid;gap:10px}.alert-item{display:grid;grid-template-columns:120px 1fr 1fr 1.4fr;gap:10px;align-items:center;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.32);border:1px solid rgba(255,255,255,.28);font-size:14px}.chip{display:inline-block;width:fit-content;padding:7px 10px;border-radius:999px;font-weight:bold;font-size:12px}.chip-on{background:rgba(185,28,28,.12);color:var(--red)}.chip-ok{background:rgba(21,128,61,.12);color:var(--leaf)}
-    .placeholder{height:260px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:22px;background:rgba(255,255,255,.26);border:1px dashed rgba(15,61,34,.24);color:#466176;line-height:1.5;padding:20px}
-    .legend{display:grid;grid-template-columns:120px 1fr 180px;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.24);font-size:14px}.legend:last-child{border-bottom:0}.c{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px}.red{background:var(--red)}.orange{background:var(--amber)}.green{background:var(--leaf)}.blue{background:var(--blue)}.purple{background:var(--purple)}
-    .last{text-align:center;color:#35566b;margin-top:18px;font-size:15px}
-    @media(max-width:1100px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto;padding:16px 16px 0}.main{padding:16px}.systems,.chart-grid,.planned,.info-grid{grid-template-columns:1fr}.stats,.monitor{grid-template-columns:repeat(2,1fr)}h1{white-space:normal}}
-    @media(max-width:620px){.stats,.monitor{grid-template-columns:1fr}.decision,.connection{grid-template-columns:1fr}.alert-item,.legend{grid-template-columns:1fr}.logos img{height:44px}.hero{padding:24px 18px}h1{font-size:30px}}
+    body{margin:0;min-width:1180px;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:radial-gradient(circle at 12% 12%,rgba(255,255,255,.75),transparent 22%),radial-gradient(circle at 82% 10%,rgba(209,250,229,.75),transparent 24%),radial-gradient(circle at 72% 82%,rgba(191,219,254,.45),transparent 26%),linear-gradient(135deg,#edfdf3 0%,#f8fbff 45%,#dbeedc 100%);overflow-x:auto}
+    body:before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,.22)),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='360' height='360' viewBox='0 0 360 360'><g fill='none' stroke='%2314532d' stroke-opacity='.055' stroke-width='2'><path d='M25 280 C70 240 115 240 160 280 S250 320 335 270'/><path d='M30 120 C80 70 130 70 180 120 S270 180 330 105'/><circle cx='95' cy='65' r='18'/><circle cx='260' cy='245' r='20'/><path d='M230 80 q25 -30 50 0 q-25 34 -50 0z'/><path d='M70 210 q20 -24 40 0 q-20 28 -40 0z'/></g></svg>");background-size:360px}
+    .glass{background:var(--glass);border:1px solid var(--border);box-shadow:var(--shadow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+    .sidebar{position:fixed;left:22px;top:22px;bottom:22px;width:310px;z-index:10;border-radius:34px;padding:22px;background:rgba(255,255,255,.64);border:1px solid var(--border);box-shadow:var(--shadow);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);overflow-y:auto}
+    .brand-kicker{color:#52677f;font-size:12px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px}.brand-title{color:var(--forest);font-size:28px;font-weight:900;line-height:1.08;margin-bottom:22px}.nav-title{color:#5b7185;font-size:12px;font-weight:900;letter-spacing:1px;text-transform:uppercase;margin:20px 0 10px}
+    .nav-button{width:100%;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.55);color:#123e29;text-align:left;padding:15px;border-radius:19px;margin-bottom:10px;font-size:15px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:.22s}.nav-button:hover,.nav-button.active{background:#e9f8ed;transform:translateX(4px);box-shadow:0 8px 18px rgba(21,128,61,.10)}.nav-dot{width:9px;height:9px;border-radius:50%;background:#94a3b8;flex:0 0 auto}.nav-dot.live{background:var(--leaf)}.nav-dot.pending{background:var(--amber)}.sidebar-note{margin-top:18px;padding:14px;border-radius:20px;background:rgba(220,252,231,.72);color:#36546a;font-size:13px;line-height:1.5}
+    .main{position:relative;z-index:1;margin-left:356px;padding:28px 32px 46px 0;min-height:100vh}.logos{display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:20px;padding:8px 0}.logos img{height:58px;max-width:125px;object-fit:contain;filter:drop-shadow(0 8px 12px rgba(15,23,42,.11))}.page{display:none;animation:fadeIn .25s ease}.page.active{display:block}@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    .hero{border-radius:34px;padding:34px;margin-bottom:22px;overflow:hidden;position:relative}.hero:after{content:"";position:absolute;right:-70px;top:-70px;width:240px;height:240px;border-radius:50%;background:rgba(21,128,61,.10)}.hero h1{margin:0;color:var(--forest);font-size:clamp(36px,4vw,56px);line-height:1.02;position:relative;z-index:1}.hero p{margin:14px 0 0;color:#3b5b71;max-width:780px;line-height:1.6;font-size:17px;position:relative;z-index:1}
+    .overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:22px}.system-card{min-height:225px;border-radius:30px;padding:24px;cursor:pointer;transition:.24s;position:relative;overflow:hidden}.system-card:hover{transform:translateY(-5px);box-shadow:0 24px 60px rgba(15,23,42,.16)}.system-icon{font-size:42px;margin-bottom:14px}.system-title{font-size:24px;color:var(--forest);font-weight:900;margin-bottom:8px}.system-desc{color:#466176;line-height:1.55;font-size:14px;margin-bottom:16px}.pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.62);color:var(--forest);border:1px solid rgba(255,255,255,.44);font-size:12px;font-weight:900}.pill.pending{color:#92400e}
+    .stat-grid,.sensor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}.planned-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}.card{border-radius:28px;padding:22px;overflow:hidden}.card-label{color:#4b6578;font-size:14px;font-weight:900;margin-bottom:10px}.card-value{color:var(--forest);font-size:36px;line-height:1;font-weight:900}.card-note{margin-top:9px;color:#52677f;font-size:13px;line-height:1.45}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}.tab-button{border:1px solid rgba(255,255,255,.52);border-radius:999px;background:rgba(255,255,255,.52);padding:11px 16px;color:var(--forest);font-weight:900;cursor:pointer;transition:.2s}.tab-button.active,.tab-button:hover{background:#e9f8ed}.tab-section{display:none}.tab-section.active{display:block}
+    .sensor-value{color:var(--forest);font-size:44px;line-height:1;font-weight:900}.sensor-status{margin-top:10px;font-size:15px;font-weight:900}.track{height:12px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.58);margin-top:18px}.bar{height:100%;width:0%;transition:width .5s;border-radius:999px}.bar-vd{background:var(--red)}.bar-d{background:var(--amber)}.bar-n{background:var(--leaf)}.bar-w{background:var(--blue)}.bar-s{background:var(--purple)}.very-dry{color:var(--red)}.dry{color:var(--amber)}.normal{color:var(--leaf)}.wet{color:var(--blue)}.saturated{color:var(--purple)}.alert-on{color:var(--red)}.alert-off{color:var(--leaf)}
+    .decision-card{border-radius:28px;padding:24px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;margin-bottom:22px;border-left:10px solid var(--leaf)}.decision-title{color:#4b6578;font-size:15px;font-weight:900;margin-bottom:8px}.decision-text{color:var(--ink);font-size:31px;line-height:1.15;font-weight:900}.decision-note{color:#52677f;margin-top:8px;font-size:14px;line-height:1.5}.code-box{min-width:122px;border-radius:22px;padding:18px;text-align:center;background:rgba(255,255,255,.56);border:1px solid rgba(255,255,255,.44)}.code-box span{display:block;color:#5b7185;font-size:12px;font-weight:900;margin-bottom:5px}.code-box strong{font-size:30px;color:var(--forest)}
+    .connection-card{border-radius:28px;padding:20px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;margin-bottom:22px}.connection-title{color:var(--forest);font-size:19px;font-weight:900;margin-bottom:6px}.connection-text{color:#466176;font-size:14px;line-height:1.5}.connection-status{border-radius:999px;padding:11px 14px;background:rgba(255,255,255,.62);color:var(--forest);font-weight:900;white-space:nowrap}
+    .tools{border-radius:24px;padding:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}.tools label{color:#466176;font-size:14px;font-weight:900}.tools select,.tools button{border:1px solid rgba(255,255,255,.52);border-radius:999px;padding:10px 13px;background:rgba(255,255,255,.62);color:var(--forest);font-weight:900;cursor:pointer;outline:none}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.chart-title{color:var(--forest);font-size:21px;font-weight:900;margin-bottom:5px}.chart-subtitle{color:#5b7185;font-size:13px;margin-bottom:12px}.chart-box{height:315px}
+    .alert-list{display:grid;gap:10px}.alert-row{display:grid;grid-template-columns:120px 1fr 1fr 1.4fr;gap:10px;align-items:center;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.38);color:#334155;font-size:14px}.chip{display:inline-block;width:fit-content;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}.chip-on{background:rgba(185,28,28,.12);color:var(--red)}.chip-ok{background:rgba(21,128,61,.12);color:var(--leaf)}
+    .placeholder{min-height:275px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:#466176;line-height:1.6;border:1px dashed rgba(15,61,34,.25);background:rgba(255,255,255,.34)}.info-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.legend-row{display:grid;grid-template-columns:125px 1fr 185px;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.32);font-size:14px}.legend-row:last-child{border-bottom:none}.legend-dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px}.red{background:var(--red)}.orange{background:var(--amber)}.green{background:var(--leaf)}.blue{background:var(--blue)}.purple{background:var(--purple)}.small-text{color:#466176;line-height:1.7;font-size:15px}.last-update{text-align:center;color:#35566b;font-size:15px;margin-top:18px}
+    @media(max-width:900px){body{min-width:1120px}}
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="side-panel glass">
-        <div class="brand-mini">DOST-JST Smart Agriculture</div>
-        <div class="brand-title">Monitoring and Decision Support Dashboard</div>
+  <aside class="sidebar">
+    <div class="brand-kicker">DOST-JST Smart Agriculture</div>
+    <div class="brand-title">Monitoring and Decision Support Dashboard</div>
+    <div class="nav-title">Main</div>
+    <button class="nav-button active" onclick="showPage('overview',this)">Dashboard Overview <span class="nav-dot live"></span></button>
+    <button class="nav-button" onclick="showPage('agroforestry',this)">Agroforestry <span class="nav-dot live"></span></button>
+    <button class="nav-button" onclick="showPage('awd',this)">AWD <span class="nav-dot pending"></span></button>
+    <button class="nav-button" onclick="showPage('ricefish',this)">Rice-Fish <span class="nav-dot pending"></span></button>
+    <div class="nav-title">Review</div>
+    <button class="nav-button" onclick="showPage('alerts',this)">Alert Center <span class="nav-dot live"></span></button>
+    <button class="nav-button" onclick="showPage('project',this)">Project Information <span class="nav-dot pending"></span></button>
+    <div class="sidebar-note">This sidebar stays fixed on the left side. Only the selected monitoring system appears in the main dashboard area.</div>
+  </aside>
 
-        <div class="nav-label">Main</div>
-        <button class="nav-btn active" data-page="overview">Dashboard Overview <span class="dot live"></span></button>
-        <button class="nav-btn" data-page="agroforestry">Agroforestry <span class="dot live"></span></button>
-        <button class="nav-btn" data-page="awd">AWD <span class="dot pending"></span></button>
-        <button class="nav-btn" data-page="ricefish">Rice-Fish <span class="dot pending"></span></button>
+  <main class="main">
+    <div class="logos">
+      <img src="UPLB.png" alt="UPLB Logo"><img src="DOST.png" alt="DOST Logo"><img src="JST.png" alt="JST Logo"><img src="TOHOKU.png" alt="Tohoku Logo"><img src="TMU.png" alt="TMU Logo"><img src="ICHARM.png" alt="ICHARM Logo">
+    </div>
 
-        <div class="nav-label">Review</div>
-        <button class="nav-btn" data-page="alerts">Alert Center <span class="dot live"></span></button>
-        <button class="nav-btn" data-page="project">Project Information <span class="dot pending"></span></button>
+    <section class="page active" id="overview">
+      <div class="hero glass"><h1>Smart Agriculture Monitoring Dashboard</h1><p>Choose one monitoring component from the sidebar. The interface is separated into Agroforestry, AWD, and Rice-Fish sections to avoid showing too much data at once.</p></div>
+      <div class="overview-grid">
+        <div class="system-card glass" onclick="openFromCard('agroforestry')"><div class="system-icon">🌳</div><div class="system-title">Agroforestry</div><div class="system-desc">Tree zone and crop alley soil moisture monitoring with live DSS decision support.</div><span class="pill">Live ThingSpeak data</span></div>
+        <div class="system-card glass" onclick="openFromCard('awd')"><div class="system-icon">💧</div><div class="system-title">AWD</div><div class="system-desc">Prepared dashboard module for alternate wetting and drying water level monitoring.</div><span class="pill pending">For sensor integration</span></div>
+        <div class="system-card glass" onclick="openFromCard('ricefish')"><div class="system-icon">🐟</div><div class="system-title">Rice-Fish</div><div class="system-desc">Prepared dashboard module for water level and dissolved oxygen monitoring in tilapia-based rice-fish plots.</div><span class="pill pending">For sensor integration</span></div>
       </div>
-    </aside>
-
-    <main class="main">
-      <div class="logos">
-        <img src="UPLB.png" alt="UPLB Logo">
-        <img src="DOST.png" alt="DOST Logo">
-        <img src="JST.png" alt="JST Logo">
-        <img src="TOHOKU.png" alt="Tohoku University Logo">
-        <img src="TMU.png" alt="Tokyo Metropolitan University Logo">
-        <img src="ICHARM.jpg" alt="ICHARM Logo" onerror="this.onerror=null;this.src='ICHARM.png';">
+      <div class="stat-grid">
+        <div class="card glass"><div class="card-label">Agroforestry DSS</div><div class="card-value" id="overviewDssCode">--</div><div class="card-note" id="overviewDssText">Waiting for live data</div></div>
+        <div class="card glass"><div class="card-label">Tree Moisture</div><div class="card-value" id="overviewTree">--%</div><div class="card-note">Latest agroforestry reading</div></div>
+        <div class="card glass"><div class="card-label">Crop Moisture</div><div class="card-value" id="overviewCrop">--%</div><div class="card-note">Latest agroforestry reading</div></div>
+        <div class="card glass"><div class="card-label">Connection</div><div class="card-value" id="overviewConnection">--</div><div class="card-note" id="overviewConnectionNote">Checking ThingSpeak status</div></div>
       </div>
+    </section>
 
-      <section class="page active" id="overview">
-        <div class="hero glass">
-          <h1>Smart Agriculture Monitoring Dashboard</h1>
-          <div class="subtitle">Select a monitoring system from the sidebar to view only the data needed for that component.</div>
-        </div>
-        <div class="systems">
-          <div class="system-card glass" data-open-page="agroforestry"><div class="icon">🌳</div><div class="title">Agroforestry</div><div class="desc">Tree zone and crop alley soil moisture monitoring with live DSS alerts.</div><span class="pill">Live data connected</span></div>
-          <div class="system-card glass" data-open-page="awd"><div class="icon">💧</div><div class="title">AWD</div><div class="desc">Water level monitoring layout for alternate wetting and drying plots.</div><span class="pill pending-pill">Ready for sensor integration</span></div>
-          <div class="system-card glass" data-open-page="ricefish"><div class="icon">🐟</div><div class="title">Rice-Fish</div><div class="desc">Water level and dissolved oxygen layout for tilapia-based rice-fish plots.</div><span class="pill pending-pill">Ready for sensor integration</span></div>
-        </div>
-        <div class="stats">
-          <div class="card glass"><div class="label">Agroforestry DSS</div><div class="value" id="overviewDssCode">--</div><div class="note" id="overviewDssText">Waiting for live data</div></div>
-          <div class="card glass"><div class="label">Tree Moisture</div><div class="value" id="overviewTree">--%</div><div class="note">Latest agroforestry reading</div></div>
-          <div class="card glass"><div class="label">Crop Moisture</div><div class="value" id="overviewCrop">--%</div><div class="note">Latest agroforestry reading</div></div>
-          <div class="card glass"><div class="label">Connection</div><div class="value" id="overviewConnection">--</div><div class="note" id="overviewConnectionNote">Checking ThingSpeak update status</div></div>
-        </div>
-      </section>
+    <section class="page" id="agroforestry">
+      <div class="hero glass"><h1>Agroforestry Soil Moisture Dashboard</h1><p>Live monitoring of soil moisture conditions in the tree zone and crop alley.</p></div>
+      <div class="tabs"><button class="tab-button active" onclick="showAgroTab('agro-live',this)">Live Monitoring</button><button class="tab-button" onclick="showAgroTab('agro-trends',this)">Trends and Export</button><button class="tab-button" onclick="showAgroTab('agro-alerts',this)">Alert History</button><button class="tab-button" onclick="showAgroTab('agro-guide',this)">Threshold Guide</button></div>
+      <div class="tab-section active" id="agro-live">
+        <div class="stat-grid"><div class="card glass"><div class="card-label">Average Tree Moisture</div><div class="card-value" id="avgTree">--%</div><div class="card-note">Based on selected history range</div></div><div class="card glass"><div class="card-label">Average Crop Moisture</div><div class="card-value" id="avgCrop">--%</div><div class="card-note">Based on selected history range</div></div><div class="card glass"><div class="card-label">Lowest Tree Reading</div><div class="card-value" id="lowestTreeReading">--%</div><div class="card-note" id="lowestTreeTime">Waiting for data</div></div><div class="card glass"><div class="card-label">Lowest Crop Reading</div><div class="card-value" id="lowestCropReading">--%</div><div class="card-note" id="lowestCropTime">Waiting for data</div></div></div>
+        <div class="sensor-grid"><div class="card glass"><div class="system-icon">🌳</div><div class="card-label">Tree Zone Moisture</div><div class="sensor-value" id="treeMoisture">--%</div><div class="sensor-status" id="treeStatus">Loading...</div><div class="track"><div class="bar" id="treeBar"></div></div></div><div class="card glass"><div class="system-icon">🌾</div><div class="card-label">Crop Alley Moisture</div><div class="sensor-value" id="cropMoisture">--%</div><div class="sensor-status" id="cropStatus">Loading...</div><div class="track"><div class="bar" id="cropBar"></div></div></div><div class="card glass"><div class="system-icon">🔔</div><div class="card-label">Tree Zone Alert</div><div class="sensor-value" id="treeAlert">--</div><div class="sensor-status">ON = irrigation recommended</div></div><div class="card glass"><div class="system-icon">💧</div><div class="card-label">Crop Alley Alert</div><div class="sensor-value" id="cropAlert">--</div><div class="sensor-status">ON = irrigation recommended</div></div></div>
+        <div class="connection-card glass"><div><div class="connection-title">Data Connection Status</div><div class="connection-text" id="connectionText">Checking latest ThingSpeak update.</div></div><div class="connection-status" id="connectionStatus">Checking...</div></div>
+        <div class="decision-card glass" id="decisionBox"><div><div class="decision-title">DSS Decision</div><div class="decision-text" id="dssDecision">Loading...</div><div class="decision-note" id="decisionNote">Waiting for latest ThingSpeak data.</div></div><div class="code-box"><span>DSS Code</span><strong id="dssCode">--</strong></div></div>
+      </div>
+      <div class="tab-section" id="agro-trends"><div class="tools glass"><label for="historyRange">Graph range:</label><select id="historyRange"><option value="30">Latest 30 readings</option><option value="50" selected>Latest 50 readings</option><option value="100">Latest 100 readings</option></select><button onclick="updateHistoryCharts()">Refresh graphs</button><button onclick="downloadHistoryCsv()">Download CSV</button></div><div class="chart-grid"><div class="card glass"><div class="chart-title">Tree Zone Moisture History</div><div class="chart-subtitle">Recent tree zone moisture records</div><div class="chart-box"><canvas id="treeMoistureChart"></canvas></div></div><div class="card glass"><div class="chart-title" style="color:#1e40af">Crop Alley Moisture History</div><div class="chart-subtitle">Recent crop alley moisture records</div><div class="chart-box"><canvas id="cropMoistureChart"></canvas></div></div></div></div>
+      <div class="tab-section" id="agro-alerts"><div class="card glass"><div class="chart-title">Agroforestry Alert History</div><div class="chart-subtitle">Recent DSS events based on selected history range</div><span class="pill" id="alertCount">Checking alerts</span><div class="alert-list" id="alertList" style="margin-top:14px"><div class="alert-row"><strong>Waiting</strong><span>Latest data</span><span class="chip chip-ok">Loading</span><span>Checking recent sensor records.</span></div></div></div></div>
+      <div class="tab-section" id="agro-guide"><div class="info-grid"><div class="card glass"><div class="chart-title">Soil Moisture Threshold Guide</div><div class="small-text" style="margin:8px 0 10px">These categories guide the dashboard and DSS alert interpretation.</div><div class="legend-row"><div><span class="legend-dot red"></span>0 to 25%</div><div>Very Dry</div><div>Irrigation recommended</div></div><div class="legend-row"><div><span class="legend-dot orange"></span>26 to 45%</div><div>Dry</div><div>Irrigation recommended</div></div><div class="legend-row"><div><span class="legend-dot green"></span>46 to 70%</div><div>Normal</div><div>No irrigation alert</div></div><div class="legend-row"><div><span class="legend-dot blue"></span>71 to 85%</div><div>Wet</div><div>No irrigation alert</div></div><div class="legend-row"><div><span class="legend-dot purple"></span>86 to 100%</div><div>Saturated</div><div>Possible waterlogging</div></div></div><div class="card glass"><div class="chart-title">System Notes</div><div class="small-text">This dashboard receives simulated soil moisture data from ThingSpeak. The DSS decision is intended as a preliminary guide and should be calibrated using actual soil conditions, crop needs, and field validation.</div></div></div></div>
+      <div class="last-update" id="lastUpdate">Waiting for latest data...</div>
+    </section>
 
-      <section class="page" id="agroforestry">
-        <div class="hero glass"><h1>Agroforestry Soil Moisture Dashboard</h1><div class="subtitle">Live monitoring of soil moisture conditions in the tree zone and crop alley.</div></div>
-        <div class="tabs">
-          <button class="tab active" data-agro-tab="agro-live">Live Monitoring</button>
-          <button class="tab" data-agro-tab="agro-trends">Trends and Export</button>
-          <button class="tab" data-agro-tab="agro-alerts">Alert History</button>
-          <button class="tab" data-agro-tab="agro-guide">Threshold Guide</button>
-        </div>
-
-        <div class="agro-tab active" id="agro-live">
-          <div class="stats">
-            <div class="card glass"><div class="label">Average Tree Moisture</div><div class="value" id="avgTree">--%</div><div class="note">Based on selected history range</div></div>
-            <div class="card glass"><div class="label">Average Crop Moisture</div><div class="value" id="avgCrop">--%</div><div class="note">Based on selected history range</div></div>
-            <div class="card glass"><div class="label">Lowest Tree Reading</div><div class="value" id="lowestTreeReading">--%</div><div class="note" id="lowestTreeTime">Waiting for data</div></div>
-            <div class="card glass"><div class="label">Lowest Crop Reading</div><div class="value" id="lowestCropReading">--%</div><div class="note" id="lowestCropTime">Waiting for data</div></div>
-          </div>
-          <div class="monitor">
-            <div class="sensor-card glass"><div class="icon">🌳</div><div class="label">Tree Zone Moisture</div><div class="sensor-value" id="treeMoisture">--%</div><div class="sensor-status" id="treeStatus">Loading...</div><div class="track"><div class="bar" id="treeBar"></div></div></div>
-            <div class="sensor-card glass"><div class="icon">🌾</div><div class="label">Crop Alley Moisture</div><div class="sensor-value" id="cropMoisture">--%</div><div class="sensor-status" id="cropStatus">Loading...</div><div class="track"><div class="bar" id="cropBar"></div></div></div>
-            <div class="sensor-card glass"><div class="icon">🔔</div><div class="label">Tree Zone Alert</div><div class="sensor-value" id="treeAlert">--</div><div class="sensor-status">ON = irrigation recommended</div></div>
-            <div class="sensor-card glass"><div class="icon">💧</div><div class="label">Crop Alley Alert</div><div class="sensor-value" id="cropAlert">--</div><div class="sensor-status">ON = irrigation recommended</div></div>
-          </div>
-          <div class="connection glass"><div><div class="title">Data Connection Status</div><div class="desc" id="connectionText">Checking the latest ThingSpeak update status.</div></div><div class="connection-status" id="connectionStatus">Checking...</div></div>
-          <div class="decision glass" id="decisionBox"><div><div class="label">DSS Decision</div><div class="decision-text" id="dssDecision">Loading...</div><div class="note" id="decisionNote">Waiting for latest ThingSpeak data.</div></div><div class="code"><span>DSS Code</span><strong id="dssCode">--</strong></div></div>
-        </div>
-
-        <div class="agro-tab" id="agro-trends">
-          <div class="tools glass"><label for="historyRange">Graph range:</label><select id="historyRange"><option value="30">Latest 30 readings</option><option value="50" selected>Latest 50 readings</option><option value="100">Latest 100 readings</option></select><button id="refreshGraphs" type="button">Refresh graphs</button><button id="downloadCsv" type="button">Download CSV</button></div>
-          <div class="chart-grid">
-            <div class="chart-card glass"><div class="chart-title">Tree Zone Moisture History</div><div class="chart-sub">Recent tree zone moisture records</div><div class="chart-box"><canvas id="treeMoistureChart"></canvas></div></div>
-            <div class="chart-card glass"><div class="chart-title" style="color:#1e40af">Crop Alley Moisture History</div><div class="chart-sub">Recent crop alley moisture records</div><div class="chart-box"><canvas id="cropMoistureChart"></canvas></div></div>
-          </div>
-        </div>
-
-        <div class="agro-tab" id="agro-alerts"><div class="alert-panel glass"><div class="chart-title">Agroforestry Alert History</div><div class="chart-sub">Recent DSS events based on the selected history range</div><span class="pill" id="alertCount">No alerts yet</span><div class="alert-list" id="alertList" style="margin-top:14px"><div class="alert-item"><strong>Waiting</strong><span>Latest data</span><span class="chip chip-ok">Loading</span><span>Checking recent sensor records.</span></div></div></div></div>
-
-        <div class="agro-tab" id="agro-guide">
-          <div class="info-grid">
-            <div class="info-card glass"><div class="chart-title">Soil Moisture Threshold Guide</div><div class="small" style="margin:8px 0 10px">The same moisture categories are also shown as subtle background bands in each history graph.</div><div class="legend"><div><span class="c red"></span>0 to 25%</div><div>Very Dry</div><div>Irrigation recommended</div></div><div class="legend"><div><span class="c orange"></span>26 to 45%</div><div>Dry</div><div>Irrigation recommended</div></div><div class="legend"><div><span class="c green"></span>46 to 70%</div><div>Normal</div><div>No irrigation alert</div></div><div class="legend"><div><span class="c blue"></span>71 to 85%</div><div>Wet</div><div>No irrigation alert</div></div><div class="legend"><div><span class="c purple"></span>86 to 100%</div><div>Saturated</div><div>Possible waterlogging</div></div></div>
-            <div class="info-card glass"><div class="chart-title">System Notes</div><div class="small">This section receives simulated soil moisture data from ThingSpeak. The DSS alert is intended as a preliminary monitoring guide. Actual irrigation thresholds should be calibrated based on soil type, crop requirement, root zone depth, and field conditions.</div></div>
-          </div>
-        </div>
-        <div class="last" id="lastUpdate">Waiting for latest data...</div>
-      </section>
-
-      <section class="page" id="awd">
-        <div class="hero glass"><h1>AWD Water Level Dashboard</h1><div class="subtitle">Planned interface for alternate wetting and drying water level monitoring.</div></div>
-        <div class="planned"><div class="card glass"><div class="icon">💧</div><div class="label">Current Water Level</div><div class="value">-- cm</div><div class="note">Waiting for water level sensor connection</div></div><div class="card glass"><div class="icon">🌾</div><div class="label">AWD Status</div><div class="value">Pending</div><div class="note">Flooded, safe drying, or re-irrigation status</div></div><div class="card glass"><div class="icon">🔔</div><div class="label">Re-irrigation Alert</div><div class="value">--</div><div class="note">Alert logic to be activated after sensor setup</div></div></div>
-        <div class="chart-card glass"><div class="chart-title">Water Level Trend</div><div class="placeholder">Water level trend graph will appear here once the AWD water level sensor is connected to a ThingSpeak field.</div></div>
-      </section>
-
-      <section class="page" id="ricefish">
-        <div class="hero glass"><h1>Rice-Fish Water Quality Dashboard</h1><div class="subtitle">Planned interface for rice-fish water level and dissolved oxygen monitoring.</div></div>
-        <div class="planned"><div class="card glass"><div class="icon">💧</div><div class="label">Water Level</div><div class="value">-- cm</div><div class="note">Waiting for rice-fish water level sensor</div></div><div class="card glass"><div class="icon">🐟</div><div class="label">Dissolved Oxygen</div><div class="value">-- mg/L</div><div class="note">Waiting for DO sensor integration</div></div><div class="card glass"><div class="icon">✅</div><div class="label">Fish Safety Status</div><div class="value">Pending</div><div class="note">Tilapia safety decision support to be activated</div></div></div>
-        <div class="chart-card glass"><div class="chart-title">Rice-Fish Trend Graphs</div><div class="placeholder">Water level and dissolved oxygen trends will appear here once the rice-fish sensors are connected to ThingSpeak fields.</div></div>
-      </section>
-
-      <section class="page" id="alerts">
-        <div class="hero glass"><h1>Alert Center</h1><div class="subtitle">Centralized alert view for agroforestry, AWD, and rice-fish monitoring components.</div></div>
-        <div class="alert-panel glass"><div class="chart-title">Current Active Alerts</div><div class="chart-sub">Agroforestry is live. AWD and rice-fish alerts are placeholders until sensors are connected.</div><span class="pill" id="alertCenterCount">Checking alerts</span><div class="alert-list" id="alertCenterList" style="margin-top:14px"><div class="alert-item"><strong>Waiting</strong><span>Agroforestry</span><span class="chip chip-ok">Loading</span><span>Checking recent DSS records.</span></div></div></div>
-      </section>
-
-      <section class="page" id="project">
-        <div class="hero glass"><h1>Project Information</h1><div class="subtitle">System layout prepared for a ridge-to-reef smart agriculture monitoring and decision-support platform.</div></div>
-        <div class="info-grid"><div class="info-card glass"><div class="chart-title">Monitoring Components</div><div class="small">The website separates the system into agroforestry, AWD, and rice-fish monitoring sections to reduce data overload. Only the selected system is shown in detail, making the interface easier to explain and easier to use during demonstrations.</div></div><div class="info-card glass"><div class="chart-title">Integration Status</div><div class="small">Agroforestry soil moisture is currently connected to ThingSpeak. AWD water level and rice-fish water level and dissolved oxygen sections are prepared as layout modules and can be connected later once the sensor fields are finalized.</div></div></div>
-      </section>
-    </main>
-  </div>
+    <section class="page" id="awd"><div class="hero glass"><h1>AWD Water Level Dashboard</h1><p>Prepared interface for alternate wetting and drying water level monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon">💧</div><div class="card-label">Current Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for water level sensor connection</div></div><div class="card glass"><div class="system-icon">🌾</div><div class="card-label">AWD Status</div><div class="card-value">Pending</div><div class="card-note">Flooded, safe drying, or re-irrigation status</div></div><div class="card glass"><div class="system-icon">🔔</div><div class="card-label">Re-irrigation Alert</div><div class="card-value">--</div><div class="card-note">Alert logic to be activated after sensor setup</div></div></div><div class="card glass"><div class="chart-title">Water Level Trend</div><div class="placeholder">Water level trend graph will appear here once the AWD water level sensor is connected to a ThingSpeak field.</div></div></section>
+    <section class="page" id="ricefish"><div class="hero glass"><h1>Rice-Fish Water Quality Dashboard</h1><p>Prepared interface for rice-fish water level and dissolved oxygen monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon">💧</div><div class="card-label">Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for rice-fish water level sensor</div></div><div class="card glass"><div class="system-icon">🐟</div><div class="card-label">Dissolved Oxygen</div><div class="card-value">-- mg/L</div><div class="card-note">Waiting for DO sensor integration</div></div><div class="card glass"><div class="system-icon">✅</div><div class="card-label">Fish Safety Status</div><div class="card-value">Pending</div><div class="card-note">Tilapia safety decision support to be activated</div></div></div><div class="card glass"><div class="chart-title">Rice-Fish Trend Graphs</div><div class="placeholder">Water level and dissolved oxygen trends will appear here once the rice-fish sensors are connected to ThingSpeak fields.</div></div></section>
+    <section class="page" id="alerts"><div class="hero glass"><h1>Alert Center</h1><p>Centralized alert view for Agroforestry, AWD, and Rice-Fish monitoring components.</p></div><div class="card glass"><div class="chart-title">Current Active Alerts</div><div class="chart-subtitle">Agroforestry is live. AWD and Rice-Fish alerts are placeholders until sensors are connected.</div><span class="pill" id="alertCenterCount">Checking alerts</span><div class="alert-list" id="alertCenterList" style="margin-top:14px"><div class="alert-row"><strong>Waiting</strong><span>Agroforestry</span><span class="chip chip-ok">Loading</span><span>Checking recent DSS records.</span></div></div></div></section>
+    <section class="page" id="project"><div class="hero glass"><h1>Project Information</h1><p>System layout prepared for a ridge-to-reef smart agriculture monitoring and decision-support platform.</p></div><div class="info-grid"><div class="card glass"><div class="chart-title">Monitoring Components</div><div class="small-text">The website separates the system into Agroforestry, AWD, and Rice-Fish monitoring sections to reduce data overload. Only the selected system is shown in detail, making the interface easier to understand during demonstrations.</div></div><div class="card glass"><div class="chart-title">Integration Status</div><div class="small-text">Agroforestry soil moisture is currently connected to ThingSpeak. AWD water level and Rice-Fish water level and dissolved oxygen sections are prepared as layout modules and can be connected once the sensor fields are finalized.</div></div></div></section>
+  </main>
 
   <script>
-    const channelID="3414691";
-    const readAPIKey="URH4MTXR9YCKIGUM";
+    const channelID='3414691';
+    const readAPIKey='URH4MTXR9YCKIGUM';
     const latestUrl=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=1`;
     let treeMoistureChart,cropMoistureChart,selectedHistoryFeeds=[];
-
-    function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelector(`[data-page="${id}"]`).classList.add("active");setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},120)}
-    document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-    document.querySelectorAll("[data-open-page]").forEach(c=>c.addEventListener("click",()=>showPage(c.dataset.openPage)));
-    document.querySelectorAll("[data-agro-tab]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".agro-tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.agroTab).classList.add("active");setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},120)}));
-
-    function getMoistureStatus(v){if(v<=25)return"Very Dry";if(v<=45)return"Dry";if(v<=70)return"Normal";if(v<=85)return"Wet";return"Saturated"}
-    function getStatusClass(v){if(v<=25)return"very-dry";if(v<=45)return"dry";if(v<=70)return"normal";if(v<=85)return"wet";return"saturated"}
-    function getBarClass(v){if(v<=25)return"bar bar-vd";if(v<=45)return"bar bar-d";if(v<=70)return"bar bar-n";if(v<=85)return"bar bar-w";return"bar bar-s"}
-    function getDssDecision(c){if(c===0)return"Soil moisture acceptable";if(c===1)return"Tree zone irrigation recommended";if(c===2)return"Crop alley irrigation recommended";if(c===3)return"Both zones irrigation recommended";if(c===4)return"Possible waterlogging";return"No DSS data yet"}
-    function getDecisionNote(c){if(c===0)return"Current readings are within the acceptable monitoring range.";if(c===1)return"Tree zone is below the irrigation threshold.";if(c===2)return"Crop alley is below the irrigation threshold.";if(c===3)return"Both monitored zones are below the irrigation threshold.";if(c===4)return"Both zones are saturated. Check possible drainage or waterlogging concerns.";return"Waiting for valid DSS data."}
-    function getDecisionBorder(c){if(c===0)return"#15803d";if(c===1||c===2)return"#d97706";if(c===3)return"#b91c1c";if(c===4)return"#6d28d9";return"#64748b"}
-    function average(a){return a.length?a.reduce((s,v)=>s+v,0)/a.length:0}
-    function getDssActionText(c){if(c===0)return"No irrigation alert";if(c===1)return"Tree zone irrigation recommended";if(c===2)return"Crop alley irrigation recommended";if(c===3)return"Both zones irrigation recommended";if(c===4)return"Check possible waterlogging";return"No action available"}
-
-    function updateConnectionStatus(createdAt){
-      const t=new Date(createdAt),age=Math.floor((new Date()-t)/1000);let status="Connected",note="ThingSpeak is receiving recent data from the monitoring system.";
-      if(age>300){status="Disconnected";note="ThingSpeak has not received a new update for more than 5 minutes. Check if the Wokwi simulation, Wi-Fi connection, or upload process is still running."}
-      else if(age>60){status="Waiting for update";note="ThingSpeak has not received a new update for more than 1 minute. The dashboard is still showing the last valid reading."}
-      connectionStatus.textContent=status;connectionStatus.style.color=status==="Connected"?"#15803d":status==="Waiting for update"?"#d97706":"#b91c1c";connectionText.textContent=note+" Last recorded update: "+t.toLocaleString();
-      overviewConnection.textContent=status;overviewConnection.style.color=connectionStatus.style.color;overviewConnectionNote.textContent="Last update: "+t.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
-    }
-
-    async function updateDashboard(){
-      try{
-        const res=await fetch(latestUrl+"&t="+Date.now()),data=await res.json();
-        if(!data.feeds||!data.feeds.length){dssDecision.textContent="No data received yet";connectionStatus.textContent="Disconnected";connectionText.textContent="No valid ThingSpeak record was received by the dashboard.";return}
-        const latest=data.feeds[0],tree=Number(latest.field1),crop=Number(latest.field2),ta=Number(latest.field3),ca=Number(latest.field4),code=Number(latest.field5);
-        treeMoisture.textContent=tree+"%";cropMoisture.textContent=crop+"%";overviewTree.textContent=tree+"%";overviewCrop.textContent=crop+"%";
-        treeStatus.textContent=getMoistureStatus(tree);cropStatus.textContent=getMoistureStatus(crop);treeStatus.className="sensor-status "+getStatusClass(tree);cropStatus.className="sensor-status "+getStatusClass(crop);
-        treeBar.style.width=tree+"%";cropBar.style.width=crop+"%";treeBar.className=getBarClass(tree);cropBar.className=getBarClass(crop);
-        treeAlert.textContent=ta===1?"ON":"OFF";cropAlert.textContent=ca===1?"ON":"OFF";treeAlert.className=ta===1?"sensor-value alert-on":"sensor-value alert-off";cropAlert.className=ca===1?"sensor-value alert-on":"sensor-value alert-off";
-        dssDecision.textContent=getDssDecision(code);dssCode.textContent=code;decisionNote.textContent=getDecisionNote(code);decisionBox.style.borderLeftColor=getDecisionBorder(code);
-        overviewDssCode.textContent="Code "+code;overviewDssText.textContent=getDssDecision(code);
-        const ut=new Date(latest.created_at);lastUpdate.textContent="Last ThingSpeak update: "+ut.toLocaleString();updateConnectionStatus(latest.created_at);
-      }catch(e){dssDecision.textContent="Error loading ThingSpeak data";connectionStatus.textContent="Disconnected";connectionStatus.style.color="#b91c1c";connectionText.textContent="The dashboard cannot connect to ThingSpeak at the moment.";console.log(e)}
-    }
-
-    function updateSummary(treeData,cropData,feeds){
-      const cleanT=treeData.filter(v=>!Number.isNaN(v)),cleanC=cropData.filter(v=>!Number.isNaN(v));avgTree.textContent=Math.round(average(cleanT))+"%";avgCrop.textContent=Math.round(average(cleanC))+"%";
-      const tr=feeds.map(f=>({value:Number(f.field1),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));
-      const cr=feeds.map(f=>({value:Number(f.field2),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));
-      if(tr.length){const m=tr.reduce((a,b)=>b.value<a.value?b:a,tr[0]);lowestTreeReading.textContent=m.value+"%";lowestTreeTime.textContent="Lowest at "+m.time.toLocaleString()}
-      if(cr.length){const m=cr.reduce((a,b)=>b.value<a.value?b:a,cr[0]);lowestCropReading.textContent=m.value+"%";lowestCropTime.textContent="Lowest at "+m.time.toLocaleString()}
-    }
-
-    function updateAlerts(feeds){
-      const alerts=feeds.map(f=>{const ta=Number(f.field3),ca=Number(f.field4),code=Number(f.field5),time=new Date(f.created_at);let zone="System";if(ta===1&&ca===1)zone="Tree and Crop";else if(ta===1)zone="Tree Zone";else if(ca===1)zone="Crop Alley";else if(code===4)zone="Both Zones";return{time,zone,code,ta,ca,action:getDssActionText(code)}}).filter(x=>x.code!==0||x.ta===1||x.ca===1).slice(-8).reverse();
-      const normal=`<div class="alert-item"><strong>Normal</strong><span>Agroforestry</span><span class="chip chip-ok">No alert</span><span>No irrigation or waterlogging alert in the selected records.</span></div>`;
-      if(!alerts.length){alertCount.textContent="No recent alerts";alertCenterCount.textContent="No active alert";alertList.innerHTML=normal;alertCenterList.innerHTML=normal;return}
-      const rows=alerts.map(x=>`<div class="alert-item"><strong>${x.time.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</strong><span>${x.zone}</span><span class="chip chip-on">DSS Code ${x.code}</span><span>${x.action}</span></div>`).join("");
-      alertCount.textContent=alerts.length+" recent alert event"+(alerts.length>1?"s":"");alertCenterCount.textContent=alerts.length+" agroforestry alert"+(alerts.length>1?"s":"");alertList.innerHTML=rows;alertCenterList.innerHTML=rows+`<div class="alert-item"><strong>Pending</strong><span>AWD and Rice-Fish</span><span class="chip chip-ok">Not connected</span><span>Alert records will appear after sensor fields are connected.</span></div>`;
-    }
-
-    const thresholdBandPlugin={id:"thresholdBandPlugin",beforeDraw(chart){const{ctx,chartArea,scales}=chart;if(!chartArea||!scales.y)return;[{from:0,to:25,color:"rgba(185,28,28,.07)"},{from:25,to:45,color:"rgba(217,119,6,.07)"},{from:45,to:70,color:"rgba(21,128,61,.07)"},{from:70,to:85,color:"rgba(37,99,235,.07)"},{from:85,to:100,color:"rgba(109,40,217,.07)"}].forEach(b=>{const y1=scales.y.getPixelForValue(b.to),y2=scales.y.getPixelForValue(b.from);ctx.save();ctx.fillStyle=b.color;ctx.fillRect(chartArea.left,y1,chartArea.right-chartArea.left,y2-y1);ctx.restore()})}};
-
-    function makeChart(id,label,data,labels,color,fill){const ctx=document.getElementById(id).getContext("2d");return new Chart(ctx,{type:"line",data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:fill,tension:.35,fill:true,pointRadius:3,pointHoverRadius:5,borderWidth:3}]},plugins:[thresholdBandPlugin],options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"top"}},scales:{y:{min:0,max:100,title:{display:true,text:"Moisture (%)"},grid:{color:"rgba(255,255,255,.34)"}},x:{title:{display:true,text:"Time"},grid:{color:"rgba(255,255,255,.18)"}}}}})}
-
-    async function updateHistoryCharts(){
-      try{
-        const range=historyRange?historyRange.value:50,url=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=${range}&t=${Date.now()}`;
-        const res=await fetch(url),data=await res.json();if(!data.feeds||!data.feeds.length)return;selectedHistoryFeeds=data.feeds;
-        const labels=data.feeds.map(f=>new Date(f.created_at).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})),tree=data.feeds.map(f=>Number(f.field1)),crop=data.feeds.map(f=>Number(f.field2));
-        updateSummary(tree,crop,data.feeds);updateAlerts(data.feeds);
-        if(!treeMoistureChart)treeMoistureChart=makeChart("treeMoistureChart","Tree Zone Moisture",tree,labels,"#15803d","rgba(21,128,61,.12)");else{treeMoistureChart.data.labels=labels;treeMoistureChart.data.datasets[0].data=tree;treeMoistureChart.update()}
-        if(!cropMoistureChart)cropMoistureChart=makeChart("cropMoistureChart","Crop Alley Moisture",crop,labels,"#2563eb","rgba(37,99,235,.12)");else{cropMoistureChart.data.labels=labels;cropMoistureChart.data.datasets[0].data=crop;cropMoistureChart.update()}
-      }catch(e){console.log("History chart error:",e)}
-    }
-
-    function downloadHistoryCsv(){
-      if(!selectedHistoryFeeds.length){alert("No history data available yet.");return}
-      const rows=[["Time","Tree Moisture","Crop Moisture","Tree Alert","Crop Alert","DSS Code"]];selectedHistoryFeeds.forEach(f=>rows.push([f.created_at,f.field1,f.field2,f.field3,f.field4,f.field5]));
-      const csv=rows.map(r=>r.map(v=>`"${v??""}"`).join(",")).join("\n"),blob=new Blob([csv],{type:"text/csv;charset=utf-8;"}),link=document.createElement("a"),url=URL.createObjectURL(blob),range=historyRange?historyRange.value:selectedHistoryFeeds.length;
-      link.href=url;link.download="agroforestry_soil_moisture_latest_"+range+"_readings.csv";document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url);
-    }
-
-    historyRange.addEventListener("change",updateHistoryCharts);refreshGraphs.addEventListener("click",updateHistoryCharts);downloadCsv.addEventListener("click",downloadHistoryCsv);
+    function showPage(pageId,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(pageId).classList.add('active');document.querySelectorAll('.nav-button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},150)}
+    function openFromCard(pageId){const btn=document.querySelector(`.nav-button[onclick*="${pageId}"]`);if(btn)showPage(pageId,btn)}
+    function showAgroTab(tabId,btn){document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));document.getElementById(tabId).classList.add('active');document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},150)}
+    function getMoistureStatus(v){if(v<=25)return'Very Dry';if(v<=45)return'Dry';if(v<=70)return'Normal';if(v<=85)return'Wet';return'Saturated'}
+    function getStatusClass(v){if(v<=25)return'very-dry';if(v<=45)return'dry';if(v<=70)return'normal';if(v<=85)return'wet';return'saturated'}
+    function getBarClass(v){if(v<=25)return'bar bar-vd';if(v<=45)return'bar bar-d';if(v<=70)return'bar bar-n';if(v<=85)return'bar bar-w';return'bar bar-s'}
+    function getDssDecision(c){if(c===0)return'Soil moisture acceptable';if(c===1)return'Tree zone irrigation recommended';if(c===2)return'Crop alley irrigation recommended';if(c===3)return'Both zones irrigation recommended';if(c===4)return'Possible waterlogging';return'No DSS data yet'}
+    function getDecisionNote(c){if(c===0)return'Current readings are within the acceptable monitoring range.';if(c===1)return'Tree zone is below the irrigation threshold.';if(c===2)return'Crop alley is below the irrigation threshold.';if(c===3)return'Both monitored zones are below the irrigation threshold.';if(c===4)return'Both zones are saturated. Check possible drainage or waterlogging concerns.';return'Waiting for valid DSS data.'}
+    function getDecisionBorder(c){if(c===0)return'#16a34a';if(c===1||c===2)return'#d97706';if(c===3)return'#b91c1c';if(c===4)return'#6d28d9';return'#64748b'}
+    function getDssActionText(c){if(c===0)return'No irrigation alert';if(c===1)return'Tree zone irrigation recommended';if(c===2)return'Crop alley irrigation recommended';if(c===3)return'Both zones irrigation recommended';if(c===4)return'Check possible waterlogging';return'No action available'}
+    function average(values){return values.length?values.reduce((s,v)=>s+v,0)/values.length:0}
+    function updateConnectionStatus(createdAt){const latestTime=new Date(createdAt),ageSeconds=Math.floor((new Date()-latestTime)/1000);let status='Connected',note='ThingSpeak is receiving recent data from the monitoring system.';if(ageSeconds>300){status='Disconnected';note='ThingSpeak has not received a new update for more than 5 minutes. Check if the Wokwi simulation, Wi-Fi connection, or upload process is still running.'}else if(ageSeconds>60){status='Waiting';note='ThingSpeak has not received a new update for more than 1 minute. The dashboard is still showing the last valid reading.'}connectionStatus.textContent=status;connectionStatus.style.color=status==='Connected'?'#16a34a':status==='Waiting'?'#d97706':'#b91c1c';connectionText.textContent=note+' Last recorded update: '+latestTime.toLocaleString();overviewConnection.textContent=status;overviewConnection.style.color=connectionStatus.style.color;overviewConnectionNote.textContent='Last update: '+latestTime.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+    async function updateDashboard(){try{const response=await fetch(latestUrl+'&t='+Date.now()),data=await response.json();if(!data.feeds||data.feeds.length===0){dssDecision.textContent='No data received yet';connectionStatus.textContent='Disconnected';connectionText.textContent='No valid ThingSpeak record was received by the dashboard.';return}const latest=data.feeds[0],tree=Number(latest.field1),crop=Number(latest.field2),ta=Number(latest.field3),ca=Number(latest.field4),code=Number(latest.field5);treeMoisture.textContent=tree+'%';cropMoisture.textContent=crop+'%';overviewTree.textContent=tree+'%';overviewCrop.textContent=crop+'%';treeStatus.textContent=getMoistureStatus(tree);cropStatus.textContent=getMoistureStatus(crop);treeStatus.className='sensor-status '+getStatusClass(tree);cropStatus.className='sensor-status '+getStatusClass(crop);treeBar.style.width=tree+'%';cropBar.style.width=crop+'%';treeBar.className=getBarClass(tree);cropBar.className=getBarClass(crop);treeAlert.textContent=ta===1?'ON':'OFF';cropAlert.textContent=ca===1?'ON':'OFF';treeAlert.className=ta===1?'sensor-value alert-on':'sensor-value alert-off';cropAlert.className=ca===1?'sensor-value alert-on':'sensor-value alert-off';dssDecision.textContent=getDssDecision(code);dssCode.textContent=code;decisionNote.textContent=getDecisionNote(code);decisionBox.style.borderLeftColor=getDecisionBorder(code);overviewDssCode.textContent='Code '+code;overviewDssText.textContent=getDssDecision(code);lastUpdate.textContent='Last ThingSpeak update: '+new Date(latest.created_at).toLocaleString();updateConnectionStatus(latest.created_at)}catch(error){dssDecision.textContent='Error loading ThingSpeak data';connectionStatus.textContent='Disconnected';connectionStatus.style.color='#b91c1c';connectionText.textContent='The dashboard cannot connect to ThingSpeak at the moment.';console.log(error)}}
+    function updateSummaryCards(treeData,cropData,feeds){const t=treeData.filter(v=>!Number.isNaN(v)),c=cropData.filter(v=>!Number.isNaN(v));avgTree.textContent=Math.round(average(t))+'%';avgCrop.textContent=Math.round(average(c))+'%';const tr=feeds.map(f=>({value:Number(f.field1),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));const cr=feeds.map(f=>({value:Number(f.field2),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));if(tr.length){const m=tr.reduce((a,b)=>b.value<a.value?b:a,tr[0]);lowestTreeReading.textContent=m.value+'%';lowestTreeTime.textContent='Lowest at '+m.time.toLocaleString()}if(cr.length){const m=cr.reduce((a,b)=>b.value<a.value?b:a,cr[0]);lowestCropReading.textContent=m.value+'%';lowestCropTime.textContent='Lowest at '+m.time.toLocaleString()}}
+    function updateAlertLists(feeds){const alerts=feeds.map(f=>{const ta=Number(f.field3),ca=Number(f.field4),code=Number(f.field5),time=new Date(f.created_at);let zone='System';if(ta===1&&ca===1)zone='Tree and Crop';else if(ta===1)zone='Tree Zone';else if(ca===1)zone='Crop Alley';else if(code===4)zone='Both Zones';return{time,zone,code,ta,ca,action:getDssActionText(code)}}).filter(x=>x.code!==0||x.ta===1||x.ca===1).slice(-8).reverse();const normal=`<div class="alert-row"><strong>Normal</strong><span>Agroforestry</span><span class="chip chip-ok">No alert</span><span>No irrigation or waterlogging alert in the selected records.</span></div>`;if(!alerts.length){alertCount.textContent='No recent alerts';alertCenterCount.textContent='No active alert';alertList.innerHTML=normal;alertCenterList.innerHTML=normal;return}const rows=alerts.map(x=>`<div class="alert-row"><strong>${x.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</strong><span>${x.zone}</span><span class="chip chip-on">DSS Code ${x.code}</span><span>${x.action}</span></div>`).join('');alertCount.textContent=alerts.length+' recent alert event'+(alerts.length>1?'s':'');alertCenterCount.textContent=alerts.length+' agroforestry alert'+(alerts.length>1?'s':'');alertList.innerHTML=rows;alertCenterList.innerHTML=rows+`<div class="alert-row"><strong>Pending</strong><span>AWD and Rice-Fish</span><span class="chip chip-ok">Not connected</span><span>Alert records will appear after sensor fields are connected.</span></div>`}
+    const thresholdBandPlugin={id:'thresholdBandPlugin',beforeDraw(chart){const{ctx,chartArea,scales}=chart;if(!chartArea||!scales.y)return;[{from:0,to:25,color:'rgba(185,28,28,.07)'},{from:25,to:45,color:'rgba(217,119,6,.07)'},{from:45,to:70,color:'rgba(21,128,61,.07)'},{from:70,to:85,color:'rgba(37,99,235,.07)'},{from:85,to:100,color:'rgba(109,40,217,.07)'}].forEach(b=>{const yTop=scales.y.getPixelForValue(b.to),yBottom=scales.y.getPixelForValue(b.from);ctx.save();ctx.fillStyle=b.color;ctx.fillRect(chartArea.left,yTop,chartArea.right-chartArea.left,yBottom-yTop);ctx.restore()})}};
+    function createSingleMoistureChart(id,label,data,labels,color,fill){const ctx=document.getElementById(id).getContext('2d');return new Chart(ctx,{type:'line',data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:fill,tension:.35,fill:true,pointRadius:3,pointHoverRadius:5,borderWidth:3}]},plugins:[thresholdBandPlugin],options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:0,max:100,title:{display:true,text:'Moisture (%)'},grid:{color:'rgba(255,255,255,.34)'}},x:{title:{display:true,text:'Time'},grid:{color:'rgba(255,255,255,.18)'}}}}})}
+    async function updateHistoryCharts(){try{const selectedRange=historyRange.value;const url=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=${selectedRange}&t=${Date.now()}`;const response=await fetch(url),data=await response.json();if(!data.feeds||data.feeds.length===0)return;selectedHistoryFeeds=data.feeds;const labels=data.feeds.map(f=>new Date(f.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));const treeData=data.feeds.map(f=>Number(f.field1)),cropData=data.feeds.map(f=>Number(f.field2));updateSummaryCards(treeData,cropData,data.feeds);updateAlertLists(data.feeds);if(!treeMoistureChart)treeMoistureChart=createSingleMoistureChart('treeMoistureChart','Tree Zone Moisture',treeData,labels,'#15803d','rgba(21,128,61,.12)');else{treeMoistureChart.data.labels=labels;treeMoistureChart.data.datasets[0].data=treeData;treeMoistureChart.update()}if(!cropMoistureChart)cropMoistureChart=createSingleMoistureChart('cropMoistureChart','Crop Alley Moisture',cropData,labels,'#2563eb','rgba(37,99,235,.12)');else{cropMoistureChart.data.labels=labels;cropMoistureChart.data.datasets[0].data=cropData;cropMoistureChart.update()}}catch(e){console.log('History chart error:',e)}}
+    function downloadHistoryCsv(){if(!selectedHistoryFeeds.length){alert('No history data available yet.');return}const rows=[['Time','Tree Moisture','Crop Moisture','Tree Alert','Crop Alert','DSS Code']];selectedHistoryFeeds.forEach(f=>rows.push([f.created_at,f.field1,f.field2,f.field3,f.field4,f.field5]));const csv=rows.map(r=>r.map(v=>`"${v??''}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const link=document.createElement('a');const url=URL.createObjectURL(blob);link.href=url;link.download='agroforestry_soil_moisture_latest_'+historyRange.value+'_readings.csv';document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url)}
     updateDashboard();updateHistoryCharts();setInterval(updateDashboard,5000);setInterval(updateHistoryCharts,15000);
   </script>
 </body>
