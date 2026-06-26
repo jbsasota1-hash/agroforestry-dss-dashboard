@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smart Agriculture DSS Dashboard</title>
+  <title>AgRiFiS</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     *{box-sizing:border-box}
     :root{--forest:#0f3d22;--leaf:#16a34a;--blue:#2563eb;--amber:#d97706;--red:#b91c1c;--purple:#6d28d9;--ink:#0f172a;--muted:#5b7185;--glass:rgba(255,255,255,.55);--border:rgba(255,255,255,.5);--shadow:0 20px 55px rgba(15,23,42,.12)}
@@ -26,22 +27,2914 @@
     .tools{border-radius:24px;padding:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}.tools label{color:#466176;font-size:14px;font-weight:900}.tools select,.tools button{border:1px solid rgba(255,255,255,.52);border-radius:999px;padding:10px 13px;background:rgba(255,255,255,.62);color:var(--forest);font-weight:900;cursor:pointer;outline:none}.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.chart-title{color:var(--forest);font-size:21px;font-weight:900;margin-bottom:5px}.chart-subtitle{color:#5b7185;font-size:13px;margin-bottom:12px}.chart-box{height:315px}
     .alert-list{display:grid;gap:10px}.alert-row{display:grid;grid-template-columns:120px 1fr 1fr 1.4fr;gap:10px;align-items:center;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.38);color:#334155;font-size:14px}.chip{display:inline-block;width:fit-content;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}.chip-on{background:rgba(185,28,28,.12);color:var(--red)}.chip-ok{background:rgba(21,128,61,.12);color:var(--leaf)}
     .placeholder{min-height:275px;border-radius:24px;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center;color:#466176;line-height:1.6;border:1px dashed rgba(15,61,34,.25);background:rgba(255,255,255,.34)}.info-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.legend-row{display:grid;grid-template-columns:125px 1fr 185px;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.32);font-size:14px}.legend-row:last-child{border-bottom:none}.legend-dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:8px}.red{background:var(--red)}.orange{background:var(--amber)}.green{background:var(--leaf)}.blue{background:var(--blue)}.purple{background:var(--purple)}.small-text{color:#466176;line-height:1.7;font-size:15px}.last-update{text-align:center;color:#35566b;font-size:15px;margin-top:18px}
-    @media(max-width:900px){body{min-width:1120px}}
+
+    /* iOS-style smooth interactions and strict fixed-sidebar layout */
+    body{min-width:0;overflow-x:hidden}
+    .main{width:calc(100vw - 388px);max-width:calc(100vw - 388px);min-width:0;overflow-x:hidden}
+    .page.active{animation:iosPageIn .45s cubic-bezier(.16,1,.3,1) both}
+    .tab-section.active{animation:iosCardIn .36s cubic-bezier(.16,1,.3,1) both}
+    .card,.hero,.system-card,.decision-card,.connection-card,.tab-button,.nav-button{transition:transform .28s cubic-bezier(.16,1,.3,1),box-shadow .28s cubic-bezier(.16,1,.3,1),background .28s ease,opacity .28s ease}
+    .card:hover,.decision-card:hover,.connection-card:hover{transform:translateY(-2px);box-shadow:0 24px 58px rgba(15,23,42,.14)}
+    .tab-button:active,.nav-button:active,.tools button:active{transform:scale(.97)}
+    @keyframes iosPageIn{0%{opacity:0;transform:translateY(18px) scale(.985);filter:blur(5px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+    @keyframes iosCardIn{0%{opacity:0;transform:translateY(12px) scale(.99)}100%{opacity:1;transform:translateY(0) scale(1)}}
+    .report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+    .report-panel{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .report-line{display:grid;grid-template-columns:190px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.34);font-size:15px}
+    .report-line:last-child{border-bottom:0}
+    .report-label{color:#52677f;font-weight:900}
+    .report-value{color:#0f172a;font-weight:800}
+    .action-button{border:1px solid rgba(255,255,255,.52);border-radius:999px;padding:12px 16px;background:#e9f8ed;color:var(--forest);font-weight:900;cursor:pointer}
+    .simulation-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:22px}
+    .test-case{display:grid;grid-template-columns:80px 1fr;gap:12px;align-items:start;padding:14px;border-radius:20px;background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.38)}
+    .test-code{font-size:24px;font-weight:900;color:var(--forest)}
+    .main-safe-note{color:#466176;font-size:14px;line-height:1.6}
+    @media(max-width:900px){body{min-width:1120px;overflow-x:auto}.main{width:732px;max-width:732px;overflow-x:visible}}
+
+  
+    /* AgRiFiS welcome page and iOS-like liquid transitions */
+    .brand-subtitle{
+      margin-top:-12px;
+      margin-bottom:20px;
+      color:#52677f;
+      font-size:13px;
+      line-height:1.45;
+      font-weight:700;
+    }
+
+    .hero-kicker{
+      position:relative;
+      z-index:2;
+      display:inline-flex;
+      width:fit-content;
+      padding:8px 12px;
+      margin-bottom:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.58);
+      border:1px solid rgba(255,255,255,.45);
+      color:#166534;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.7px;
+      text-transform:uppercase;
+    }
+
+    .welcome-hero h1{
+      font-size:clamp(54px,8vw,104px);
+      letter-spacing:-3px;
+      background:linear-gradient(120deg,#0f3d22 0%,#16a34a 48%,#1d4ed8 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .welcome-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+      margin-bottom:24px;
+    }
+
+    .welcome-card{
+      border-radius:30px;
+      padding:24px;
+      min-height:185px;
+    }
+
+    .welcome-icon{
+      font-size:36px;
+      margin-bottom:14px;
+    }
+
+    .welcome-title{
+      color:var(--forest);
+      font-size:20px;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    .welcome-text{
+      color:#466176;
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .welcome-flow{
+      display:grid;
+      grid-template-columns:1fr auto;
+      align-items:center;
+      gap:18px;
+      border-radius:30px;
+      padding:22px;
+      margin-bottom:18px;
+    }
+
+    .glass{
+      position:relative;
+      isolation:isolate;
+      overflow:hidden;
+    }
+
+    .glass::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.55),transparent 23%),
+        radial-gradient(circle at 92% 18%,rgba(255,255,255,.28),transparent 28%),
+        linear-gradient(135deg,rgba(255,255,255,.30),rgba(255,255,255,.06));
+      opacity:.95;
+    }
+
+    .glass::after{
+      content:"";
+      position:absolute;
+      width:180px;
+      height:180px;
+      top:-90px;
+      left:-80px;
+      border-radius:999px;
+      pointer-events:none;
+      background:rgba(255,255,255,.28);
+      filter:blur(2px);
+      transform:translate3d(0,0,0);
+      transition:transform .9s cubic-bezier(.16,1,.3,1),opacity .45s ease;
+      opacity:.55;
+      z-index:-1;
+    }
+
+    .glass:hover::after{
+      transform:translate3d(38px,26px,0) scale(1.12);
+      opacity:.75;
+    }
+
+    .page.active{
+      animation:agriFisPageIn .62s cubic-bezier(.16,1,.3,1) both;
+      transform-origin:50% 18%;
+    }
+
+    .tab-section.active{
+      animation:agriFisPanelIn .48s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .system-card,.welcome-card,.card,.decision-card,.connection-card,.welcome-flow{
+      will-change:transform,opacity,filter;
+    }
+
+    .system-card:hover,.welcome-card:hover,.card:hover,.decision-card:hover,.connection-card:hover{
+      transform:translateY(-4px) scale(1.006);
+    }
+
+    .nav-button{
+      transform-origin:left center;
+    }
+
+    .nav-button.active{
+      background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(220,252,231,.78));
+      box-shadow:0 14px 26px rgba(21,128,61,.13), inset 0 1px 0 rgba(255,255,255,.7);
+    }
+
+    .nav-button.active::before{
+      content:"";
+      width:4px;
+      align-self:stretch;
+      border-radius:999px;
+      background:#16a34a;
+      margin-right:2px;
+    }
+
+    .tab-button.active{
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 10px 22px rgba(21,128,61,.12);
+    }
+
+    @keyframes agriFisPageIn{
+      0%{opacity:0;transform:translateY(22px) scale(.982);filter:blur(8px)}
+      65%{opacity:1;transform:translateY(-2px) scale(1.003);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    @keyframes agriFisPanelIn{
+      0%{opacity:0;transform:translateY(14px) scale(.988);filter:blur(5px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+  
+    /* Agroforestry tab refinement: current status first, History tab, iOS-style threshold cards */
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Arial,sans-serif;
+    }
+
+    .current-status-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      margin-bottom:24px;
+    }
+
+    .current-card{
+      border-radius:34px;
+      padding:28px;
+      min-height:265px;
+    }
+
+    .current-card-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .current-kicker{
+      color:#5b7185;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.9px;
+      text-transform:uppercase;
+      margin-bottom:7px;
+    }
+
+    .current-title{
+      color:var(--forest);
+      font-size:25px;
+      font-weight:950;
+      letter-spacing:-.4px;
+    }
+
+    .current-icon{
+      width:56px;
+      height:56px;
+      display:grid;
+      place-items:center;
+      border-radius:20px;
+      font-size:31px;
+      background:rgba(255,255,255,.56);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 12px 24px rgba(15,23,42,.08);
+    }
+
+    .current-value{
+      color:var(--forest);
+      font-size:72px;
+      line-height:.95;
+      font-weight:950;
+      letter-spacing:-3px;
+      margin-bottom:8px;
+    }
+
+    .current-status{
+      font-size:18px;
+      font-weight:900;
+      margin-top:6px;
+    }
+
+    .alert-decision-grid{
+      display:grid;
+      grid-template-columns:.92fr 1.08fr;
+      gap:18px;
+      align-items:stretch;
+      margin-bottom:24px;
+    }
+
+    .alert-stack{
+      display:grid;
+      gap:14px;
+    }
+
+    .mini-alert{
+      border-radius:28px;
+      padding:20px;
+      display:grid;
+      grid-template-columns:58px 1fr;
+      gap:16px;
+      align-items:center;
+    }
+
+    .mini-alert-icon{
+      width:54px;
+      height:54px;
+      display:grid;
+      place-items:center;
+      border-radius:20px;
+      font-size:27px;
+      background:rgba(255,255,255,.58);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.78),0 10px 20px rgba(15,23,42,.08);
+    }
+
+    .alert-decision-grid .decision-card{
+      margin-bottom:0;
+      min-height:100%;
+    }
+
+    .low-priority-summary{
+      opacity:.92;
+    }
+
+    .low-priority-summary .card-value{
+      font-size:31px;
+    }
+
+    .range-note{
+      color:#52677f;
+      font-size:13px;
+      font-weight:800;
+      margin-right:auto;
+    }
+
+    .history-alert-card{
+      margin-top:18px;
+    }
+
+    .threshold-hero{
+      border-radius:34px;
+      padding:28px;
+      margin-bottom:18px;
+    }
+
+    .threshold-hero h2{
+      margin:0;
+      color:var(--forest);
+      font-size:42px;
+      letter-spacing:-1.8px;
+      line-height:1;
+      font-weight:950;
+    }
+
+    .threshold-hero p{
+      margin:12px 0 0;
+      color:#466176;
+      max-width:760px;
+      font-size:16px;
+      line-height:1.6;
+    }
+
+    .threshold-grid{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .threshold-card{
+      border-radius:30px;
+      padding:22px;
+      min-height:175px;
+      overflow:hidden;
+      transform-origin:center;
+    }
+
+    .threshold-range{
+      font-size:30px;
+      font-weight:950;
+      letter-spacing:-1.3px;
+      margin-bottom:18px;
+    }
+
+    .threshold-name{
+      color:var(--ink);
+      font-size:20px;
+      font-weight:950;
+      margin-bottom:8px;
+      letter-spacing:-.4px;
+    }
+
+    .threshold-action{
+      color:#52677f;
+      font-size:13px;
+      line-height:1.45;
+      font-weight:800;
+    }
+
+    .threshold-red .threshold-range{color:var(--red)}
+    .threshold-orange .threshold-range{color:var(--amber)}
+    .threshold-green .threshold-range{color:var(--leaf)}
+    .threshold-blue .threshold-range{color:var(--blue)}
+    .threshold-purple .threshold-range{color:var(--purple)}
+
+    .threshold-card::before{
+      background:
+        radial-gradient(circle at 22% 12%,rgba(255,255,255,.75),transparent 25%),
+        linear-gradient(135deg,rgba(255,255,255,.36),rgba(255,255,255,.05));
+    }
+
+    .threshold-card:hover{
+      transform:translateY(-6px) scale(1.018);
+    }
+
+    .value-pulse{
+      animation:valuePulse .58s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .bar{
+      transition:width .85s cubic-bezier(.16,1,.3,1),background .35s ease;
+    }
+
+    .current-card,.mini-alert,.threshold-card,.history-alert-card{
+      animation:agriFisPanelIn .55s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes valuePulse{
+      0%{transform:scale(.985);filter:blur(1px);opacity:.78}
+      55%{transform:scale(1.035);filter:blur(0);opacity:1}
+      100%{transform:scale(1);filter:blur(0);opacity:1}
+    }
+
+    @media(max-width:1250px){
+      .threshold-grid{grid-template-columns:repeat(3,1fr)}
+      .current-value{font-size:58px}
+    }
+
+  
+    /* Requested refinement: cleaner welcome page, inner report tabs, stronger iPad-style motion */
+    .brand-title{
+      font-size:38px !important;
+      line-height:1 !important;
+      letter-spacing:-1.8px;
+      white-space:nowrap;
+      overflow:visible;
+      padding-bottom:2px;
+    }
+
+    .welcome-hero h1{
+      white-space:nowrap;
+      overflow:visible;
+      padding-bottom:8px;
+      line-height:1.02;
+    }
+
+    .welcome-card{
+      min-height:unset;
+      cursor:default;
+    }
+
+    .welcome-card summary,
+    .system-card summary{
+      list-style:none;
+      cursor:pointer;
+      width:fit-content;
+      margin-top:14px;
+      border-radius:999px;
+      padding:8px 12px;
+      background:rgba(255,255,255,.62);
+      color:var(--forest);
+      font-size:12px;
+      font-weight:950;
+      border:1px solid rgba(255,255,255,.52);
+      transition:.25s cubic-bezier(.16,1,.3,1);
+    }
+
+    .welcome-card summary::-webkit-details-marker,
+    .system-card summary::-webkit-details-marker{
+      display:none;
+    }
+
+    .welcome-card details[open] summary,
+    .system-card details[open] summary{
+      background:#e9f8ed;
+      transform:scale(.98);
+    }
+
+    .welcome-details,
+    .module-details{
+      margin-top:10px;
+      color:#466176;
+      font-size:14px;
+      line-height:1.6;
+      animation:dropGlass .38s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .overview-grid .system-card{
+      min-height:180px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .overview-grid .system-title{
+      font-size:28px;
+      letter-spacing:-1.2px;
+    }
+
+    .overview-grid .system-desc{
+      display:none;
+    }
+
+    .overview-grid .pill{
+      margin-top:6px;
+    }
+
+    .page.active{
+      animation:iPadOpen .72s cubic-bezier(.19,1,.22,1) both !important;
+      transform-origin:50% 12%;
+    }
+
+    .tab-section.active{
+      animation:iPadSheet .54s cubic-bezier(.19,1,.22,1) both !important;
+      transform-origin:50% 0;
+    }
+
+    .glass{
+      transition:transform .34s cubic-bezier(.19,1,.22,1), box-shadow .34s cubic-bezier(.19,1,.22,1), background .34s ease, filter .34s ease;
+    }
+
+    .glass:hover{
+      box-shadow:0 30px 68px rgba(15,23,42,.16), inset 0 1px 0 rgba(255,255,255,.50);
+    }
+
+    .nav-button,.tab-button,.action-button,.system-card{
+      transition:transform .32s cubic-bezier(.19,1,.22,1), box-shadow .32s cubic-bezier(.19,1,.22,1), background .32s ease, filter .32s ease;
+    }
+
+    .nav-button:active,.tab-button:active,.action-button:active,.system-card:active{
+      transform:scale(.965);
+      filter:saturate(1.15);
+    }
+
+    .system-card:hover{
+      transform:translateY(-7px) scale(1.012);
+    }
+
+    .report-tabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:0 0 18px;
+    }
+
+    .report-tab-button{
+      border:1px solid rgba(255,255,255,.52);
+      border-radius:999px;
+      background:rgba(255,255,255,.52);
+      padding:11px 16px;
+      color:var(--forest);
+      font-weight:950;
+      cursor:pointer;
+      transition:.28s cubic-bezier(.16,1,.3,1);
+    }
+
+    .report-tab-button.active,
+    .report-tab-button:hover{
+      background:#e9f8ed;
+      box-shadow:0 12px 24px rgba(21,128,61,.12), inset 0 1px 0 rgba(255,255,255,.75);
+    }
+
+    .report-tab-section{
+      display:none;
+    }
+
+    .report-tab-section.active{
+      display:block;
+      animation:iPadSheet .54s cubic-bezier(.19,1,.22,1) both;
+    }
+
+    .system-summary-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+      margin-bottom:18px;
+    }
+
+    .decision-insights{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .decision-insight{
+      border-radius:20px;
+      padding:14px;
+      background:rgba(255,255,255,.46);
+      border:1px solid rgba(255,255,255,.42);
+    }
+
+    .decision-insight-label{
+      color:#5b7185;
+      font-size:11px;
+      font-weight:950;
+      letter-spacing:.7px;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+
+    .decision-insight-value{
+      color:var(--forest);
+      font-size:15px;
+      font-weight:950;
+      line-height:1.3;
+    }
+
+    .alert-decision-grid{
+      grid-template-columns:.82fr 1.18fr;
+    }
+
+    .decision-card{
+      grid-template-columns:1fr auto;
+      align-content:center;
+    }
+
+    @keyframes iPadOpen{
+      0%{opacity:0;transform:translateY(28px) scale(.955);filter:blur(16px) saturate(.85)}
+      55%{opacity:1;transform:translateY(-4px) scale(1.012);filter:blur(0) saturate(1.08)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0) saturate(1)}
+    }
+
+    @keyframes iPadSheet{
+      0%{opacity:0;transform:translateY(18px) scale(.97);filter:blur(10px)}
+      70%{opacity:1;transform:translateY(-2px) scale(1.004);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    @keyframes dropGlass{
+      0%{opacity:0;transform:translateY(-8px) scale(.98);filter:blur(5px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    @media(max-width:1250px){
+      .system-summary-grid,.decision-insights{grid-template-columns:1fr}
+      .alert-decision-grid{grid-template-columns:1fr}
+    }
+
+  
+    /* Compact AgRiFiS layout refinement */
+    body{
+      overflow-x:hidden !important;
+      transition:background .75s cubic-bezier(.19,1,.22,1);
+    }
+
+    body.page-overview{
+      background:
+        radial-gradient(circle at 15% 10%,rgba(255,255,255,.78),transparent 22%),
+        radial-gradient(circle at 78% 8%,rgba(187,247,208,.66),transparent 24%),
+        linear-gradient(135deg,#eefbf2 0%,#f7fff9 44%,#d7efd9 100%) !important;
+    }
+
+    body.page-agroforestry{
+      background:
+        radial-gradient(circle at 18% 14%,rgba(255,255,255,.70),transparent 20%),
+        radial-gradient(circle at 88% 20%,rgba(134,239,172,.46),transparent 28%),
+        linear-gradient(135deg,#e7f8e7 0%,#f4fff5 45%,#cfeccf 100%) !important;
+    }
+
+    body.page-awd{
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.74),transparent 22%),
+        radial-gradient(circle at 82% 20%,rgba(125,211,252,.38),transparent 28%),
+        linear-gradient(135deg,#e4f7ef 0%,#f6fffb 46%,#c7e8dd 100%) !important;
+    }
+
+    body.page-ricefish{
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.72),transparent 22%),
+        radial-gradient(circle at 84% 18%,rgba(45,212,191,.34),transparent 28%),
+        linear-gradient(135deg,#e5f8ee 0%,#f5fffb 48%,#c9ebe3 100%) !important;
+    }
+
+    body.page-report{
+      background:
+        radial-gradient(circle at 16% 12%,rgba(255,255,255,.74),transparent 24%),
+        radial-gradient(circle at 84% 18%,rgba(190,242,100,.32),transparent 27%),
+        linear-gradient(135deg,#edf8e8 0%,#fbfff5 48%,#d7eec7 100%) !important;
+    }
+
+    body.page-simulation,
+    body.page-project,
+    body.page-alerts{
+      background:
+        radial-gradient(circle at 14% 12%,rgba(255,255,255,.72),transparent 22%),
+        radial-gradient(circle at 82% 18%,rgba(163,230,53,.28),transparent 28%),
+        linear-gradient(135deg,#eef7e3 0%,#fbfff5 45%,#dbeec4 100%) !important;
+    }
+
+    .sidebar{
+      left:18px !important;
+      top:18px !important;
+      bottom:18px !important;
+      width:292px !important;
+      padding:18px !important;
+      border-radius:30px !important;
+    }
+
+    .brand-title{
+      font-size:34px !important;
+      margin-bottom:10px !important;
+    }
+
+    .brand-subtitle{
+      font-size:12px !important;
+      margin-bottom:14px !important;
+    }
+
+    .nav-title{
+      margin:14px 0 8px !important;
+    }
+
+    .nav-button{
+      padding:12px 13px !important;
+      border-radius:16px !important;
+      margin-bottom:8px !important;
+      font-size:14px !important;
+    }
+
+    .sidebar-note{
+      padding:12px !important;
+      font-size:12px !important;
+      margin-top:12px !important;
+    }
+
+    .main{
+      margin-left:330px !important;
+      width:calc(100vw - 350px) !important;
+      max-width:calc(100vw - 350px) !important;
+      padding:18px 20px 28px 0 !important;
+      overflow-x:hidden !important;
+    }
+
+    .logos{
+      gap:18px !important;
+      margin-bottom:12px !important;
+      padding:2px 0 !important;
+    }
+
+    .logos img{
+      height:42px !important;
+      max-width:102px !important;
+    }
+
+    .hero{
+      padding:20px 24px !important;
+      margin-bottom:16px !important;
+      border-radius:28px !important;
+    }
+
+    .hero h1{
+      font-size:clamp(30px,3.4vw,44px) !important;
+      line-height:1.03 !important;
+      letter-spacing:-1.4px !important;
+    }
+
+    .hero p{
+      margin-top:8px !important;
+      font-size:14px !important;
+      line-height:1.45 !important;
+      max-width:720px !important;
+    }
+
+    .welcome-hero h1{
+      font-size:clamp(50px,7vw,78px) !important;
+      letter-spacing:-2.4px !important;
+      padding-bottom:4px !important;
+    }
+
+    .hero-kicker{
+      padding:6px 10px !important;
+      font-size:11px !important;
+      margin-bottom:8px !important;
+    }
+
+    .section-heading{
+      font-size:20px !important;
+      margin:0 0 10px !important;
+    }
+
+    .welcome-grid,
+    .overview-grid,
+    .stat-grid,
+    .planned-grid,
+    .chart-grid,
+    .info-grid,
+    .system-summary-grid,
+    .report-panel,
+    .current-status-grid,
+    .threshold-grid{
+      align-items:start !important;
+    }
+
+    .welcome-grid{
+      gap:12px !important;
+      margin-bottom:16px !important;
+    }
+
+    .welcome-card{
+      padding:18px !important;
+      border-radius:24px !important;
+      align-self:start !important;
+    }
+
+    .welcome-icon{
+      font-size:30px !important;
+      margin-bottom:10px !important;
+    }
+
+    .welcome-title{
+      font-size:17px !important;
+      line-height:1.2 !important;
+    }
+
+    .welcome-details,
+    .module-details{
+      font-size:12.5px !important;
+      line-height:1.45 !important;
+    }
+
+    .overview-grid{
+      gap:12px !important;
+      margin-bottom:14px !important;
+    }
+
+    .system-card{
+      min-height:135px !important;
+      padding:18px !important;
+      border-radius:24px !important;
+      align-self:start !important;
+    }
+
+    .system-icon{
+      font-size:30px !important;
+      margin-bottom:8px !important;
+    }
+
+    .overview-grid .system-title{
+      font-size:22px !important;
+      letter-spacing:-.7px !important;
+    }
+
+    .pill{
+      padding:6px 10px !important;
+      font-size:11px !important;
+    }
+
+    .tabs{
+      gap:8px !important;
+      margin-bottom:12px !important;
+    }
+
+    .tab-button,.report-tab-button,.action-button{
+      padding:9px 13px !important;
+      font-size:13px !important;
+    }
+
+    .card{
+      padding:16px !important;
+      border-radius:22px !important;
+    }
+
+    .card-label{
+      font-size:12px !important;
+      margin-bottom:7px !important;
+    }
+
+    .card-value{
+      font-size:28px !important;
+    }
+
+    .card-note{
+      font-size:12px !important;
+      margin-top:7px !important;
+      line-height:1.35 !important;
+    }
+
+    .current-status-grid{
+      gap:14px !important;
+      margin-bottom:16px !important;
+    }
+
+    .current-card{
+      min-height:178px !important;
+      padding:20px !important;
+      border-radius:28px !important;
+    }
+
+    .current-card-top{
+      margin-bottom:10px !important;
+    }
+
+    .current-icon{
+      width:44px !important;
+      height:44px !important;
+      border-radius:16px !important;
+      font-size:24px !important;
+    }
+
+    .current-title{
+      font-size:19px !important;
+    }
+
+    .current-kicker{
+      font-size:10px !important;
+      margin-bottom:4px !important;
+    }
+
+    .current-value{
+      font-size:50px !important;
+      letter-spacing:-2px !important;
+      margin-bottom:6px !important;
+    }
+
+    .current-status{
+      font-size:14px !important;
+    }
+
+    .track{
+      height:9px !important;
+      margin-top:12px !important;
+    }
+
+    .alert-decision-grid{
+      grid-template-columns:310px minmax(0,1fr) !important;
+      gap:14px !important;
+      align-items:stretch !important;
+      margin-bottom:16px !important;
+    }
+
+    .alert-stack{
+      gap:10px !important;
+      align-self:stretch !important;
+    }
+
+    .mini-alert{
+      padding:14px !important;
+      grid-template-columns:44px 1fr !important;
+      gap:12px !important;
+      border-radius:22px !important;
+    }
+
+    .mini-alert-icon{
+      width:42px !important;
+      height:42px !important;
+      border-radius:15px !important;
+      font-size:21px !important;
+    }
+
+    .sensor-value{
+      font-size:32px !important;
+    }
+
+    .connection-card{
+      padding:14px !important;
+      border-radius:22px !important;
+      gap:10px !important;
+      grid-template-columns:1fr !important;
+    }
+
+    .connection-title{
+      font-size:15px !important;
+    }
+
+    .connection-text{
+      font-size:12px !important;
+      line-height:1.35 !important;
+    }
+
+    .connection-status{
+      width:max-content !important;
+      padding:8px 11px !important;
+      font-size:12px !important;
+    }
+
+    .decision-card{
+      min-height:100% !important;
+      padding:20px !important;
+      border-radius:26px !important;
+      grid-template-columns:minmax(0,1fr) 96px !important;
+      gap:14px !important;
+      align-items:stretch !important;
+      margin-bottom:0 !important;
+    }
+
+    .decision-title{
+      font-size:13px !important;
+    }
+
+    .decision-text{
+      font-size:30px !important;
+      letter-spacing:-.8px !important;
+    }
+
+    .decision-note{
+      font-size:13px !important;
+      line-height:1.35 !important;
+      max-width:760px !important;
+    }
+
+    .code-box{
+      min-width:92px !important;
+      padding:14px 10px !important;
+      border-radius:18px !important;
+      align-self:start !important;
+    }
+
+    .code-box strong{
+      font-size:26px !important;
+    }
+
+    .decision-insights{
+      grid-template-columns:repeat(3,1fr) !important;
+      gap:10px !important;
+      margin-top:14px !important;
+    }
+
+    .decision-insight{
+      padding:11px !important;
+      border-radius:16px !important;
+    }
+
+    .decision-insight-label{
+      font-size:10px !important;
+      margin-bottom:4px !important;
+    }
+
+    .decision-insight-value{
+      font-size:13px !important;
+    }
+
+    .low-priority-summary{
+      gap:10px !important;
+      margin-bottom:14px !important;
+    }
+
+    .low-priority-summary .card{
+      padding:14px !important;
+    }
+
+    .low-priority-summary .card-value{
+      font-size:23px !important;
+    }
+
+    .tools{
+      padding:12px !important;
+      border-radius:20px !important;
+      margin-bottom:12px !important;
+    }
+
+    .tools select,.tools button{
+      padding:8px 11px !important;
+      font-size:12px !important;
+    }
+
+    .range-note{
+      font-size:12px !important;
+    }
+
+    .chart-title{
+      font-size:17px !important;
+    }
+
+    .chart-subtitle{
+      font-size:12px !important;
+      margin-bottom:8px !important;
+    }
+
+    .chart-box{
+      height:235px !important;
+    }
+
+    .history-alert-card{
+      margin-top:12px !important;
+    }
+
+    .alert-row{
+      padding:9px 11px !important;
+      border-radius:15px !important;
+      font-size:12px !important;
+      grid-template-columns:84px 1fr 92px 1.4fr !important;
+    }
+
+    .chip{
+      padding:5px 8px !important;
+      font-size:10.5px !important;
+    }
+
+    .threshold-hero{
+      padding:18px !important;
+      border-radius:26px !important;
+      margin-bottom:12px !important;
+    }
+
+    .threshold-hero h2{
+      font-size:31px !important;
+      letter-spacing:-1.2px !important;
+    }
+
+    .threshold-hero p{
+      font-size:13px !important;
+      margin-top:7px !important;
+    }
+
+    .threshold-grid{
+      grid-template-columns:repeat(5,1fr) !important;
+      gap:10px !important;
+      margin-bottom:12px !important;
+    }
+
+    .threshold-card{
+      min-height:128px !important;
+      padding:16px !important;
+      border-radius:22px !important;
+    }
+
+    .threshold-range{
+      font-size:22px !important;
+      letter-spacing:-.8px !important;
+      margin-bottom:10px !important;
+    }
+
+    .threshold-name{
+      font-size:16px !important;
+      margin-bottom:5px !important;
+    }
+
+    .threshold-action{
+      font-size:11.5px !important;
+      line-height:1.35 !important;
+    }
+
+    details{
+      align-self:start !important;
+      contain:layout paint;
+    }
+
+    details[open]{
+      animation:detailsPop .34s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes detailsPop{
+      0%{opacity:.65;transform:translateY(-3px) scale(.992)}
+      100%{opacity:1;transform:translateY(0) scale(1)}
+    }
+
+    @media(max-width:1250px){
+      .threshold-grid{grid-template-columns:repeat(3,1fr) !important}
+      .alert-decision-grid{grid-template-columns:1fr !important}
+      .decision-card{min-height:auto !important}
+    }
+
+  
+    /* Non-emoji iOS rounded icons */
+    .ios-icon{
+      color:#166534;
+      background:
+        radial-gradient(circle at 30% 20%,rgba(255,255,255,.86),transparent 35%),
+        linear-gradient(145deg,rgba(255,255,255,.76),rgba(220,252,231,.68));
+      border:1px solid rgba(255,255,255,.62);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.80),0 12px 24px rgba(15,23,42,.08);
+      display:grid !important;
+      place-items:center !important;
+      overflow:hidden;
+    }
+
+    .ios-icon svg{
+      width:60%;
+      height:60%;
+      display:block;
+      filter:drop-shadow(0 4px 7px rgba(15,23,42,.09));
+    }
+
+    .icon-water{color:#0f766e;background:linear-gradient(145deg,rgba(255,255,255,.80),rgba(204,251,241,.72))}
+    .icon-fish{color:#0e7490;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(207,250,254,.70))}
+    .icon-bell{color:#b45309;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(254,243,199,.72))}
+    .icon-report{color:#1d4ed8;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(219,234,254,.72))}
+    .icon-check{color:#15803d;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(220,252,231,.72))}
+    .icon-crop{color:#65a30d;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(236,252,203,.72))}
+    .icon-tree{color:#15803d;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(220,252,231,.72))}
+    .icon-leaf{color:#16a34a;background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(220,252,231,.72))}
+
+    .welcome-icon.ios-icon{
+      width:48px !important;
+      height:48px !important;
+      border-radius:16px !important;
+      margin-bottom:12px !important;
+      font-size:0 !important;
+    }
+
+    .system-icon.ios-icon{
+      width:48px !important;
+      height:48px !important;
+      border-radius:16px !important;
+      margin-bottom:10px !important;
+      font-size:0 !important;
+    }
+
+    .current-icon.ios-icon{
+      font-size:0 !important;
+    }
+
+    .mini-alert-icon.ios-icon{
+      font-size:0 !important;
+    }
+
+    /* iPad-like view transitions */
+    ::view-transition-old(root){
+      animation:rootOut .34s cubic-bezier(.2,0,0,1) both;
+    }
+
+    ::view-transition-new(root){
+      animation:rootIn .52s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes rootOut{
+      from{opacity:1;filter:blur(0);transform:scale(1)}
+      to{opacity:.55;filter:blur(8px);transform:scale(.985)}
+    }
+
+    @keyframes rootIn{
+      from{opacity:0;filter:blur(12px);transform:translateY(16px) scale(.972)}
+      70%{opacity:1;filter:blur(0);transform:translateY(-2px) scale(1.006)}
+      to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+    }
+
+    /* Millisecond staggered card entrance */
+    .page.active .hero,
+    .page.active .welcome-grid > *,
+    .page.active .overview-grid > *,
+    .page.active .current-status-grid > *,
+    .page.active .alert-stack > *,
+    .page.active .decision-card,
+    .page.active .low-priority-summary > *,
+    .page.active .chart-grid > *,
+    .page.active .history-alert-card,
+    .page.active .threshold-grid > *,
+    .page.active .info-grid > *,
+    .page.active .planned-grid > *,
+    .page.active .system-summary-grid > *,
+    .page.active .report-panel > *,
+    .page.active .simulation-grid > *{
+      animation:staggerOpen .58s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .page.active .hero{animation-delay:0ms}
+    .page.active .welcome-grid > *:nth-child(1),
+    .page.active .overview-grid > *:nth-child(1),
+    .page.active .current-status-grid > *:nth-child(1),
+    .page.active .alert-stack > *:nth-child(1),
+    .page.active .low-priority-summary > *:nth-child(1),
+    .page.active .chart-grid > *:nth-child(1),
+    .page.active .threshold-grid > *:nth-child(1),
+    .page.active .info-grid > *:nth-child(1),
+    .page.active .planned-grid > *:nth-child(1),
+    .page.active .system-summary-grid > *:nth-child(1),
+    .page.active .report-panel > *:nth-child(1){animation-delay:45ms}
+
+    .page.active .welcome-grid > *:nth-child(2),
+    .page.active .overview-grid > *:nth-child(2),
+    .page.active .current-status-grid > *:nth-child(2),
+    .page.active .alert-stack > *:nth-child(2),
+    .page.active .low-priority-summary > *:nth-child(2),
+    .page.active .chart-grid > *:nth-child(2),
+    .page.active .threshold-grid > *:nth-child(2),
+    .page.active .info-grid > *:nth-child(2),
+    .page.active .planned-grid > *:nth-child(2),
+    .page.active .system-summary-grid > *:nth-child(2),
+    .page.active .report-panel > *:nth-child(2){animation-delay:82ms}
+
+    .page.active .welcome-grid > *:nth-child(3),
+    .page.active .overview-grid > *:nth-child(3),
+    .page.active .alert-stack > *:nth-child(3),
+    .page.active .low-priority-summary > *:nth-child(3),
+    .page.active .threshold-grid > *:nth-child(3),
+    .page.active .planned-grid > *:nth-child(3),
+    .page.active .system-summary-grid > *:nth-child(3){animation-delay:118ms}
+
+    .page.active .low-priority-summary > *:nth-child(4),
+    .page.active .threshold-grid > *:nth-child(4){animation-delay:154ms}
+
+    .page.active .threshold-grid > *:nth-child(5){animation-delay:190ms}
+    .page.active .decision-card{animation-delay:118ms}
+    .page.active .history-alert-card{animation-delay:118ms}
+
+    @keyframes staggerOpen{
+      0%{opacity:0;transform:translate3d(0,18px,0) scale(.965);filter:blur(10px)}
+      68%{opacity:1;transform:translate3d(0,-2px,0) scale(1.006);filter:blur(0)}
+      100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+    }
+
+    details[open] .welcome-details,
+    details[open] .module-details{
+      animation:dropdownSlide .34s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes dropdownSlide{
+      from{opacity:0;transform:translateY(-8px) scale(.985);filter:blur(6px)}
+      to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    /* Make DSS decision box compact, no large empty space */
+    .alert-decision-grid{
+      align-items:start !important;
+      grid-template-columns:300px minmax(0,1fr) !important;
+    }
+
+    .decision-card{
+      min-height:auto !important;
+      align-self:start !important;
+      padding:16px !important;
+      grid-template-columns:minmax(0,1fr) 86px !important;
+    }
+
+    .decision-text{
+      font-size:25px !important;
+      line-height:1.12 !important;
+    }
+
+    .decision-note{
+      font-size:12.5px !important;
+      margin-top:6px !important;
+    }
+
+    .decision-insights{
+      margin-top:10px !important;
+      gap:8px !important;
+    }
+
+    .decision-insight{
+      padding:9px !important;
+      border-radius:14px !important;
+    }
+
+    .decision-insight-value{
+      font-size:12px !important;
+    }
+
+    .code-box{
+      min-width:80px !important;
+      padding:12px 8px !important;
+      border-radius:16px !important;
+    }
+
+    .code-box strong{
+      font-size:23px !important;
+    }
+
+    .mini-alert{
+      padding:12px !important;
+    }
+
+    .connection-card{
+      padding:12px !important;
+    }
+
+    @media(max-width:1250px){
+      .alert-decision-grid{grid-template-columns:1fr !important}
+    }
+
+  
+    /* Final motion tuning: no sidebar pitik, smoother main-only motion */
+    .sidebar,
+    .sidebar *,
+    .nav-button,
+    .nav-button:hover,
+    .nav-button.active,
+    .nav-button:active{
+      transform:none !important;
+      animation:none !important;
+      filter:none !important;
+    }
+
+    .nav-button{
+      transition:background .24s ease, box-shadow .24s ease, color .24s ease !important;
+    }
+
+    .nav-button:hover,
+    .nav-button.active{
+      transform:none !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.70),0 8px 18px rgba(21,128,61,.10) !important;
+    }
+
+    .main-soft-switch{
+      animation:mainOnlySoftSwitch .72s cubic-bezier(.22,1,.36,1) both;
+      transform-origin:50% 8%;
+    }
+
+    @keyframes mainOnlySoftSwitch{
+      0%{opacity:.70;transform:translateY(10px) scale(.992);filter:blur(6px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    /* Disable whole-root browser view transition effects so the left sidebar stays still */
+    ::view-transition-old(root),
+    ::view-transition-new(root){
+      animation:none !important;
+    }
+
+    .page.active{
+      animation:mainPageCalmIn .64s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    .tab-section.active,
+    .report-tab-section.active{
+      animation:mainPanelCalmIn .56s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes mainPageCalmIn{
+      0%{opacity:0;transform:translateY(12px) scale(.992);filter:blur(7px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    @keyframes mainPanelCalmIn{
+      0%{opacity:0;transform:translateY(10px) scale(.994);filter:blur(5px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    /* Slower but still millisecond staggered box entrance */
+    .page.active .hero,
+    .page.active .welcome-grid > *,
+    .page.active .overview-grid > *,
+    .page.active .current-status-grid > *,
+    .page.active .alert-stack > *,
+    .page.active .decision-card,
+    .page.active .low-priority-summary > *,
+    .page.active .chart-grid > *,
+    .page.active .history-alert-card,
+    .page.active .threshold-grid > *,
+    .page.active .info-grid > *,
+    .page.active .planned-grid > *,
+    .page.active .system-summary-grid > *,
+    .page.active .report-panel > *,
+    .page.active .simulation-grid > *{
+      animation:staggerCalmOpen .72s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    .page.active .hero{animation-delay:0ms !important}
+
+    .page.active .welcome-grid > *:nth-child(1),
+    .page.active .overview-grid > *:nth-child(1),
+    .page.active .current-status-grid > *:nth-child(1),
+    .page.active .alert-stack > *:nth-child(1),
+    .page.active .low-priority-summary > *:nth-child(1),
+    .page.active .chart-grid > *:nth-child(1),
+    .page.active .threshold-grid > *:nth-child(1),
+    .page.active .info-grid > *:nth-child(1),
+    .page.active .planned-grid > *:nth-child(1),
+    .page.active .system-summary-grid > *:nth-child(1),
+    .page.active .report-panel > *:nth-child(1){animation-delay:85ms !important}
+
+    .page.active .welcome-grid > *:nth-child(2),
+    .page.active .overview-grid > *:nth-child(2),
+    .page.active .current-status-grid > *:nth-child(2),
+    .page.active .alert-stack > *:nth-child(2),
+    .page.active .low-priority-summary > *:nth-child(2),
+    .page.active .chart-grid > *:nth-child(2),
+    .page.active .threshold-grid > *:nth-child(2),
+    .page.active .info-grid > *:nth-child(2),
+    .page.active .planned-grid > *:nth-child(2),
+    .page.active .system-summary-grid > *:nth-child(2),
+    .page.active .report-panel > *:nth-child(2){animation-delay:145ms !important}
+
+    .page.active .welcome-grid > *:nth-child(3),
+    .page.active .overview-grid > *:nth-child(3),
+    .page.active .alert-stack > *:nth-child(3),
+    .page.active .low-priority-summary > *:nth-child(3),
+    .page.active .threshold-grid > *:nth-child(3),
+    .page.active .planned-grid > *:nth-child(3),
+    .page.active .system-summary-grid > *:nth-child(3){animation-delay:205ms !important}
+
+    .page.active .low-priority-summary > *:nth-child(4),
+    .page.active .threshold-grid > *:nth-child(4){animation-delay:265ms !important}
+
+    .page.active .threshold-grid > *:nth-child(5){animation-delay:325ms !important}
+    .page.active .decision-card{animation-delay:205ms !important}
+    .page.active .history-alert-card{animation-delay:205ms !important}
+
+    @keyframes staggerCalmOpen{
+      0%{opacity:0;transform:translate3d(0,14px,0) scale(.988);filter:blur(7px)}
+      100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+    }
+
+    /* Remove pitik on card hover while keeping premium smoothness */
+    .system-card:hover,
+    .welcome-card:hover,
+    .card:hover,
+    .decision-card:hover,
+    .connection-card:hover,
+    .threshold-card:hover{
+      transform:translateY(-2px) !important;
+      filter:none !important;
+    }
+
+    .system-card:active,
+    .tab-button:active,
+    .report-tab-button:active,
+    .action-button:active{
+      transform:scale(.99) !important;
+    }
+
+  
+    /* Experimental morph transition */
+    .morph-blob{
+      position:fixed;
+      z-index:8;
+      pointer-events:none;
+      opacity:.72;
+      background:
+        radial-gradient(circle at 28% 22%,rgba(255,255,255,.92),transparent 28%),
+        linear-gradient(135deg,rgba(236,253,245,.94),rgba(187,247,208,.70) 46%,rgba(209,250,229,.62));
+      border:1px solid rgba(255,255,255,.66);
+      box-shadow:0 28px 80px rgba(15,23,42,.16), inset 0 1px 0 rgba(255,255,255,.86);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      transition:
+        left .62s cubic-bezier(.22,1,.36,1),
+        top .62s cubic-bezier(.22,1,.36,1),
+        width .62s cubic-bezier(.22,1,.36,1),
+        height .62s cubic-bezier(.22,1,.36,1),
+        border-radius .62s cubic-bezier(.22,1,.36,1),
+        opacity .58s ease .10s,
+        filter .58s ease .10s;
+    }
+
+    .main-soft-switch{
+      animation:morphContentIn .68s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes morphContentIn{
+      0%{opacity:0;transform:translateY(10px) scale(.992);filter:blur(8px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .page.active .hero,
+    .page.active .welcome-grid > *,
+    .page.active .overview-grid > *,
+    .page.active .current-status-grid > *,
+    .page.active .alert-stack > *,
+    .page.active .decision-card,
+    .page.active .low-priority-summary > *,
+    .page.active .chart-grid > *,
+    .page.active .history-alert-card,
+    .page.active .threshold-grid > *,
+    .page.active .info-grid > *,
+    .page.active .planned-grid > *,
+    .page.active .system-summary-grid > *,
+    .page.active .report-panel > *,
+    .page.active .simulation-grid > *{
+      animation:morphStagger .78s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes morphStagger{
+      0%{opacity:0;transform:translateY(12px) scale(.988);filter:blur(8px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    details[open] .welcome-details,
+    details[open] .module-details{
+      animation:morphDropdown .38s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes morphDropdown{
+      0%{opacity:0;transform:translateY(-6px) scale(.99);filter:blur(5px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+  
+    /* Left sidebar to main-panel morph transition */
+    .morph-blob{
+      position:fixed;
+      z-index:60;
+      pointer-events:none;
+      opacity:.92;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      overflow:hidden;
+      padding:0 16px;
+      color:#0f3d22;
+      background:
+        radial-gradient(circle at 18% 18%,rgba(255,255,255,.95),transparent 26%),
+        linear-gradient(135deg,rgba(255,255,255,.88),rgba(220,252,231,.82) 45%,rgba(187,247,208,.64));
+      border:1px solid rgba(255,255,255,.72);
+      box-shadow:0 28px 80px rgba(15,23,42,.17), inset 0 1px 0 rgba(255,255,255,.88);
+      backdrop-filter:blur(24px) saturate(1.18);
+      -webkit-backdrop-filter:blur(24px) saturate(1.18);
+      transition:
+        left .82s cubic-bezier(.22,1,.36,1),
+        top .82s cubic-bezier(.22,1,.36,1),
+        width .82s cubic-bezier(.22,1,.36,1),
+        height .82s cubic-bezier(.22,1,.36,1),
+        border-radius .82s cubic-bezier(.22,1,.36,1),
+        opacity .54s ease .22s,
+        filter .54s ease .22s,
+        padding .82s cubic-bezier(.22,1,.36,1);
+    }
+
+    .morph-from-sidebar{
+      transform-origin:left center;
+    }
+
+    .morph-blob-label{
+      font-size:14px;
+      font-weight:950;
+      white-space:nowrap;
+      letter-spacing:-.2px;
+      opacity:1;
+      transform:translateX(0) scale(1);
+      transition:opacity .30s ease .16s, transform .40s cubic-bezier(.22,1,.36,1);
+    }
+
+    .morph-blob.morph-expanded{
+      padding:0 26px;
+    }
+
+    .morph-blob.morph-expanded .morph-blob-label{
+      opacity:0;
+      transform:translateX(34px) scale(1.05);
+    }
+
+    .main-soft-switch{
+      animation:morphPageArrive .74s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes morphPageArrive{
+      0%{opacity:0;transform:translateX(-18px) scale(.992);filter:blur(9px)}
+      100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}
+    }
+
+    .page.active .hero,
+    .page.active .welcome-grid > *,
+    .page.active .overview-grid > *,
+    .page.active .current-status-grid > *,
+    .page.active .alert-stack > *,
+    .page.active .decision-card,
+    .page.active .low-priority-summary > *,
+    .page.active .chart-grid > *,
+    .page.active .history-alert-card,
+    .page.active .threshold-grid > *,
+    .page.active .info-grid > *,
+    .page.active .planned-grid > *,
+    .page.active .system-summary-grid > *,
+    .page.active .report-panel > *,
+    .page.active .simulation-grid > *{
+      animation:morphFromLeftStagger .80s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes morphFromLeftStagger{
+      0%{opacity:0;transform:translateX(-12px) translateY(8px) scale(.99);filter:blur(7px)}
+      100%{opacity:1;transform:translateX(0) translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .sidebar,
+    .sidebar *,
+    .nav-button,
+    .nav-button:hover,
+    .nav-button.active,
+    .nav-button:active{
+      transform:none !important;
+      animation:none !important;
+    }
+
+    .nav-button{
+      transition:background .22s ease, box-shadow .22s ease, color .22s ease !important;
+    }
+
+  
+    /* PowerPoint/iPad-style title morph: clicked word/box travels from left to main header */
+    .morph-blob{
+      display:none !important;
+    }
+
+    .title-morph-shell{
+      position:fixed;
+      z-index:80;
+      pointer-events:none;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      padding:0 16px;
+      color:#0f3d22;
+      overflow:hidden;
+      border-radius:17px;
+      background:
+        radial-gradient(circle at 24% 18%,rgba(255,255,255,.96),transparent 28%),
+        linear-gradient(135deg,rgba(255,255,255,.92),rgba(220,252,231,.88));
+      border:1px solid rgba(255,255,255,.78);
+      box-shadow:0 20px 56px rgba(15,23,42,.16), inset 0 1px 0 rgba(255,255,255,.92);
+      backdrop-filter:blur(20px) saturate(1.12);
+      -webkit-backdrop-filter:blur(20px) saturate(1.12);
+      transition:
+        left .72s cubic-bezier(.2,.8,.2,1),
+        top .72s cubic-bezier(.2,.8,.2,1),
+        width .72s cubic-bezier(.2,.8,.2,1),
+        height .72s cubic-bezier(.2,.8,.2,1),
+        border-radius .72s cubic-bezier(.2,.8,.2,1),
+        box-shadow .72s cubic-bezier(.2,.8,.2,1),
+        background .72s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .title-morph-text{
+      position:relative;
+      z-index:2;
+      display:block;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:#0f3d22;
+      font-size:14px;
+      font-weight:950;
+      letter-spacing:-.25px;
+      transform-origin:left center;
+      transition:
+        font-size .72s cubic-bezier(.2,.8,.2,1),
+        letter-spacing .72s cubic-bezier(.2,.8,.2,1),
+        transform .72s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .title-morph-highlight{
+      position:absolute;
+      inset:6px;
+      border-radius:14px;
+      background:rgba(255,255,255,.38);
+      transform:scaleX(.26);
+      transform-origin:left center;
+      transition:transform .72s cubic-bezier(.2,.8,.2,1),border-radius .72s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .title-morph-shell.is-moving{
+      padding:0 22px;
+      background:
+        radial-gradient(circle at 18% 20%,rgba(255,255,255,.98),transparent 30%),
+        linear-gradient(135deg,rgba(255,255,255,.94),rgba(187,247,208,.82));
+      box-shadow:0 28px 70px rgba(15,23,42,.18), inset 0 1px 0 rgba(255,255,255,.95);
+    }
+
+    .title-morph-shell.is-moving .title-morph-text{
+      font-size:18px;
+      letter-spacing:-.55px;
+      transform:translateX(2px);
+    }
+
+    .title-morph-shell.is-moving .title-morph-highlight{
+      transform:scaleX(1);
+      border-radius:18px;
+    }
+
+    .title-morph-shell.is-settling{
+      box-shadow:0 18px 45px rgba(15,23,42,.10), inset 0 1px 0 rgba(255,255,255,.95);
+    }
+
+    .main-soft-switch{
+      animation:titleMorphContentIn .58s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes titleMorphContentIn{
+      0%{opacity:0;transform:translateX(-10px) translateY(4px);filter:blur(5px)}
+      100%{opacity:1;transform:translateX(0) translateY(0);filter:blur(0)}
+    }
+
+    .page.active .hero,
+    .page.active .welcome-grid > *,
+    .page.active .overview-grid > *,
+    .page.active .current-status-grid > *,
+    .page.active .alert-stack > *,
+    .page.active .decision-card,
+    .page.active .low-priority-summary > *,
+    .page.active .chart-grid > *,
+    .page.active .history-alert-card,
+    .page.active .threshold-grid > *,
+    .page.active .info-grid > *,
+    .page.active .planned-grid > *,
+    .page.active .system-summary-grid > *,
+    .page.active .report-panel > *,
+    .page.active .simulation-grid > *{
+      animation:titleMorphStagger .72s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes titleMorphStagger{
+      0%{opacity:0;transform:translateX(-8px) translateY(8px) scale(.995);filter:blur(5px)}
+      100%{opacity:1;transform:translateX(0) translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .sidebar,
+    .sidebar *,
+    .nav-button,
+    .nav-button:hover,
+    .nav-button.active,
+    .nav-button:active{
+      transform:none !important;
+      animation:none !important;
+    }
+
+  
+    /* iOS-style main panel header and exact word morph */
+    .ios-main-bar{
+      position:relative;
+      z-index:2;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      height:54px;
+      padding:8px 14px;
+      margin:0 0 12px;
+      border-radius:24px;
+    }
+
+    .ios-back-button{
+      border:0;
+      outline:0;
+      border-radius:999px;
+      padding:9px 13px;
+      background:rgba(255,255,255,.62);
+      color:#166534;
+      font-size:14px;
+      font-weight:950;
+      cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.76);
+      transition:background .22s ease, opacity .22s ease;
+    }
+
+    .ios-back-button:hover{
+      background:#e9f8ed;
+    }
+
+    .ios-back-button.hidden{
+      visibility:hidden;
+      pointer-events:none;
+      opacity:0;
+    }
+
+    .ios-main-title{
+      color:#0f3d22;
+      font-size:21px;
+      font-weight:950;
+      letter-spacing:-.55px;
+      line-height:1;
+      white-space:nowrap;
+    }
+
+    .morph-target-hidden{
+      visibility:hidden;
+    }
+
+    .word-morph-clone{
+      position:fixed;
+      z-index:90;
+      pointer-events:none;
+      display:block;
+      width:max-content;
+      max-width:420px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:#0f3d22;
+      line-height:1;
+      letter-spacing:-.25px;
+      text-shadow:0 12px 30px rgba(15,23,42,.18);
+      transform-origin:left center;
+      will-change:left,top,font-size,opacity,transform,filter;
+      transition:
+        left .64s cubic-bezier(.22,1,.36,1),
+        top .64s cubic-bezier(.22,1,.36,1),
+        font-size .64s cubic-bezier(.22,1,.36,1),
+        font-weight .64s cubic-bezier(.22,1,.36,1),
+        letter-spacing .64s cubic-bezier(.22,1,.36,1),
+        transform .64s cubic-bezier(.22,1,.36,1),
+        opacity .24s ease .52s,
+        filter .24s ease .52s;
+    }
+
+    .word-morph-clone.is-moving{
+      transform:translateY(0) scale(1);
+    }
+
+    .word-morph-clone.is-done{
+      opacity:0;
+      filter:blur(3px);
+    }
+
+    .title-morph-shell,
+    .morph-blob,
+    .title-morph-highlight{
+      display:none !important;
+    }
+
+    .main-soft-switch{
+      animation:contentAfterWordMorph .56s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes contentAfterWordMorph{
+      0%{opacity:0;transform:translateX(-6px) translateY(5px);filter:blur(4px)}
+      100%{opacity:1;transform:translateX(0) translateY(0);filter:blur(0)}
+    }
+
+    .page.active .hero,
+    .page.active .welcome-grid > *,
+    .page.active .overview-grid > *,
+    .page.active .current-status-grid > *,
+    .page.active .alert-stack > *,
+    .page.active .decision-card,
+    .page.active .low-priority-summary > *,
+    .page.active .chart-grid > *,
+    .page.active .history-alert-card,
+    .page.active .threshold-grid > *,
+    .page.active .info-grid > *,
+    .page.active .planned-grid > *,
+    .page.active .system-summary-grid > *,
+    .page.active .report-panel > *,
+    .page.active .simulation-grid > *{
+      animation:wordMorphStagger .64s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes wordMorphStagger{
+      0%{opacity:0;transform:translateX(-7px) translateY(7px) scale(.996);filter:blur(4px)}
+      100%{opacity:1;transform:translateX(0) translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .sidebar,
+    .sidebar *,
+    .nav-button,
+    .nav-button:hover,
+    .nav-button.active,
+    .nav-button:active{
+      transform:none !important;
+      animation:none !important;
+    }
+
+    .nav-button{
+      transition:background .22s ease, box-shadow .22s ease, color .22s ease !important;
+    }
+
+    .logos{
+      margin-bottom:8px !important;
+    }
+
+  
+    /* Final morph target: clicked word lands exactly on the hero title inside the page box */
+    .ios-main-title{
+      display:none !important;
+    }
+
+    .ios-main-bar{
+      justify-content:flex-start !important;
+      height:46px !important;
+      margin-bottom:10px !important;
+      padding:7px 12px !important;
+    }
+
+    .hero-title-hidden{
+      visibility:hidden !important;
+    }
+
+    .word-morph-clone.hero-word-morph{
+      position:fixed;
+      z-index:95;
+      pointer-events:none;
+      display:block;
+      width:max-content;
+      max-width:760px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:#0f3d22;
+      line-height:1.02;
+      text-shadow:0 14px 34px rgba(15,23,42,.16);
+      transform-origin:left top;
+      will-change:left,top,font-size,opacity,filter,transform;
+      transition:
+        left .66s cubic-bezier(.22,1,.36,1),
+        top .66s cubic-bezier(.22,1,.36,1),
+        font-size .66s cubic-bezier(.22,1,.36,1),
+        font-weight .66s cubic-bezier(.22,1,.36,1),
+        letter-spacing .66s cubic-bezier(.22,1,.36,1),
+        transform .66s cubic-bezier(.22,1,.36,1),
+        opacity .22s ease .62s,
+        filter .22s ease .62s;
+    }
+
+    .word-morph-clone.hero-word-morph.is-moving{
+      transform:translateY(0) scale(1);
+    }
+
+    .word-morph-clone.hero-word-morph.is-changing{
+      max-width:900px;
+    }
+
+    .word-morph-clone.hero-word-morph.is-done{
+      opacity:0;
+      filter:blur(3px);
+    }
+
+    .morph-target-hidden{
+      visibility:visible !important;
+    }
+
+    .title-morph-shell,
+    .morph-blob,
+    .title-morph-highlight{
+      display:none !important;
+    }
+
+    .main-soft-switch{
+      animation:contentAfterHeroMorph .56s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes contentAfterHeroMorph{
+      0%{opacity:.82;transform:translateX(-4px) translateY(4px);filter:blur(3px)}
+      100%{opacity:1;transform:translateX(0) translateY(0);filter:blur(0)}
+    }
+
+    .page.active .hero,
+    .page.active .welcome-grid > *,
+    .page.active .overview-grid > *,
+    .page.active .current-status-grid > *,
+    .page.active .alert-stack > *,
+    .page.active .decision-card,
+    .page.active .low-priority-summary > *,
+    .page.active .chart-grid > *,
+    .page.active .history-alert-card,
+    .page.active .threshold-grid > *,
+    .page.active .info-grid > *,
+    .page.active .planned-grid > *,
+    .page.active .system-summary-grid > *,
+    .page.active .report-panel > *,
+    .page.active .simulation-grid > *{
+      animation:heroMorphStagger .64s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes heroMorphStagger{
+      0%{opacity:0;transform:translateX(-6px) translateY(6px) scale(.997);filter:blur(4px)}
+      100%{opacity:1;transform:translateX(0) translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .sidebar,
+    .sidebar *,
+    .nav-button,
+    .nav-button:hover,
+    .nav-button.active,
+    .nav-button:active{
+      transform:none !important;
+      animation:none !important;
+    }
+
+    .ios-back-button{
+      padding:8px 12px !important;
+      font-size:13px !important;
+    }
+
+  
+    /* Exact hero-title morph: same words from start to landing */
+    .hero-title-morph-target{
+      animation:none !important;
+      transform:none !important;
+    }
+
+    .word-morph-clone.hero-word-morph{
+      transform-origin:left top !important;
+      max-width:none !important;
+      overflow:visible !important;
+      text-overflow:clip !important;
+      transition:
+        left .68s cubic-bezier(.22,1,.36,1),
+        top .68s cubic-bezier(.22,1,.36,1),
+        font-size .68s cubic-bezier(.22,1,.36,1),
+        font-weight .68s cubic-bezier(.22,1,.36,1),
+        letter-spacing .68s cubic-bezier(.22,1,.36,1),
+        opacity .18s ease .66s,
+        filter .18s ease .66s !important;
+    }
+
+    .word-morph-clone.hero-word-morph.is-changing{
+      max-width:none !important;
+    }
+
+    .word-morph-clone.hero-word-morph.is-moving{
+      transform:none !important;
+    }
+
+  
+    /* Landing polish: prevent hero movement while the morph lands */
+    body.is-morphing .page.active .hero,
+    body.is-morphing .page.active .hero h1{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    body.is-morphing .page.active .hero{
+      opacity:1 !important;
+    }
+
+    .word-morph-clone.hero-word-morph{
+      transition:
+        left .60s cubic-bezier(.22,1,.36,1),
+        top .60s cubic-bezier(.22,1,.36,1),
+        font-size .60s cubic-bezier(.22,1,.36,1),
+        font-weight .60s cubic-bezier(.22,1,.36,1),
+        letter-spacing .60s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+    .word-morph-clone.hero-word-morph.is-done{
+      opacity:1 !important;
+      filter:none !important;
+    }
+
+  
+    /* Agroforestry inner tabs: no hero word morph, data drops down from selected tab */
+    .tab-drop-cue{
+      position:fixed;
+      z-index:70;
+      pointer-events:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      padding:0 14px;
+      border-radius:999px;
+      color:#0f3d22;
+      font-size:13px;
+      font-weight:950;
+      letter-spacing:-.2px;
+      white-space:nowrap;
+      background:rgba(233,248,237,.92);
+      border:1px solid rgba(255,255,255,.78);
+      box-shadow:0 18px 46px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.90);
+      backdrop-filter:blur(18px) saturate(1.12);
+      -webkit-backdrop-filter:blur(18px) saturate(1.12);
+      transform-origin:top center;
+      transition:
+        left .48s cubic-bezier(.22,1,.36,1),
+        top .48s cubic-bezier(.22,1,.36,1),
+        width .48s cubic-bezier(.22,1,.36,1),
+        height .48s cubic-bezier(.22,1,.36,1),
+        border-radius .48s cubic-bezier(.22,1,.36,1),
+        opacity .24s ease .34s,
+        filter .24s ease .34s;
+    }
+
+    .tab-drop-cue.is-dropping{
+      align-items:flex-start;
+      justify-content:flex-start;
+      padding:14px 18px;
+      border-radius:28px;
+      opacity:0;
+      filter:blur(9px);
+    }
+
+    .tab-section.ios-tab-drop{
+      transform-origin:top center;
+      animation:iosDataDrop .58s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    .tab-section.ios-tab-drop .current-status-grid > *,
+    .tab-section.ios-tab-drop .alert-stack > *,
+    .tab-section.ios-tab-drop .decision-card,
+    .tab-section.ios-tab-drop .low-priority-summary > *,
+    .tab-section.ios-tab-drop .chart-grid > *,
+    .tab-section.ios-tab-drop .history-alert-card,
+    .tab-section.ios-tab-drop .threshold-grid > *,
+    .tab-section.ios-tab-drop .info-grid > *,
+    .tab-section.ios-tab-drop .threshold-hero,
+    .tab-section.ios-tab-drop .tools{
+      animation:iosDataDropItem .62s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    .tab-section.ios-tab-drop .current-status-grid > *:nth-child(1),
+    .tab-section.ios-tab-drop .chart-grid > *:nth-child(1),
+    .tab-section.ios-tab-drop .threshold-grid > *:nth-child(1),
+    .tab-section.ios-tab-drop .tools{
+      animation-delay:40ms !important;
+    }
+
+    .tab-section.ios-tab-drop .current-status-grid > *:nth-child(2),
+    .tab-section.ios-tab-drop .chart-grid > *:nth-child(2),
+    .tab-section.ios-tab-drop .threshold-grid > *:nth-child(2),
+    .tab-section.ios-tab-drop .alert-stack > *:nth-child(1){
+      animation-delay:90ms !important;
+    }
+
+    .tab-section.ios-tab-drop .threshold-grid > *:nth-child(3),
+    .tab-section.ios-tab-drop .alert-stack > *:nth-child(2),
+    .tab-section.ios-tab-drop .decision-card,
+    .tab-section.ios-tab-drop .history-alert-card{
+      animation-delay:140ms !important;
+    }
+
+    .tab-section.ios-tab-drop .threshold-grid > *:nth-child(4),
+    .tab-section.ios-tab-drop .alert-stack > *:nth-child(3),
+    .tab-section.ios-tab-drop .low-priority-summary > *:nth-child(1){
+      animation-delay:190ms !important;
+    }
+
+    .tab-section.ios-tab-drop .threshold-grid > *:nth-child(5),
+    .tab-section.ios-tab-drop .low-priority-summary > *:nth-child(2){
+      animation-delay:240ms !important;
+    }
+
+    .tab-section.ios-tab-drop .low-priority-summary > *:nth-child(3){
+      animation-delay:290ms !important;
+    }
+
+    .tab-section.ios-tab-drop .low-priority-summary > *:nth-child(4){
+      animation-delay:340ms !important;
+    }
+
+    @keyframes iosDataDrop{
+      0%{opacity:.72;transform:translateY(-8px) scaleY(.985);filter:blur(4px)}
+      100%{opacity:1;transform:translateY(0) scaleY(1);filter:blur(0)}
+    }
+
+    @keyframes iosDataDropItem{
+      0%{opacity:0;transform:translateY(-16px) scale(.988);filter:blur(7px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+  
+    /* Final Agroforestry inner-tab motion: no upper-left cue, graph-like smooth box movement */
+    .tab-drop-cue{
+      display:none !important;
+    }
+
+    .tab-section.smooth-data-enter{
+      transform-origin:top center;
+      animation:smoothSectionSettle .42s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    .smooth-box-enter{
+      animation:smoothBoxSettle .68s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--smooth-delay,0ms) !important;
+      will-change:transform,opacity,filter;
+    }
+
+    @keyframes smoothSectionSettle{
+      0%{opacity:.86;transform:translateY(4px);filter:blur(2px)}
+      100%{opacity:1;transform:translateY(0);filter:blur(0)}
+    }
+
+    @keyframes smoothBoxSettle{
+      0%{opacity:0;transform:translateY(18px) scale(.992);filter:blur(6px)}
+      62%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .card,
+    .current-card,
+    .mini-alert,
+    .connection-card,
+    .decision-card,
+    .threshold-card,
+    .threshold-hero,
+    .tools,
+    .history-alert-card{
+      transition:
+        transform .68s cubic-bezier(.22,1,.36,1),
+        opacity .68s cubic-bezier(.22,1,.36,1),
+        box-shadow .68s cubic-bezier(.22,1,.36,1),
+        filter .68s cubic-bezier(.22,1,.36,1),
+        background .68s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+    .tab-section.active:not(.smooth-data-enter){
+      animation:none !important;
+    }
+
+    .tab-button{
+      transition:
+        background .42s cubic-bezier(.22,1,.36,1),
+        box-shadow .42s cubic-bezier(.22,1,.36,1),
+        color .42s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+    .tab-button:active{
+      transform:none !important;
+    }
+
+  
+    /* Remove post-morph blink on left-sidebar page switching */
+    body.page-transition-clean .main-soft-switch{
+      animation:none !important;
+      opacity:1 !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    body.page-transition-clean .page.active,
+    body.page-transition-clean .page.active .hero,
+    body.page-transition-clean .page.active .welcome-grid > *,
+    body.page-transition-clean .page.active .overview-grid > *,
+    body.page-transition-clean .page.active .current-status-grid > *,
+    body.page-transition-clean .page.active .alert-stack > *,
+    body.page-transition-clean .page.active .decision-card,
+    body.page-transition-clean .page.active .low-priority-summary > *,
+    body.page-transition-clean .page.active .chart-grid > *,
+    body.page-transition-clean .page.active .history-alert-card,
+    body.page-transition-clean .page.active .threshold-grid > *,
+    body.page-transition-clean .page.active .info-grid > *,
+    body.page-transition-clean .page.active .planned-grid > *,
+    body.page-transition-clean .page.active .system-summary-grid > *,
+    body.page-transition-clean .page.active .report-panel > *,
+    body.page-transition-clean .page.active .simulation-grid > *{
+      animation:none !important;
+      opacity:1 !important;
+      filter:none !important;
+    }
+
+    /* Keep the smooth graph-like motion only for Agroforestry inner tab contents */
+    body.page-transition-clean .tab-section.smooth-data-enter{
+      animation:smoothSectionSettle .42s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    body.page-transition-clean .smooth-box-enter{
+      animation:smoothBoxSettle .68s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--smooth-delay,0ms) !important;
+    }
+
+    body.is-morphing .page.active .hero,
+    body.is-morphing .page.active .hero h1{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    body.is-morphing .word-morph-clone.hero-word-morph{
+      transition:
+        left .58s cubic-bezier(.22,1,.36,1),
+        top .58s cubic-bezier(.22,1,.36,1),
+        font-size .58s cubic-bezier(.22,1,.36,1),
+        font-weight .58s cubic-bezier(.22,1,.36,1),
+        letter-spacing .58s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+  
+    /* Restore smooth iOS-like page transition without the right-panel blink */
+    body.page-transition-clean .page.page-smooth-reveal{
+      animation:pageGlassSettle .58s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    body.page-transition-clean .page-box-smooth{
+      animation:pageBoxFloatIn .78s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+      will-change:transform,opacity,filter;
+    }
+
+    @keyframes pageGlassSettle{
+      0%{opacity:.96;transform:translateY(3px);filter:blur(1.5px)}
+      100%{opacity:1;transform:translateY(0);filter:blur(0)}
+    }
+
+    @keyframes pageBoxFloatIn{
+      0%{opacity:0;transform:translateY(16px) scale(.994);filter:blur(5px)}
+      58%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    body.is-morphing .page.page-smooth-reveal{
+      animation:pageGlassSettle .58s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    body.is-morphing .page-box-smooth{
+      animation:pageBoxFloatIn .78s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+    }
+
+    .card,
+    .current-card,
+    .welcome-card,
+    .system-card,
+    .mini-alert,
+    .connection-card,
+    .decision-card,
+    .threshold-card,
+    .threshold-hero,
+    .tools,
+    .history-alert-card,
+    .hero{
+      transition:
+        transform .72s cubic-bezier(.22,1,.36,1),
+        opacity .72s cubic-bezier(.22,1,.36,1),
+        filter .72s cubic-bezier(.22,1,.36,1),
+        box-shadow .72s cubic-bezier(.22,1,.36,1),
+        background .72s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+    body.is-morphing .page.active .hero h1{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+  
+    /* Final page motion: no word flying to upper corner; right-panel boxes cascade smoothly */
+    body.is-page-cascading .word-morph-clone,
+    body.is-page-cascading .hero-word-morph,
+    body.is-page-cascading .title-morph-shell,
+    body.is-page-cascading .morph-blob{
+      display:none !important;
+      opacity:0 !important;
+    }
+
+    body.page-transition-clean .page.page-smooth-reveal,
+    body.is-page-cascading .page.page-smooth-reveal{
+      animation:iosPanelBreatheIn .62s cubic-bezier(.22,1,.36,1) both !important;
+      transform-origin:top center !important;
+    }
+
+    body.page-transition-clean .page-box-smooth,
+    body.is-page-cascading .page-box-smooth{
+      animation:iosControlCascade .86s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+      will-change:transform,opacity,filter;
+      backface-visibility:hidden;
+    }
+
+    @keyframes iosPanelBreatheIn{
+      0%{opacity:.98;transform:translateY(2px) scale(.998);filter:blur(.8px)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    @keyframes iosControlCascade{
+      0%{opacity:0;transform:translateY(-18px) scale(.982);filter:blur(8px)}
+      45%{opacity:1;transform:translateY(4px) scale(1.004);filter:blur(0)}
+      72%{opacity:1;transform:translateY(-1px) scale(1);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    /* Make page titles feel settled, not jumpy, after landing */
+    .page.active .hero h1{
+      transform:none !important;
+      filter:none !important;
+      transition:
+        opacity .42s cubic-bezier(.22,1,.36,1),
+        transform .42s cubic-bezier(.22,1,.36,1),
+        filter .42s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+    body.is-page-cascading .page.active .hero h1{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    /* Keep sidebar completely still while only the right panel animates */
+    .sidebar,
+    .sidebar *,
+    .nav-button,
+    .nav-button:hover,
+    .nav-button.active,
+    .nav-button:active{
+      transform:none !important;
+      animation:none !important;
+      filter:none !important;
+    }
+
+    .nav-button{
+      transition:
+        background .34s cubic-bezier(.22,1,.36,1),
+        box-shadow .34s cubic-bezier(.22,1,.36,1),
+        color .34s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+    .hero,
+    .welcome-card,
+    .system-card,
+    .card,
+    .current-card,
+    .mini-alert,
+    .connection-card,
+    .decision-card,
+    .threshold-card,
+    .threshold-hero,
+    .tools,
+    .history-alert-card,
+    .report-panel > *{
+      transition:
+        transform .86s cubic-bezier(.22,1,.36,1),
+        opacity .86s cubic-bezier(.22,1,.36,1),
+        filter .86s cubic-bezier(.22,1,.36,1),
+        box-shadow .86s cubic-bezier(.22,1,.36,1),
+        background .86s cubic-bezier(.22,1,.36,1) !important;
+    }
+
+  
+    /* Title word morph restored, with no landing pitik */
+    body.is-page-cascading .word-morph-clone,
+    body.is-page-cascading .hero-word-morph{
+      display:block !important;
+      opacity:1 !important;
+    }
+
+    body.is-morphing .page.active .hero,
+    body.is-morphing .page.active .hero h1,
+    .hero-title-morph-target{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    .hero-title-hidden{
+      visibility:hidden !important;
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word{
+      position:fixed;
+      z-index:96;
+      pointer-events:none;
+      display:block;
+      width:max-content;
+      max-width:none;
+      white-space:nowrap;
+      overflow:visible;
+      text-overflow:clip;
+      color:#0f3d22;
+      line-height:1.02;
+      text-shadow:0 14px 34px rgba(15,23,42,.14);
+      transform:none !important;
+      transform-origin:left top;
+      will-change:left,top,font-size,font-weight,letter-spacing;
+      transition:
+        left .62s cubic-bezier(.25,.1,.25,1),
+        top .62s cubic-bezier(.25,.1,.25,1),
+        font-size .62s cubic-bezier(.25,.1,.25,1),
+        font-weight .62s cubic-bezier(.25,.1,.25,1),
+        letter-spacing .62s cubic-bezier(.25,.1,.25,1) !important;
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word.is-moving{
+      transform:none !important;
+      opacity:1 !important;
+      filter:none !important;
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word.is-done{
+      opacity:1 !important;
+      filter:none !important;
+      transform:none !important;
+    }
+
+    /* Keep the destination title still after the clone disappears */
+    .page.active .hero h1{
+      transform:none !important;
+      filter:none !important;
+    }
+
+    body.is-page-cascading .page.active .hero{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+      opacity:1 !important;
+    }
+
+    /* Smooth iOS control-center style cascade for the boxes, not for the hero title */
+    body.page-transition-clean .page-box-smooth,
+    body.is-page-cascading .page-box-smooth{
+      animation:iosControlCascadeNoTitlePitik .88s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+      will-change:transform,opacity,filter;
+    }
+
+    @keyframes iosControlCascadeNoTitlePitik{
+      0%{opacity:0;transform:translateY(-16px) scale(.985);filter:blur(8px)}
+      60%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+  
+    /* Final fix: keep title morph, restore one-by-one iOS cascade, and remove landing pitik */
+    .welcome-hero h1,
+    #overview .hero h1{
+      display:inline-block !important;
+      line-height:1.18 !important;
+      padding-bottom:.12em !important;
+      margin-bottom:-.03em !important;
+      overflow:visible !important;
+    }
+
+    .welcome-hero,
+    #overview .hero{
+      overflow:visible !important;
+    }
+
+    .page-cascade-prep .page-box-prep{
+      opacity:0 !important;
+      transform:translateY(-20px) scale(.982) !important;
+      filter:blur(8px) !important;
+    }
+
+    body.page-transition-clean .page.active .page-box-smooth,
+    body.is-page-cascading .page.active .page-box-smooth,
+    body.page-transition-clean .page.active .welcome-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .overview-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .current-status-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .alert-stack > .page-box-smooth,
+    body.page-transition-clean .page.active .low-priority-summary > .page-box-smooth,
+    body.page-transition-clean .page.active .chart-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .threshold-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .info-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .planned-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .system-summary-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .report-panel > .page-box-smooth,
+    body.page-transition-clean .page.active .simulation-grid > .page-box-smooth{
+      animation:iosCascadeOneByOneFinal .92s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+      will-change:transform,opacity,filter;
+      backface-visibility:hidden;
+    }
+
+    @keyframes iosCascadeOneByOneFinal{
+      0%{opacity:0;transform:translateY(-20px) scale(.982);filter:blur(8px)}
+      42%{opacity:1;transform:translateY(3px) scale(1.002);filter:blur(0)}
+      72%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    body.page-transition-clean .page.page-smooth-reveal,
+    body.is-page-cascading .page.page-smooth-reveal{
+      animation:iosPanelSoftFinal .62s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes iosPanelSoftFinal{
+      0%{opacity:.98;transform:translateY(2px);filter:blur(.6px)}
+      100%{opacity:1;transform:translateY(0);filter:blur(0)}
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word{
+      transform:none !important;
+      filter:none !important;
+      transition:
+        left .62s cubic-bezier(.25,.1,.25,1),
+        top .62s cubic-bezier(.25,.1,.25,1),
+        font-size .62s cubic-bezier(.25,.1,.25,1),
+        font-weight .62s cubic-bezier(.25,.1,.25,1),
+        letter-spacing .62s cubic-bezier(.25,.1,.25,1) !important;
+    }
+
+    body.is-morphing .page.active .hero,
+    body.is-morphing .page.active .hero h1,
+    .hero-title-morph-target{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+  
+    /* Softer version: boxes feel absent first, then semi fade in one by one */
+    .page-cascade-prep .page-box-prep{
+      opacity:0 !important;
+      visibility:hidden !important;
+      transform:translateY(10px) scale(.992) !important;
+      filter:blur(8px) !important;
+    }
+
+    body.page-transition-clean .page.active .page-box-smooth,
+    body.is-page-cascading .page.active .page-box-smooth,
+    body.page-transition-clean .page.active .welcome-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .overview-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .current-status-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .alert-stack > .page-box-smooth,
+    body.page-transition-clean .page.active .low-priority-summary > .page-box-smooth,
+    body.page-transition-clean .page.active .chart-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .threshold-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .info-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .planned-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .system-summary-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .report-panel > .page-box-smooth,
+    body.page-transition-clean .page.active .simulation-grid > .page-box-smooth{
+      visibility:visible !important;
+      animation:iosSoftFadeBoxes .95s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+      will-change:opacity,transform,filter;
+      backface-visibility:hidden;
+    }
+
+    @keyframes iosSoftFadeBoxes{
+      0%{
+        opacity:0;
+        transform:translateY(12px) scale(.992);
+        filter:blur(8px);
+      }
+      48%{
+        opacity:.78;
+        transform:translateY(3px) scale(.998);
+        filter:blur(2px);
+      }
+      100%{
+        opacity:1;
+        transform:translateY(0) scale(1);
+        filter:blur(0);
+      }
+    }
+
+    body.page-transition-clean .page.page-smooth-reveal,
+    body.is-page-cascading .page.page-smooth-reveal{
+      animation:iosSoftPanelFade .58s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    @keyframes iosSoftPanelFade{
+      0%{opacity:1;transform:none;filter:none}
+      100%{opacity:1;transform:none;filter:none}
+    }
+
+  
+    /* Clean final transition: title morph + simple iOS stagger, no cloned moving cards */
+    .taskbar-burst-card,
+    .source-content-clone,
+    .tab-drop-cue{
+      display:none !important;
+      opacity:0 !important;
+      visibility:hidden !important;
+    }
+
+    .clean-source-pulse{
+      position:fixed;
+      z-index:68;
+      pointer-events:none;
+      border-radius:18px;
+      background:rgba(240,253,244,.64);
+      border:1px solid rgba(255,255,255,.80);
+      box-shadow:0 12px 34px rgba(21,128,61,.12), inset 0 1px 0 rgba(255,255,255,.82);
+      transform:scale(.98);
+      opacity:0;
+      filter:blur(2px);
+      transition:
+        opacity .18s ease,
+        transform .42s cubic-bezier(.22,1,.36,1),
+        filter .42s cubic-bezier(.22,1,.36,1);
+    }
+
+    .clean-source-pulse.is-active{
+      opacity:1;
+      transform:scale(1.025);
+      filter:blur(0);
+    }
+
+    .page-cascade-prep .page-box-prep{
+      opacity:0 !important;
+      visibility:hidden !important;
+      transform:translateX(-14px) translateY(10px) scale(.992) !important;
+      filter:blur(7px) !important;
+      pointer-events:none !important;
+    }
+
+    body.page-transition-clean .page.active .page-box-smooth,
+    body.is-page-cascading .page.active .page-box-smooth,
+    body.page-transition-clean .page.active .hero.page-box-smooth,
+    body.page-transition-clean .page.active .welcome-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .overview-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .current-status-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .alert-stack > .page-box-smooth,
+    body.page-transition-clean .page.active .low-priority-summary > .page-box-smooth,
+    body.page-transition-clean .page.active .chart-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .threshold-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .info-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .planned-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .system-summary-grid > .page-box-smooth,
+    body.page-transition-clean .page.active .report-panel > .page-box-smooth,
+    body.page-transition-clean .page.active .simulation-grid > .page-box-smooth{
+      visibility:visible !important;
+      pointer-events:auto !important;
+      animation:cleanIOSBoxReveal .82s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+      will-change:opacity,transform,filter;
+      backface-visibility:hidden;
+    }
+
+    @keyframes cleanIOSBoxReveal{
+      0%{
+        opacity:0;
+        transform:translateX(-16px) translateY(10px) scale(.992);
+        filter:blur(7px);
+      }
+      52%{
+        opacity:.88;
+        transform:translateX(0) translateY(2px) scale(.999);
+        filter:blur(1px);
+      }
+      100%{
+        opacity:1;
+        transform:translateX(0) translateY(0) scale(1);
+        filter:blur(0);
+      }
+    }
+
+    body.page-transition-clean .page.page-smooth-reveal,
+    body.is-page-cascading .page.page-smooth-reveal{
+      animation:none !important;
+      opacity:1 !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word{
+      transform:none !important;
+      filter:none !important;
+      transition:
+        left .60s cubic-bezier(.25,.1,.25,1),
+        top .60s cubic-bezier(.25,.1,.25,1),
+        font-size .60s cubic-bezier(.25,.1,.25,1),
+        font-weight .60s cubic-bezier(.25,.1,.25,1),
+        letter-spacing .60s cubic-bezier(.25,.1,.25,1) !important;
+    }
+
+    body.is-morphing .page.active .hero,
+    body.is-morphing .page.active .hero h1,
+    .hero-title-morph-target{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    .welcome-hero h1,
+    #overview .hero h1{
+      display:inline-block !important;
+      line-height:1.18 !important;
+      padding-bottom:.12em !important;
+      margin-bottom:-.03em !important;
+      overflow:visible !important;
+    }
+
+    .welcome-hero,
+    #overview .hero{
+      overflow:visible !important;
+    }
+
+    .sidebar,
+    .sidebar *,
+    .nav-button,
+    .nav-button:hover,
+    .nav-button.active,
+    .nav-button:active{
+      transform:none !important;
+      animation:none !important;
+      filter:none !important;
+    }
+
+  
+    /* AgRiFiS overview title: keep gradient during the word morph, not only after landing */
+    .word-morph-clone.gradient-title-morph{
+      background-size:100% 100% !important;
+      background-position:center !important;
+      -webkit-background-clip:text !important;
+      background-clip:text !important;
+      color:transparent !important;
+      -webkit-text-fill-color:transparent !important;
+      text-shadow:none !important;
+    }
+
+  
+    /* Hard fix for AgRiFiS descender clipping during and after landing */
+    #overview .welcome-hero h1,
+    #overview .hero h1,
+    .welcome-hero h1{
+      display:inline-block !important;
+      line-height:1.32 !important;
+      padding-top:.03em !important;
+      padding-bottom:.24em !important;
+      margin-bottom:0 !important;
+      overflow:visible !important;
+      vertical-align:top !important;
+      contain:none !important;
+    }
+
+    #overview .welcome-hero,
+    #overview .hero,
+    .welcome-hero{
+      overflow:visible !important;
+      padding-bottom:38px !important;
+      contain:none !important;
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word,
+    .word-morph-clone.gradient-title-morph{
+      display:inline-block !important;
+      line-height:1.32 !important;
+      padding-top:.03em !important;
+      padding-bottom:.24em !important;
+      overflow:visible !important;
+      contain:none !important;
+      box-sizing:content-box !important;
+      vertical-align:top !important;
+    }
+
+    .word-morph-clone.gradient-title-morph{
+      background-size:100% 100% !important;
+      background-position:center !important;
+      -webkit-background-clip:text !important;
+      background-clip:text !important;
+      color:transparent !important;
+      -webkit-text-fill-color:transparent !important;
+      text-shadow:none !important;
+    }
+
+    body.is-morphing #overview .welcome-hero h1,
+    body.is-morphing #overview .hero h1{
+      line-height:1.32 !important;
+      padding-bottom:.24em !important;
+      overflow:visible !important;
+    }
+
   </style>
 </head>
-<body>
+<body class="page-overview page-transition-clean">
   <aside class="sidebar">
     <div class="brand-kicker">DOST-JST Smart Agriculture</div>
-    <div class="brand-title">Monitoring and Decision Support Dashboard</div>
+    <div class="brand-title">AgRiFiS</div>
+    <div class="brand-subtitle">Agroforestry, AWD, and Rice-Fish Monitoring</div>
     <div class="nav-title">Main</div>
     <button class="nav-button active" onclick="showPage('overview',this)">Dashboard Overview <span class="nav-dot live"></span></button>
     <button class="nav-button" onclick="showPage('agroforestry',this)">Agroforestry <span class="nav-dot live"></span></button>
     <button class="nav-button" onclick="showPage('awd',this)">AWD <span class="nav-dot pending"></span></button>
     <button class="nav-button" onclick="showPage('ricefish',this)">Rice-Fish <span class="nav-dot pending"></span></button>
     <div class="nav-title">Review</div>
-    <button class="nav-button" onclick="showPage('alerts',this)">Alert Center <span class="nav-dot live"></span></button>
+    <button class="nav-button" onclick="showPage('report',this)">Summary Report <span class="nav-dot live"></span></button>
+    <button class="nav-button" onclick="showPage('simulation',this)">Simulation Guide <span class="nav-dot pending"></span></button>
     <button class="nav-button" onclick="showPage('project',this)">Project Information <span class="nav-dot pending"></span></button>
-    <div class="sidebar-note">This sidebar stays fixed on the left side. Only the selected monitoring system appears in the main dashboard area.</div>
+    <div class="sidebar-note"><strong>Welcome mode:</strong> Start with the overview, then open only the monitoring system needed for review.</div>
   </aside>
 
   <main class="main">
@@ -49,38 +2942,476 @@
       <img src="UPLB.png" alt="UPLB Logo"><img src="DOST.png" alt="DOST Logo"><img src="JST.png" alt="JST Logo"><img src="TOHOKU.png" alt="Tohoku Logo"><img src="TMU.png" alt="TMU Logo"><img src="ICHARM.png" alt="ICHARM Logo">
     </div>
 
+    <div class="ios-main-bar glass">
+      <button class="ios-back-button" id="mainBackBtn" onclick="goBackToOverview(this)">‹ Back</button>
+      <div class="ios-main-title" id="mainPageTitle">Dashboard Overview</div>
+    </div>
+
     <section class="page active" id="overview">
-      <div class="hero glass"><h1>Smart Agriculture Monitoring Dashboard</h1><p>Choose one monitoring component from the sidebar. The interface is separated into Agroforestry, AWD, and Rice-Fish sections to avoid showing too much data at once.</p></div>
-      <div class="overview-grid">
-        <div class="system-card glass" onclick="openFromCard('agroforestry')"><div class="system-icon">🌳</div><div class="system-title">Agroforestry</div><div class="system-desc">Tree zone and crop alley soil moisture monitoring with live DSS decision support.</div><span class="pill">Live ThingSpeak data</span></div>
-        <div class="system-card glass" onclick="openFromCard('awd')"><div class="system-icon">💧</div><div class="system-title">AWD</div><div class="system-desc">Prepared dashboard module for alternate wetting and drying water level monitoring.</div><span class="pill pending">For sensor integration</span></div>
-        <div class="system-card glass" onclick="openFromCard('ricefish')"><div class="system-icon">🐟</div><div class="system-title">Rice-Fish</div><div class="system-desc">Prepared dashboard module for water level and dissolved oxygen monitoring in tilapia-based rice-fish plots.</div><span class="pill pending">For sensor integration</span></div>
+      <div class="hero glass welcome-hero">
+        <div class="hero-kicker">Integrated Smart Agriculture Monitoring</div>
+        <h1>AgRiFiS</h1>
+        <p>A simplified decision-support website for Agroforestry, AWD, and Rice-Fish monitoring.</p>
       </div>
-      <div class="stat-grid">
-        <div class="card glass"><div class="card-label">Agroforestry DSS</div><div class="card-value" id="overviewDssCode">--</div><div class="card-note" id="overviewDssText">Waiting for live data</div></div>
-        <div class="card glass"><div class="card-label">Tree Moisture</div><div class="card-value" id="overviewTree">--%</div><div class="card-note">Latest agroforestry reading</div></div>
-        <div class="card glass"><div class="card-label">Crop Moisture</div><div class="card-value" id="overviewCrop">--%</div><div class="card-note">Latest agroforestry reading</div></div>
-        <div class="card glass"><div class="card-label">Connection</div><div class="card-value" id="overviewConnection">--</div><div class="card-note" id="overviewConnectionNote">Checking ThingSpeak status</div></div>
+
+      <div class="welcome-grid">
+        <div class="welcome-card glass">
+          <div class="welcome-icon ios-icon icon-leaf"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M48 12C30 13 16 25 14 43c17 2 31-7 37-28" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 44c9-11 18-18 30-24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
+          <div class="welcome-title">Choose a monitoring system</div>
+          <details>
+            <summary>More details</summary>
+            <div class="welcome-details">Open only the monitoring component needed for review so the dashboard does not show too much information at once.</div>
+          </details>
+        </div>
+
+        <div class="welcome-card glass">
+          <div class="welcome-icon ios-icon icon-bell"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 28c0-8 5-15 12-15s12 7 12 15v11l6 7H14l6-7V28z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M27 51c2 3 8 3 10 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></div>
+          <div class="welcome-title">Review important alerts</div>
+          <details>
+            <summary>More details</summary>
+            <div class="welcome-details">Telegram notifications are reserved for irrigation and waterlogging alerts, while normal readings remain visible in the dashboard.</div>
+          </details>
+        </div>
+
+        <div class="welcome-card glass">
+          <div class="welcome-icon ios-icon icon-report"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h19l9 9v35H20z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M38 10v11h10M27 31h14M27 41h14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="welcome-title">Generate a quick report</div>
+          <details>
+            <summary>More details</summary>
+            <div class="welcome-details">Use the Summary Report section to review real-time status summaries for Agroforestry, AWD, and Rice-Fish modules.</div>
+          </details>
+        </div>
+      </div>
+
+      <div class="section-heading">Monitoring Modules</div>
+      <div class="overview-grid">
+        <div class="system-card glass" onclick="openFromCard('agroforestry',this)">
+          <div>
+            <div class="system-icon ios-icon icon-tree"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 44v10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M18 42h28c6 0 9-7 5-12 5-8-3-17-11-13-4-8-17-7-20 2-9 0-13 12-6 18 1 3 2 5 4 5z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/></svg></div>
+            <div class="system-title">Agroforestry</div>
+          </div>
+          <span class="pill">Open dashboard</span>
+          <details onclick="event.stopPropagation()">
+            <summary>Details</summary>
+            <div class="module-details">Live soil moisture monitoring for tree zone and crop alley.</div>
+          </details>
+        </div>
+
+        <div class="system-card glass" onclick="openFromCard('awd',this)">
+          <div>
+            <div class="system-icon ios-icon icon-water"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8c10 14 18 25 18 35 0 10-8 17-18 17s-18-7-18-17c0-10 8-21 18-35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M25 45c3 4 11 4 14 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
+            <div class="system-title">AWD</div>
+          </div>
+          <span class="pill pending">Open module</span>
+          <details onclick="event.stopPropagation()">
+            <summary>Details</summary>
+            <div class="module-details">Prepared water level monitoring module for alternate wetting and drying plots.</div>
+          </details>
+        </div>
+
+        <div class="system-card glass" onclick="openFromCard('ricefish',this)">
+          <div>
+            <div class="system-icon ios-icon icon-fish"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 33c9-13 27-16 39 0-12 16-30 13-39 0z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M12 33 5 24v18zM46 25l9-8M46 41l9 8" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="31" r="2.5" fill="currentColor"/></svg></div>
+            <div class="system-title">Rice-Fish</div>
+          </div>
+          <span class="pill pending">Open module</span>
+          <details onclick="event.stopPropagation()">
+            <summary>Details</summary>
+            <div class="module-details">Prepared water level and dissolved oxygen module for tilapia-based rice-fish plots.</div>
+          </details>
+        </div>
+      </div>
+
+      <div style="display:none;">
+        <span id="overviewDssCode">--</span>
+        <span id="overviewDssText">Waiting for live data</span>
+        <span id="overviewTree">--%</span>
+        <span id="overviewCrop">--%</span>
+        <span id="overviewConnection">--</span>
+        <span id="overviewConnectionNote">Checking ThingSpeak status</span>
       </div>
     </section>
 
     <section class="page" id="agroforestry">
-      <div class="hero glass"><h1>Agroforestry Soil Moisture Dashboard</h1><p>Live monitoring of soil moisture conditions in the tree zone and crop alley.</p></div>
-      <div class="tabs"><button class="tab-button active" onclick="showAgroTab('agro-live',this)">Live Monitoring</button><button class="tab-button" onclick="showAgroTab('agro-trends',this)">Trends and Export</button><button class="tab-button" onclick="showAgroTab('agro-alerts',this)">Alert History</button><button class="tab-button" onclick="showAgroTab('agro-guide',this)">Threshold Guide</button></div>
-      <div class="tab-section active" id="agro-live">
-        <div class="stat-grid"><div class="card glass"><div class="card-label">Average Tree Moisture</div><div class="card-value" id="avgTree">--%</div><div class="card-note">Based on selected history range</div></div><div class="card glass"><div class="card-label">Average Crop Moisture</div><div class="card-value" id="avgCrop">--%</div><div class="card-note">Based on selected history range</div></div><div class="card glass"><div class="card-label">Lowest Tree Reading</div><div class="card-value" id="lowestTreeReading">--%</div><div class="card-note" id="lowestTreeTime">Waiting for data</div></div><div class="card glass"><div class="card-label">Lowest Crop Reading</div><div class="card-value" id="lowestCropReading">--%</div><div class="card-note" id="lowestCropTime">Waiting for data</div></div></div>
-        <div class="sensor-grid"><div class="card glass"><div class="system-icon">🌳</div><div class="card-label">Tree Zone Moisture</div><div class="sensor-value" id="treeMoisture">--%</div><div class="sensor-status" id="treeStatus">Loading...</div><div class="track"><div class="bar" id="treeBar"></div></div></div><div class="card glass"><div class="system-icon">🌾</div><div class="card-label">Crop Alley Moisture</div><div class="sensor-value" id="cropMoisture">--%</div><div class="sensor-status" id="cropStatus">Loading...</div><div class="track"><div class="bar" id="cropBar"></div></div></div><div class="card glass"><div class="system-icon">🔔</div><div class="card-label">Tree Zone Alert</div><div class="sensor-value" id="treeAlert">--</div><div class="sensor-status">ON = irrigation recommended</div></div><div class="card glass"><div class="system-icon">💧</div><div class="card-label">Crop Alley Alert</div><div class="sensor-value" id="cropAlert">--</div><div class="sensor-status">ON = irrigation recommended</div></div></div>
-        <div class="connection-card glass"><div><div class="connection-title">Data Connection Status</div><div class="connection-text" id="connectionText">Checking latest ThingSpeak update.</div></div><div class="connection-status" id="connectionStatus">Checking...</div></div>
-        <div class="decision-card glass" id="decisionBox"><div><div class="decision-title">DSS Decision</div><div class="decision-text" id="dssDecision">Loading...</div><div class="decision-note" id="decisionNote">Waiting for latest ThingSpeak data.</div></div><div class="code-box"><span>DSS Code</span><strong id="dssCode">--</strong></div></div>
+      <div class="hero glass">
+        <div class="hero-kicker">Live Agroforestry Monitoring</div>
+        <h1>Agroforestry Soil Moisture Dashboard</h1>
+        <p>Current tree zone and crop alley status are shown first. Historical readings, alert history, and threshold guide are placed in separate tabs to keep the dashboard clean and easy to read.</p>
       </div>
-      <div class="tab-section" id="agro-trends"><div class="tools glass"><label for="historyRange">Graph range:</label><select id="historyRange"><option value="30">Latest 30 readings</option><option value="50" selected>Latest 50 readings</option><option value="100">Latest 100 readings</option></select><button onclick="updateHistoryCharts()">Refresh graphs</button><button onclick="downloadHistoryCsv()">Download CSV</button></div><div class="chart-grid"><div class="card glass"><div class="chart-title">Tree Zone Moisture History</div><div class="chart-subtitle">Recent tree zone moisture records</div><div class="chart-box"><canvas id="treeMoistureChart"></canvas></div></div><div class="card glass"><div class="chart-title" style="color:#1e40af">Crop Alley Moisture History</div><div class="chart-subtitle">Recent crop alley moisture records</div><div class="chart-box"><canvas id="cropMoistureChart"></canvas></div></div></div></div>
-      <div class="tab-section" id="agro-alerts"><div class="card glass"><div class="chart-title">Agroforestry Alert History</div><div class="chart-subtitle">Recent DSS events based on selected history range</div><span class="pill" id="alertCount">Checking alerts</span><div class="alert-list" id="alertList" style="margin-top:14px"><div class="alert-row"><strong>Waiting</strong><span>Latest data</span><span class="chip chip-ok">Loading</span><span>Checking recent sensor records.</span></div></div></div></div>
-      <div class="tab-section" id="agro-guide"><div class="info-grid"><div class="card glass"><div class="chart-title">Soil Moisture Threshold Guide</div><div class="small-text" style="margin:8px 0 10px">These categories guide the dashboard and DSS alert interpretation.</div><div class="legend-row"><div><span class="legend-dot red"></span>0 to 25%</div><div>Very Dry</div><div>Irrigation recommended</div></div><div class="legend-row"><div><span class="legend-dot orange"></span>26 to 45%</div><div>Dry</div><div>Irrigation recommended</div></div><div class="legend-row"><div><span class="legend-dot green"></span>46 to 70%</div><div>Normal</div><div>No irrigation alert</div></div><div class="legend-row"><div><span class="legend-dot blue"></span>71 to 85%</div><div>Wet</div><div>No irrigation alert</div></div><div class="legend-row"><div><span class="legend-dot purple"></span>86 to 100%</div><div>Saturated</div><div>Possible waterlogging</div></div></div><div class="card glass"><div class="chart-title">System Notes</div><div class="small-text">This dashboard receives simulated soil moisture data from ThingSpeak. The DSS decision is intended as a preliminary guide and should be calibrated using actual soil conditions, crop needs, and field validation.</div></div></div></div>
+
+      <div class="tabs">
+        <button class="tab-button active" onclick="showAgroTab('agro-live',this)">Current Status</button>
+        <button class="tab-button" onclick="showAgroTab('agro-history',this)">History</button>
+        <button class="tab-button" onclick="showAgroTab('agro-guide',this)">Threshold Guide</button>
+      </div>
+
+      <div class="tab-section active" id="agro-live">
+        <div class="section-heading">Current Sensor Status</div>
+
+        <div class="current-status-grid">
+          <div class="current-card glass">
+            <div class="current-card-top">
+              <div>
+                <div class="current-kicker">Tree Zone</div>
+                <div class="current-title">Soil Moisture</div>
+              </div>
+              <div class="current-icon ios-icon icon-tree"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 44v10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M18 42h28c6 0 9-7 5-12 5-8-3-17-11-13-4-8-17-7-20 2-9 0-13 12-6 18 1 3 2 5 4 5z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/></svg></div>
+            </div>
+            <div class="current-value" id="treeMoisture">--%</div>
+            <div class="current-status" id="treeStatus">Loading...</div>
+            <div class="track"><div class="bar" id="treeBar"></div></div>
+          </div>
+
+          <div class="current-card glass">
+            <div class="current-card-top">
+              <div>
+                <div class="current-kicker">Crop Alley</div>
+                <div class="current-title">Soil Moisture</div>
+              </div>
+              <div class="current-icon ios-icon icon-crop"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 54V17" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M32 25c-9 0-15-5-17-13 9 0 15 5 17 13zM32 36c9 0 15-5 17-13-9 0-15 5-17 13zM32 44c-8 0-13-4-16-10 8 0 13 4 16 10z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg></div>
+            </div>
+            <div class="current-value" id="cropMoisture">--%</div>
+            <div class="current-status" id="cropStatus">Loading...</div>
+            <div class="track"><div class="bar" id="cropBar"></div></div>
+          </div>
+        </div>
+
+        <div class="section-heading">Alerts and Decision</div>
+
+        <div class="alert-decision-grid">
+          <div class="alert-stack">
+            <div class="mini-alert glass">
+              <div class="mini-alert-icon ios-icon icon-bell"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 28c0-8 5-15 12-15s12 7 12 15v11l6 7H14l6-7V28z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M27 51c2 3 8 3 10 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></div>
+              <div>
+                <div class="card-label">Tree Zone Alert</div>
+                <div class="sensor-value" id="treeAlert">--</div>
+                <div class="card-note">ON means irrigation is recommended for the tree zone.</div>
+              </div>
+            </div>
+
+            <div class="mini-alert glass">
+              <div class="mini-alert-icon ios-icon icon-water"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8c10 14 18 25 18 35 0 10-8 17-18 17s-18-7-18-17c0-10 8-21 18-35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M25 45c3 4 11 4 14 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
+              <div>
+                <div class="card-label">Crop Alley Alert</div>
+                <div class="sensor-value" id="cropAlert">--</div>
+                <div class="card-note">ON means irrigation is recommended for the crop alley.</div>
+              </div>
+            </div>
+
+            <div class="connection-card glass">
+              <div>
+                <div class="connection-title">Data Connection Status</div>
+                <div class="connection-text" id="connectionText">Checking latest ThingSpeak update.</div>
+              </div>
+              <div class="connection-status" id="connectionStatus">Checking...</div>
+            </div>
+          </div>
+
+          <div class="decision-card glass" id="decisionBox">
+            <div>
+              <div class="decision-title">DSS Decision</div>
+              <div class="decision-text" id="dssDecision">Loading...</div>
+              <div class="decision-note" id="decisionNote">Waiting for latest ThingSpeak data.</div>
+
+              <div class="decision-insights">
+                <div class="decision-insight">
+                  <div class="decision-insight-label">Priority</div>
+                  <div class="decision-insight-value" id="decisionPriority">Checking</div>
+                </div>
+                <div class="decision-insight">
+                  <div class="decision-insight-label">Focus Area</div>
+                  <div class="decision-insight-value" id="decisionFocusArea">Waiting for data</div>
+                </div>
+                <div class="decision-insight">
+                  <div class="decision-insight-label">Next Step</div>
+                  <div class="decision-insight-value" id="decisionNextStep">Review latest reading</div>
+                </div>
+              </div>
+            </div>
+            <div class="code-box">
+              <span>DSS Code</span>
+              <strong id="dssCode">--</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-heading">Additional Summary</div>
+
+        <div class="stat-grid low-priority-summary">
+          <div class="card glass">
+            <div class="card-label">Average Tree Moisture</div>
+            <div class="card-value" id="avgTree">--%</div>
+            <div class="card-note">Based on the selected history range</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Average Crop Moisture</div>
+            <div class="card-value" id="avgCrop">--%</div>
+            <div class="card-note">Based on the selected history range</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Lowest Tree Reading</div>
+            <div class="card-value" id="lowestTreeReading">--%</div>
+            <div class="card-note" id="lowestTreeTime">Waiting for data</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Lowest Crop Reading</div>
+            <div class="card-value" id="lowestCropReading">--%</div>
+            <div class="card-note" id="lowestCropTime">Waiting for data</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-section" id="agro-history">
+        <div class="tools glass">
+          <label for="historyRange">History range:</label>
+          <select id="historyRange" onchange="updateHistoryCharts()">
+            <option value="15" selected>Latest 15 readings</option>
+            <option value="30">Latest 30 readings</option>
+            <option value="50">Latest 50 readings</option>
+            <option value="100">Latest 100 readings</option>
+          </select>
+          <span class="range-note">Graph and alert history update automatically after selection.</span>
+          <button onclick="downloadHistoryCsv()">Download CSV</button>
+        </div>
+
+        <div class="chart-grid">
+          <div class="card glass">
+            <div class="chart-title">Tree Zone Moisture History</div>
+            <div class="chart-subtitle">Recent tree zone moisture records from ThingSpeak</div>
+            <div class="chart-box"><canvas id="treeMoistureChart"></canvas></div>
+          </div>
+
+          <div class="card glass">
+            <div class="chart-title" style="color:#1e40af;">Crop Alley Moisture History</div>
+            <div class="chart-subtitle">Recent crop alley moisture records from ThingSpeak</div>
+            <div class="chart-box"><canvas id="cropMoistureChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card glass history-alert-card">
+          <div class="chart-title">Alert History</div>
+          <div class="chart-subtitle">DSS alert events detected within the selected history range</div>
+          <span class="pill" id="alertCount">Checking alerts</span>
+          <div class="alert-list" id="alertList" style="margin-top:14px;">
+            <div class="alert-row">
+              <strong>Waiting</strong>
+              <span>Latest data</span>
+              <span class="chip chip-ok">Loading</span>
+              <span>Checking recent sensor records.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-section" id="agro-guide">
+        <div class="threshold-hero glass">
+          <div>
+            <div class="hero-kicker">Decision-Support Guide</div>
+            <h2>Soil Moisture Thresholds</h2>
+            <p>These ranges are used to classify the current soil condition and guide the DSS decision shown in the live monitoring tab.</p>
+          </div>
+        </div>
+
+        <div class="threshold-grid">
+          <div class="threshold-card glass threshold-red">
+            <div class="threshold-range">0–25%</div>
+            <div class="threshold-name">Very Dry</div>
+            <div class="threshold-action">Irrigation recommended</div>
+          </div>
+
+          <div class="threshold-card glass threshold-orange">
+            <div class="threshold-range">26–45%</div>
+            <div class="threshold-name">Dry</div>
+            <div class="threshold-action">Irrigation recommended</div>
+          </div>
+
+          <div class="threshold-card glass threshold-green">
+            <div class="threshold-range">46–70%</div>
+            <div class="threshold-name">Normal</div>
+            <div class="threshold-action">No irrigation alert</div>
+          </div>
+
+          <div class="threshold-card glass threshold-blue">
+            <div class="threshold-range">71–85%</div>
+            <div class="threshold-name">Wet</div>
+            <div class="threshold-action">No irrigation alert</div>
+          </div>
+
+          <div class="threshold-card glass threshold-purple">
+            <div class="threshold-range">86–100%</div>
+            <div class="threshold-name">Saturated</div>
+            <div class="threshold-action">Possible waterlogging</div>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="card glass">
+            <div class="chart-title">How to Read the DSS Decision</div>
+            <div class="small-text">
+              The dashboard prioritizes the latest live reading. Telegram notifications are sent only for irrigation and waterlogging conditions, while normal status remains visible in the dashboard to avoid unnecessary alerts.
+            </div>
+          </div>
+
+          <div class="card glass">
+            <div class="chart-title">Calibration Note</div>
+            <div class="small-text">
+              Thresholds should be refined using actual soil type, crop stage, root zone depth, rainfall condition, and field validation.
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="last-update" id="lastUpdate">Waiting for latest data...</div>
     </section>
 
-    <section class="page" id="awd"><div class="hero glass"><h1>AWD Water Level Dashboard</h1><p>Prepared interface for alternate wetting and drying water level monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon">💧</div><div class="card-label">Current Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for water level sensor connection</div></div><div class="card glass"><div class="system-icon">🌾</div><div class="card-label">AWD Status</div><div class="card-value">Pending</div><div class="card-note">Flooded, safe drying, or re-irrigation status</div></div><div class="card glass"><div class="system-icon">🔔</div><div class="card-label">Re-irrigation Alert</div><div class="card-value">--</div><div class="card-note">Alert logic to be activated after sensor setup</div></div></div><div class="card glass"><div class="chart-title">Water Level Trend</div><div class="placeholder">Water level trend graph will appear here once the AWD water level sensor is connected to a ThingSpeak field.</div></div></section>
-    <section class="page" id="ricefish"><div class="hero glass"><h1>Rice-Fish Water Quality Dashboard</h1><p>Prepared interface for rice-fish water level and dissolved oxygen monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon">💧</div><div class="card-label">Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for rice-fish water level sensor</div></div><div class="card glass"><div class="system-icon">🐟</div><div class="card-label">Dissolved Oxygen</div><div class="card-value">-- mg/L</div><div class="card-note">Waiting for DO sensor integration</div></div><div class="card glass"><div class="system-icon">✅</div><div class="card-label">Fish Safety Status</div><div class="card-value">Pending</div><div class="card-note">Tilapia safety decision support to be activated</div></div></div><div class="card glass"><div class="chart-title">Rice-Fish Trend Graphs</div><div class="placeholder">Water level and dissolved oxygen trends will appear here once the rice-fish sensors are connected to ThingSpeak fields.</div></div></section>
+    <section class="page" id="awd"><div class="hero glass"><h1>AWD Water Level Dashboard</h1><p>Prepared interface for alternate wetting and drying water level monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon ios-icon icon-water"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8c10 14 18 25 18 35 0 10-8 17-18 17s-18-7-18-17c0-10 8-21 18-35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M25 45c3 4 11 4 14 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div><div class="card-label">Current Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for water level sensor connection</div></div><div class="card glass"><div class="system-icon ios-icon icon-crop"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 54V17" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M32 25c-9 0-15-5-17-13 9 0 15 5 17 13zM32 36c9 0 15-5 17-13-9 0-15 5-17 13zM32 44c-8 0-13-4-16-10 8 0 13 4 16 10z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg></div><div class="card-label">AWD Status</div><div class="card-value">Pending</div><div class="card-note">Flooded, safe drying, or re-irrigation status</div></div><div class="card glass"><div class="system-icon ios-icon icon-bell"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 28c0-8 5-15 12-15s12 7 12 15v11l6 7H14l6-7V28z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M27 51c2 3 8 3 10 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></div><div class="card-label">Re-irrigation Alert</div><div class="card-value">--</div><div class="card-note">Alert logic to be activated after sensor setup</div></div></div><div class="card glass"><div class="chart-title">Water Level Trend</div><div class="placeholder">Water level trend graph will appear here once the AWD water level sensor is connected to a ThingSpeak field.</div></div></section>
+    <section class="page" id="ricefish"><div class="hero glass"><h1>Rice-Fish Water Quality Dashboard</h1><p>Prepared interface for rice-fish water level and dissolved oxygen monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon ios-icon icon-water"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8c10 14 18 25 18 35 0 10-8 17-18 17s-18-7-18-17c0-10 8-21 18-35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M25 45c3 4 11 4 14 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div><div class="card-label">Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for rice-fish water level sensor</div></div><div class="card glass"><div class="system-icon ios-icon icon-fish"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 33c9-13 27-16 39 0-12 16-30 13-39 0z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M12 33 5 24v18zM46 25l9-8M46 41l9 8" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="31" r="2.5" fill="currentColor"/></svg></div><div class="card-label">Dissolved Oxygen</div><div class="card-value">-- mg/L</div><div class="card-note">Waiting for DO sensor integration</div></div><div class="card glass"><div class="system-icon ios-icon icon-check"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="5"/><path d="M21 33l8 8 15-18" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="card-label">Fish Safety Status</div><div class="card-value">Pending</div><div class="card-note">Tilapia safety decision support to be activated</div></div></div><div class="card glass"><div class="chart-title">Rice-Fish Trend Graphs</div><div class="placeholder">Water level and dissolved oxygen trends will appear here once the rice-fish sensors are connected to ThingSpeak fields.</div></div></section>
+
+    <section class="page" id="report">
+      <div class="hero glass">
+        <div class="hero-kicker">Real-Time Documentation</div>
+        <h1>Summary Report</h1>
+        <p>Review a concise status summary for each monitoring system. Agroforestry uses live ThingSpeak data, while AWD and Rice-Fish summaries are prepared for future sensor integration.</p>
+      </div>
+
+      <div class="report-tabs">
+        <button class="report-tab-button active" onclick="showReportTab('report-agroforestry',this)">Agroforestry</button>
+        <button class="report-tab-button" onclick="showReportTab('report-awd',this)">AWD</button>
+        <button class="report-tab-button" onclick="showReportTab('report-ricefish',this)">Rice-Fish</button>
+      </div>
+
+      <div class="report-tab-section active" id="report-agroforestry">
+        <div class="system-summary-grid">
+          <div class="card glass">
+            <div class="card-label">Latest DSS Decision</div>
+            <div class="card-value" id="reportDssCode">--</div>
+            <div class="card-note" id="reportDssText">Waiting for live data</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Report Time</div>
+            <div class="card-value" style="font-size:26px;" id="reportGeneratedAt">--</div>
+            <div class="card-note">Auto-updated from the dashboard</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">History Range</div>
+            <div class="card-value" id="reportRange">--</div>
+            <div class="card-note">Based on selected graph range</div>
+          </div>
+        </div>
+
+        <div class="report-panel">
+          <div class="card glass">
+            <div class="chart-title">Current Reading Summary</div>
+            <div class="report-line"><div class="report-label">Tree Zone Moisture</div><div class="report-value" id="reportTree">--</div></div>
+            <div class="report-line"><div class="report-label">Crop Alley Moisture</div><div class="report-value" id="reportCrop">--</div></div>
+            <div class="report-line"><div class="report-label">Tree Alert</div><div class="report-value" id="reportTreeAlert">--</div></div>
+            <div class="report-line"><div class="report-label">Crop Alert</div><div class="report-value" id="reportCropAlert">--</div></div>
+            <div class="report-line"><div class="report-label">Latest Upload</div><div class="report-value" id="reportLatestUpload">--</div></div>
+          </div>
+
+          <div class="card glass">
+            <div class="chart-title">Historical Summary</div>
+            <div class="report-line"><div class="report-label">Average Tree Moisture</div><div class="report-value" id="reportAvgTree">--</div></div>
+            <div class="report-line"><div class="report-label">Average Crop Moisture</div><div class="report-value" id="reportAvgCrop">--</div></div>
+            <div class="report-line"><div class="report-label">Lowest Tree Reading</div><div class="report-value" id="reportLowestTree">--</div></div>
+            <div class="report-line"><div class="report-label">Lowest Crop Reading</div><div class="report-value" id="reportLowestCrop">--</div></div>
+            <div class="report-line"><div class="report-label">Recommendation</div><div class="report-value" id="reportRecommendation">Waiting for data</div></div>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin-top:18px;">
+          <div class="chart-title">Downloadable Report</div>
+          <div class="small-text" style="margin-bottom:14px;">Generate a quick PDF based on the current Agroforestry dashboard values.</div>
+          <button class="action-button" onclick="downloadPdfReport()">Download Agroforestry PDF Summary</button>
+        </div>
+      </div>
+
+      <div class="report-tab-section" id="report-awd">
+        <div class="system-summary-grid">
+          <div class="card glass">
+            <div class="card-label">Water Level Sensor</div>
+            <div class="card-value">Pending</div>
+            <div class="card-note">Prepared for AWD field integration</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">AWD Status</div>
+            <div class="card-value">--</div>
+            <div class="card-note">Flooded, safe drying, or re-irrigation status</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Alert Logic</div>
+            <div class="card-value">Ready</div>
+            <div class="card-note">Can be linked once the ThingSpeak field is finalized</div>
+          </div>
+        </div>
+
+        <div class="card glass">
+          <div class="chart-title">AWD Summary</div>
+          <div class="small-text">
+            This section is reserved for alternate wetting and drying water level monitoring. Once the water level sensor is connected, this report can show current water level, drying status, re-irrigation recommendation, latest upload time, and short-term water level trend.
+          </div>
+        </div>
+      </div>
+
+      <div class="report-tab-section" id="report-ricefish">
+        <div class="system-summary-grid">
+          <div class="card glass">
+            <div class="card-label">Water Level</div>
+            <div class="card-value">Pending</div>
+            <div class="card-note">Prepared for rice-fish sensor integration</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Dissolved Oxygen</div>
+            <div class="card-value">--</div>
+            <div class="card-note">For DO-based fish safety monitoring</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Fish Safety Status</div>
+            <div class="card-value">Ready</div>
+            <div class="card-note">For tilapia-based rice-fish monitoring</div>
+          </div>
+        </div>
+
+        <div class="card glass">
+          <div class="chart-title">Rice-Fish Summary</div>
+          <div class="small-text">
+            This section is reserved for rice-fish water level and dissolved oxygen reporting. Once connected, this report can show water level suitability, DO condition, fish safety interpretation, alert status, and recommended field response.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="simulation">
+      <div class="hero glass">
+        <h1>Simulation Guide</h1>
+        <p>This section is for demonstration only. It explains which Wokwi sensor positions should trigger each DSS code and Telegram alert. The buttons are intentionally not connected to the sensors to avoid confusing the live monitoring workflow.</p>
+      </div>
+
+      <div class="simulation-grid">
+        <div class="card glass">
+          <div class="chart-title">Agroforestry Test Cases</div>
+          <div class="test-case"><div class="test-code">0</div><div><strong>Soil moisture acceptable</strong><br><span class="main-safe-note">Tree and crop readings are within the acceptable range. No Telegram alert is needed.</span></div></div>
+          <div class="test-case"><div class="test-code">1</div><div><strong>Tree zone irrigation recommended</strong><br><span class="main-safe-note">Set tree zone dry while crop alley remains normal.</span></div></div>
+          <div class="test-case"><div class="test-code">2</div><div><strong>Crop alley irrigation recommended</strong><br><span class="main-safe-note">Set crop alley dry while tree zone remains normal.</span></div></div>
+          <div class="test-case"><div class="test-code">3</div><div><strong>Both zones irrigation recommended</strong><br><span class="main-safe-note">Set both tree zone and crop alley to dry condition.</span></div></div>
+          <div class="test-case"><div class="test-code">4</div><div><strong>Possible waterlogging</strong><br><span class="main-safe-note">Set both zones to saturated condition.</span></div></div>
+        </div>
+
+        <div class="card glass">
+          <div class="chart-title">Notification Logic</div>
+          <div class="small-text">
+            Telegram should only send alerts for DSS Codes 1, 2, 3, and 4. DSS Code 0 is intentionally shown only on the dashboard so the group chat will not be flooded with normal-status messages.
+            <br><br>
+            Recommended setup:
+            <br><strong>React Code 1</strong> to Tree Telegram Alert
+            <br><strong>React Code 2</strong> to Crop Telegram Alert
+            <br><strong>React Code 3</strong> to Both Zones Telegram Alert
+            <br><strong>React Code 4</strong> to Waterlogging Telegram Alert
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="page" id="alerts"><div class="hero glass"><h1>Alert Center</h1><p>Centralized alert view for Agroforestry, AWD, and Rice-Fish monitoring components.</p></div><div class="card glass"><div class="chart-title">Current Active Alerts</div><div class="chart-subtitle">Agroforestry is live. AWD and Rice-Fish alerts are placeholders until sensors are connected.</div><span class="pill" id="alertCenterCount">Checking alerts</span><div class="alert-list" id="alertCenterList" style="margin-top:14px"><div class="alert-row"><strong>Waiting</strong><span>Agroforestry</span><span class="chip chip-ok">Loading</span><span>Checking recent DSS records.</span></div></div></div></section>
     <section class="page" id="project"><div class="hero glass"><h1>Project Information</h1><p>System layout prepared for a ridge-to-reef smart agriculture monitoring and decision-support platform.</p></div><div class="info-grid"><div class="card glass"><div class="chart-title">Monitoring Components</div><div class="small-text">The website separates the system into Agroforestry, AWD, and Rice-Fish monitoring sections to reduce data overload. Only the selected system is shown in detail, making the interface easier to understand during demonstrations.</div></div><div class="card glass"><div class="chart-title">Integration Status</div><div class="small-text">Agroforestry soil moisture is currently connected to ThingSpeak. AWD water level and Rice-Fish water level and dissolved oxygen sections are prepared as layout modules and can be connected once the sensor fields are finalized.</div></div></div></section>
   </main>
@@ -89,10 +3420,286 @@
     const channelID='3414691';
     const readAPIKey='URH4MTXR9YCKIGUM';
     const latestUrl=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=1`;
-    let treeMoistureChart,cropMoistureChart,selectedHistoryFeeds=[];
-    function showPage(pageId,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(pageId).classList.add('active');document.querySelectorAll('.nav-button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},150)}
-    function openFromCard(pageId){const btn=document.querySelector(`.nav-button[onclick*="${pageId}"]`);if(btn)showPage(pageId,btn)}
-    function showAgroTab(tabId,btn){document.querySelectorAll('.tab-section').forEach(t=>t.classList.remove('active'));document.getElementById(tabId).classList.add('active');document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},150)}
+    let treeMoistureChart,cropMoistureChart,selectedHistoryFeeds=[];let latestSnapshot=null;
+    const pageTitles={
+      overview:'AgRiFiS',
+      agroforestry:'Agroforestry Soil Moisture Dashboard',
+      awd:'AWD Monitoring Dashboard',
+      ricefish:'Rice-Fish Monitoring Dashboard',
+      report:'Summary Report',
+      simulation:'Simulation Guide',
+      project:'Project Information',
+      alerts:'Alert Center'
+    };
+
+    function setMainTitle(title,pageId){
+      const titleElement=document.getElementById('mainPageTitle');
+      const backButton=document.getElementById('mainBackBtn');
+
+      if(titleElement)titleElement.textContent='AgRiFiS';
+
+      if(backButton){
+        if(pageId==='overview'){
+          backButton.classList.add('hidden');
+        }else{
+          backButton.classList.remove('hidden');
+        }
+      }
+    }
+
+    function getCleanLabel(sourceElement){
+      if(!sourceElement)return 'Dashboard Overview';
+
+      const title=sourceElement.querySelector('.system-title,.tab-title,.report-tab-title');
+      if(title)return title.textContent.trim();
+
+      const clone=sourceElement.cloneNode(true);
+      clone.querySelectorAll('.nav-dot,svg,details,.pill,.module-details,.welcome-details,.ios-icon').forEach(el=>el.remove());
+      return clone.innerText.replace(/\s+/g,' ').trim() || 'Dashboard Overview';
+    }
+
+    function getSourceTextPosition(sourceElement){
+      const mainArea=document.querySelector('.main');
+      const rect=sourceElement ? sourceElement.getBoundingClientRect() : mainArea.getBoundingClientRect();
+      const title=sourceElement ? sourceElement.querySelector('.system-title,.tab-title,.report-tab-title') : null;
+
+      if(title){
+        const titleRect=title.getBoundingClientRect();
+        const titleStyle=getComputedStyle(title);
+        return {
+          left:titleRect.left,
+          top:titleRect.top,
+          fontSize:parseFloat(titleStyle.fontSize) || 16,
+          fontWeight:titleStyle.fontWeight || '900',
+          letterSpacing:titleStyle.letterSpacing || '-.2px'
+        };
+      }
+
+      const style=sourceElement ? getComputedStyle(sourceElement) : getComputedStyle(document.body);
+      const fontSize=parseFloat(style.fontSize) || 14;
+      return {
+        left:rect.left + 14,
+        top:rect.top + (rect.height - fontSize) / 2 - 1,
+        fontSize:fontSize,
+        fontWeight:style.fontWeight || '900',
+        letterSpacing:style.letterSpacing || '-.2px'
+      };
+    }
+
+    function getHeroMorphTarget(){
+      return document.querySelector('.page.active .hero h1') ||
+             document.querySelector('.page.active h1') ||
+             document.getElementById('mainPageTitle');
+    }
+
+    function morphWordToHeroTitle(sourceElement,targetTitle){
+      const target=getHeroMorphTarget();
+      if(!target)return;
+
+      const finalText=(target.textContent || targetTitle || getCleanLabel(sourceElement)).trim();
+      const start=getSourceTextPosition(sourceElement);
+
+      target.classList.add('hero-title-hidden');
+      target.classList.add('hero-title-morph-target');
+
+      const targetRect=target.getBoundingClientRect();
+      const targetStyle=getComputedStyle(target);
+
+      const clone=document.createElement('span');
+      clone.className='word-morph-clone hero-word-morph no-pitik-word';
+      clone.textContent=finalText;
+      clone.style.left=start.left+'px';
+      clone.style.top=start.top+'px';
+      clone.style.fontSize=start.fontSize+'px';
+      clone.style.fontWeight=start.fontWeight;
+      clone.style.letterSpacing=start.letterSpacing;
+
+      const targetHasGradient=targetStyle.backgroundImage && targetStyle.backgroundImage !== 'none';
+      if(targetHasGradient){
+        clone.classList.add('gradient-title-morph');
+        clone.style.backgroundImage=targetStyle.backgroundImage;
+        clone.style.backgroundClip='text';
+        clone.style.webkitBackgroundClip='text';
+        clone.style.color='transparent';
+        clone.style.webkitTextFillColor='transparent';
+      }
+
+      document.body.appendChild(clone);
+
+      requestAnimationFrame(()=>{
+        clone.classList.add('is-moving');
+        clone.style.left=targetRect.left+'px';
+        clone.style.top=targetRect.top+'px';
+        clone.style.fontSize=(parseFloat(targetStyle.fontSize)||42)+'px';
+        clone.style.fontWeight=targetStyle.fontWeight || '950';
+        clone.style.letterSpacing=targetStyle.letterSpacing || '-1.4px';
+      });
+
+      setTimeout(()=>{
+        const finalRect=target.getBoundingClientRect();
+        clone.style.transition='none';
+        clone.style.left=finalRect.left+'px';
+        clone.style.top=finalRect.top+'px';
+        clone.style.fontSize=(parseFloat(getComputedStyle(target).fontSize)||42)+'px';
+
+        requestAnimationFrame(()=>{
+          target.classList.remove('hero-title-hidden');
+          target.classList.remove('hero-title-morph-target');
+          clone.remove();
+        });
+      },620);
+    }
+
+    function getPageCascadeItems(page){
+      if(!page)return [];
+      return Array.from(page.querySelectorAll('.hero,.welcome-grid > *,.overview-grid > *,.current-status-grid > *,.alert-stack > *,.decision-card,.low-priority-summary > *,.chart-grid > *,.history-alert-card,.threshold-grid > *,.info-grid > *,.planned-grid > *,.system-summary-grid > *,.report-panel > *,.simulation-grid > *,.glass.card,.connection-card'));
+    }
+
+    function preparePageCascade(pageId){
+      const page=document.getElementById(pageId);
+      if(!page)return;
+
+      page.classList.remove('page-smooth-reveal');
+      page.classList.add('page-cascade-prep');
+
+      getPageCascadeItems(page).forEach((item,index)=>{
+        item.style.setProperty('--page-delay',(Math.min(index,14)*56)+'ms');
+        item.classList.remove('page-box-smooth','source-revealed','burst-box-final');
+        item.classList.add('page-box-prep');
+      });
+    }
+
+    function createSourcePulse(sourceElement){
+      if(!sourceElement)return;
+
+      const sourceRect=sourceElement.getBoundingClientRect();
+      const pulse=document.createElement('div');
+      pulse.className='clean-source-pulse';
+      pulse.style.left=(sourceRect.left+8)+'px';
+      pulse.style.top=(sourceRect.top+6)+'px';
+      pulse.style.width=(sourceRect.width-16)+'px';
+      pulse.style.height=(sourceRect.height-12)+'px';
+      document.body.appendChild(pulse);
+
+      requestAnimationFrame(()=>pulse.classList.add('is-active'));
+      setTimeout(()=>pulse.remove(),520);
+    }
+
+    function revealPageContent(pageId){
+      const page=document.getElementById(pageId);
+      if(!page)return;
+
+      page.classList.remove('page-cascade-prep');
+      page.classList.remove('page-smooth-reveal');
+      void page.offsetWidth;
+      page.classList.add('page-smooth-reveal');
+
+      getPageCascadeItems(page).forEach((item,index)=>{
+        item.style.setProperty('--page-delay',(Math.min(index,14)*56)+'ms');
+        item.classList.remove('page-box-prep');
+        item.classList.remove('page-box-smooth');
+        void item.offsetWidth;
+        item.classList.add('page-box-smooth');
+      });
+    }
+
+    function runSoftTransition(callback,sourceElement,targetTitle,pageId){
+      document.body.classList.add('is-morphing','is-page-cascading');
+
+      createSourcePulse(sourceElement);
+
+      callback();
+      setMainTitle(targetTitle,pageId);
+      preparePageCascade(pageId);
+      morphWordToHeroTitle(sourceElement,targetTitle);
+
+      setTimeout(()=>{
+        revealPageContent(pageId);
+      },250);
+
+      setTimeout(()=>{
+        document.body.classList.remove('is-morphing','is-page-cascading');
+      },1180);
+    }
+
+    function showPage(pageId,btn){
+      const title=pageTitles[pageId] || getCleanLabel(btn);
+      runSoftTransition(()=>{
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.querySelectorAll('.nav-button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.classList.remove('page-overview','page-agroforestry','page-awd','page-ricefish','page-report','page-simulation','page-project','page-alerts');
+        document.body.classList.add('page-'+pageId);
+      },btn,title,pageId);
+      setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},260);
+    }
+
+    function goBackToOverview(sourceElement){
+      const btn=document.querySelector(`.nav-button[onclick*="overview"]`);
+      if(btn)showPage('overview',sourceElement || btn);
+    }
+
+    function openFromCard(pageId,sourceElement){
+      const btn=document.querySelector(`.nav-button[onclick*="${pageId}"]`);
+      if(!btn)return;
+      const title=pageTitles[pageId] || getCleanLabel(sourceElement);
+      runSoftTransition(()=>{
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        document.querySelectorAll('.nav-button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        document.body.classList.remove('page-overview','page-agroforestry','page-awd','page-ricefish','page-report','page-simulation','page-project','page-alerts');
+        document.body.classList.add('page-'+pageId);
+      },sourceElement || btn,title,pageId);
+      setTimeout(()=>{if(treeMoistureChart)treeMoistureChart.resize();if(cropMoistureChart)cropMoistureChart.resize()},260);
+    }
+
+    function showReportTab(tabId,btn){
+      const title=getCleanLabel(btn);
+      runSoftTransition(()=>{
+        document.querySelectorAll(".report-tab-section").forEach(tab=>tab.classList.remove("active"));
+        document.getElementById(tabId).classList.add("active");
+        document.querySelectorAll(".report-tab-button").forEach(button=>button.classList.remove("active"));
+        btn.classList.add("active");
+      },btn,title,'report');
+    }
+
+    function smoothRevealTab(targetSection){
+      if(!targetSection)return;
+
+      targetSection.classList.remove('smooth-data-enter');
+      void targetSection.offsetWidth;
+      targetSection.classList.add('smooth-data-enter');
+
+      const items=targetSection.querySelectorAll('.card,.current-card,.mini-alert,.connection-card,.decision-card,.threshold-card,.threshold-hero,.tools,.history-alert-card');
+      items.forEach((item,index)=>{
+        item.style.setProperty('--smooth-delay',(index*55)+'ms');
+        item.classList.remove('smooth-box-enter');
+        void item.offsetWidth;
+        item.classList.add('smooth-box-enter');
+      });
+    }
+
+    function showAgroTab(tabId,btn){
+      const targetSection=document.getElementById(tabId);
+
+      document.querySelectorAll('.tab-section').forEach(t=>{
+        t.classList.remove('active','ios-tab-drop','smooth-data-enter');
+      });
+
+      document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      targetSection.classList.add('active');
+
+      smoothRevealTab(targetSection);
+
+      setTimeout(()=>{
+        if(treeMoistureChart)treeMoistureChart.resize();
+        if(cropMoistureChart)cropMoistureChart.resize();
+      },360);
+    }
+
     function getMoistureStatus(v){if(v<=25)return'Very Dry';if(v<=45)return'Dry';if(v<=70)return'Normal';if(v<=85)return'Wet';return'Saturated'}
     function getStatusClass(v){if(v<=25)return'very-dry';if(v<=45)return'dry';if(v<=70)return'normal';if(v<=85)return'wet';return'saturated'}
     function getBarClass(v){if(v<=25)return'bar bar-vd';if(v<=45)return'bar bar-d';if(v<=70)return'bar bar-n';if(v<=85)return'bar bar-w';return'bar bar-s'}
@@ -102,12 +3709,119 @@
     function getDssActionText(c){if(c===0)return'No irrigation alert';if(c===1)return'Tree zone irrigation recommended';if(c===2)return'Crop alley irrigation recommended';if(c===3)return'Both zones irrigation recommended';if(c===4)return'Check possible waterlogging';return'No action available'}
     function average(values){return values.length?values.reduce((s,v)=>s+v,0)/values.length:0}
     function updateConnectionStatus(createdAt){const latestTime=new Date(createdAt),ageSeconds=Math.floor((new Date()-latestTime)/1000);let status='Connected',note='ThingSpeak is receiving recent data from the monitoring system.';if(ageSeconds>300){status='Disconnected';note='ThingSpeak has not received a new update for more than 5 minutes. Check if the Wokwi simulation, Wi-Fi connection, or upload process is still running.'}else if(ageSeconds>60){status='Waiting';note='ThingSpeak has not received a new update for more than 1 minute. The dashboard is still showing the last valid reading.'}connectionStatus.textContent=status;connectionStatus.style.color=status==='Connected'?'#16a34a':status==='Waiting'?'#d97706':'#b91c1c';connectionText.textContent=note+' Last recorded update: '+latestTime.toLocaleString();overviewConnection.textContent=status;overviewConnection.style.color=connectionStatus.style.color;overviewConnectionNote.textContent='Last update: '+latestTime.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
-    async function updateDashboard(){try{const response=await fetch(latestUrl+'&t='+Date.now()),data=await response.json();if(!data.feeds||data.feeds.length===0){dssDecision.textContent='No data received yet';connectionStatus.textContent='Disconnected';connectionText.textContent='No valid ThingSpeak record was received by the dashboard.';return}const latest=data.feeds[0],tree=Number(latest.field1),crop=Number(latest.field2),ta=Number(latest.field3),ca=Number(latest.field4),code=Number(latest.field5);treeMoisture.textContent=tree+'%';cropMoisture.textContent=crop+'%';overviewTree.textContent=tree+'%';overviewCrop.textContent=crop+'%';treeStatus.textContent=getMoistureStatus(tree);cropStatus.textContent=getMoistureStatus(crop);treeStatus.className='sensor-status '+getStatusClass(tree);cropStatus.className='sensor-status '+getStatusClass(crop);treeBar.style.width=tree+'%';cropBar.style.width=crop+'%';treeBar.className=getBarClass(tree);cropBar.className=getBarClass(crop);treeAlert.textContent=ta===1?'ON':'OFF';cropAlert.textContent=ca===1?'ON':'OFF';treeAlert.className=ta===1?'sensor-value alert-on':'sensor-value alert-off';cropAlert.className=ca===1?'sensor-value alert-on':'sensor-value alert-off';dssDecision.textContent=getDssDecision(code);dssCode.textContent=code;decisionNote.textContent=getDecisionNote(code);decisionBox.style.borderLeftColor=getDecisionBorder(code);overviewDssCode.textContent='Code '+code;overviewDssText.textContent=getDssDecision(code);lastUpdate.textContent='Last ThingSpeak update: '+new Date(latest.created_at).toLocaleString();updateConnectionStatus(latest.created_at)}catch(error){dssDecision.textContent='Error loading ThingSpeak data';connectionStatus.textContent='Disconnected';connectionStatus.style.color='#b91c1c';connectionText.textContent='The dashboard cannot connect to ThingSpeak at the moment.';console.log(error)}}
+    
+    function updateReportSummary(){
+      if(!latestSnapshot)return;
+      const range=historyRange?historyRange.value:'--';
+      const avgTreeText=avgTree?avgTree.textContent:'--';
+      const avgCropText=avgCrop?avgCrop.textContent:'--';
+      const lowestTreeText=lowestTreeReading?lowestTreeReading.textContent:'--';
+      const lowestCropText=lowestCropReading?lowestCropReading.textContent:'--';
+      const uploadTime=new Date(latestSnapshot.createdAt).toLocaleString();
+
+      reportDssCode.textContent='Code '+latestSnapshot.dssCode;
+      reportDssText.textContent=getDssDecision(latestSnapshot.dssCode);
+      reportGeneratedAt.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      reportRange.textContent=range+' readings';
+
+      reportTree.textContent=latestSnapshot.treeMoisture+'%';
+      reportCrop.textContent=latestSnapshot.cropMoisture+'%';
+      reportTreeAlert.textContent=latestSnapshot.treeAlert===1?'ON':'OFF';
+      reportCropAlert.textContent=latestSnapshot.cropAlert===1?'ON':'OFF';
+      reportLatestUpload.textContent=uploadTime;
+
+      reportAvgTree.textContent=avgTreeText;
+      reportAvgCrop.textContent=avgCropText;
+      reportLowestTree.textContent=lowestTreeText;
+      reportLowestCrop.textContent=lowestCropText;
+      reportRecommendation.textContent=getDecisionNote(latestSnapshot.dssCode);
+    }
+
+    function downloadPdfReport(){
+      if(!latestSnapshot){
+        alert('No live data available yet.');
+        return;
+      }
+
+      const jsPDFObject=window.jspdf;
+      if(!jsPDFObject || !jsPDFObject.jsPDF){
+        alert('PDF library is still loading. Please try again in a few seconds.');
+        return;
+      }
+
+      const doc=new jsPDFObject.jsPDF();
+      const now=new Date();
+
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(16);
+      doc.text('Agroforestry Soil Moisture DSS Summary Report',14,18);
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(10);
+      doc.text('Generated: '+now.toLocaleString(),14,26);
+      doc.text('System: Agroforestry Soil Moisture DSS',14,32);
+
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(12);
+      doc.text('Current Reading Summary',14,44);
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(10);
+      let y=52;
+      const lines=[
+        ['Latest DSS Decision','Code '+latestSnapshot.dssCode+' - '+getDssDecision(latestSnapshot.dssCode)],
+        ['Tree Zone Moisture',latestSnapshot.treeMoisture+'%'],
+        ['Crop Alley Moisture',latestSnapshot.cropMoisture+'%'],
+        ['Tree Alert',latestSnapshot.treeAlert===1?'ON':'OFF'],
+        ['Crop Alert',latestSnapshot.cropAlert===1?'ON':'OFF'],
+        ['Latest ThingSpeak Upload',new Date(latestSnapshot.createdAt).toLocaleString()],
+        ['Average Tree Moisture',avgTree?avgTree.textContent:'--'],
+        ['Average Crop Moisture',avgCrop?avgCrop.textContent:'--'],
+        ['Lowest Tree Reading',lowestTreeReading?lowestTreeReading.textContent:'--'],
+        ['Lowest Crop Reading',lowestCropReading?lowestCropReading.textContent:'--'],
+        ['Recommendation',getDecisionNote(latestSnapshot.dssCode)]
+      ];
+
+      lines.forEach(item=>{
+        doc.setFont('helvetica','bold');
+        doc.text(item[0]+':',14,y);
+        doc.setFont('helvetica','normal');
+        const wrapped=doc.splitTextToSize(String(item[1]),118);
+        doc.text(wrapped,72,y);
+        y += Math.max(7, wrapped.length*6);
+      });
+
+      doc.setFont('helvetica','bold');
+      doc.text('Note:',14,y+6);
+      doc.setFont('helvetica','normal');
+      const note='This report is automatically generated from the live dashboard. Values should be validated using actual field observations and calibrated sensor readings.';
+      doc.text(doc.splitTextToSize(note,175),14,y+13);
+
+      doc.save('agroforestry_dss_summary_report.pdf');
+    }
+
+    
+    function pulseValue(elementId){
+      const element=document.getElementById(elementId);
+      if(!element)return;
+      element.classList.remove('value-pulse');
+      void element.offsetWidth;
+      element.classList.add('value-pulse');
+    }
+
+    function pulseLiveValues(){
+      ['treeMoisture','cropMoisture','treeAlert','cropAlert','dssDecision','dssCode','connectionStatus'].forEach(pulseValue);
+    }
+
+    async function updateDashboard(){try{const response=await fetch(latestUrl+'&t='+Date.now()),data=await response.json();if(!data.feeds||data.feeds.length===0){dssDecision.textContent='No data received yet';connectionStatus.textContent='Disconnected';connectionText.textContent='No valid ThingSpeak record was received by the dashboard.';return}const latest=data.feeds[0],tree=Number(latest.field1),crop=Number(latest.field2),ta=Number(latest.field3),ca=Number(latest.field4),code=Number(latest.field5);treeMoisture.textContent=tree+'%';cropMoisture.textContent=crop+'%';overviewTree.textContent=tree+'%';overviewCrop.textContent=crop+'%';treeStatus.textContent=getMoistureStatus(tree);cropStatus.textContent=getMoistureStatus(crop);treeStatus.className='sensor-status '+getStatusClass(tree);cropStatus.className='sensor-status '+getStatusClass(crop);treeBar.style.width=tree+'%';cropBar.style.width=crop+'%';treeBar.className=getBarClass(tree);cropBar.className=getBarClass(crop);treeAlert.textContent=ta===1?'ON':'OFF';cropAlert.textContent=ca===1?'ON':'OFF';treeAlert.className=ta===1?'sensor-value alert-on':'sensor-value alert-off';cropAlert.className=ca===1?'sensor-value alert-on':'sensor-value alert-off';dssDecision.textContent=getDssDecision(code);dssCode.textContent=code;decisionNote.textContent=getDecisionNote(code);decisionBox.style.borderLeftColor=getDecisionBorder(code);
+        if(document.getElementById('decisionPriority'))decisionPriority.textContent=getDecisionPriority(code);
+        if(document.getElementById('decisionFocusArea'))decisionFocusArea.textContent=getDecisionFocusArea(code);
+        if(document.getElementById('decisionNextStep'))decisionNextStep.textContent=getDecisionNextStep(code);overviewDssCode.textContent='Code '+code;overviewDssText.textContent=getDssDecision(code);lastUpdate.textContent='Last ThingSpeak update: '+new Date(latest.created_at).toLocaleString();updateConnectionStatus(latest.created_at);latestSnapshot={treeMoisture:tree,cropMoisture:crop,treeAlert:ta,cropAlert:ca,dssCode:code,createdAt:latest.created_at};updateReportSummary();pulseLiveValues()}catch(error){dssDecision.textContent='Error loading ThingSpeak data';connectionStatus.textContent='Disconnected';connectionStatus.style.color='#b91c1c';connectionText.textContent='The dashboard cannot connect to ThingSpeak at the moment.';console.log(error)}}
     function updateSummaryCards(treeData,cropData,feeds){const t=treeData.filter(v=>!Number.isNaN(v)),c=cropData.filter(v=>!Number.isNaN(v));avgTree.textContent=Math.round(average(t))+'%';avgCrop.textContent=Math.round(average(c))+'%';const tr=feeds.map(f=>({value:Number(f.field1),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));const cr=feeds.map(f=>({value:Number(f.field2),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));if(tr.length){const m=tr.reduce((a,b)=>b.value<a.value?b:a,tr[0]);lowestTreeReading.textContent=m.value+'%';lowestTreeTime.textContent='Lowest at '+m.time.toLocaleString()}if(cr.length){const m=cr.reduce((a,b)=>b.value<a.value?b:a,cr[0]);lowestCropReading.textContent=m.value+'%';lowestCropTime.textContent='Lowest at '+m.time.toLocaleString()}}
-    function updateAlertLists(feeds){const alerts=feeds.map(f=>{const ta=Number(f.field3),ca=Number(f.field4),code=Number(f.field5),time=new Date(f.created_at);let zone='System';if(ta===1&&ca===1)zone='Tree and Crop';else if(ta===1)zone='Tree Zone';else if(ca===1)zone='Crop Alley';else if(code===4)zone='Both Zones';return{time,zone,code,ta,ca,action:getDssActionText(code)}}).filter(x=>x.code!==0||x.ta===1||x.ca===1).slice(-8).reverse();const normal=`<div class="alert-row"><strong>Normal</strong><span>Agroforestry</span><span class="chip chip-ok">No alert</span><span>No irrigation or waterlogging alert in the selected records.</span></div>`;if(!alerts.length){alertCount.textContent='No recent alerts';alertCenterCount.textContent='No active alert';alertList.innerHTML=normal;alertCenterList.innerHTML=normal;return}const rows=alerts.map(x=>`<div class="alert-row"><strong>${x.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</strong><span>${x.zone}</span><span class="chip chip-on">DSS Code ${x.code}</span><span>${x.action}</span></div>`).join('');alertCount.textContent=alerts.length+' recent alert event'+(alerts.length>1?'s':'');alertCenterCount.textContent=alerts.length+' agroforestry alert'+(alerts.length>1?'s':'');alertList.innerHTML=rows;alertCenterList.innerHTML=rows+`<div class="alert-row"><strong>Pending</strong><span>AWD and Rice-Fish</span><span class="chip chip-ok">Not connected</span><span>Alert records will appear after sensor fields are connected.</span></div>`}
+    function updateAlertLists(feeds){const alerts=feeds.map(f=>{const ta=Number(f.field3),ca=Number(f.field4),code=Number(f.field5),time=new Date(f.created_at);let zone='System';if(ta===1&&ca===1)zone='Tree and Crop';else if(ta===1)zone='Tree Zone';else if(ca===1)zone='Crop Alley';else if(code===4)zone='Both Zones';return{time,zone,code,ta,ca,action:getDssActionText(code)}}).filter(x=>x.code!==0||x.ta===1||x.ca===1).slice(-15).reverse();const normal=`<div class="alert-row"><strong>Normal</strong><span>Agroforestry</span><span class="chip chip-ok">No alert</span><span>No irrigation or waterlogging alert in the selected records.</span></div>`;if(!alerts.length){alertCount.textContent='No recent alerts';alertCenterCount.textContent='No active alert';alertList.innerHTML=normal;alertCenterList.innerHTML=normal;return}const rows=alerts.map(x=>`<div class="alert-row"><strong>${x.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</strong><span>${x.zone}</span><span class="chip chip-on">DSS Code ${x.code}</span><span>${x.action}</span></div>`).join('');alertCount.textContent=alerts.length+' recent alert event'+(alerts.length>1?'s':'');alertCenterCount.textContent=alerts.length+' agroforestry alert'+(alerts.length>1?'s':'');alertList.innerHTML=rows;alertCenterList.innerHTML=rows+`<div class="alert-row"><strong>Pending</strong><span>AWD and Rice-Fish</span><span class="chip chip-ok">Not connected</span><span>Alert records will appear after sensor fields are connected.</span></div>`}
     const thresholdBandPlugin={id:'thresholdBandPlugin',beforeDraw(chart){const{ctx,chartArea,scales}=chart;if(!chartArea||!scales.y)return;[{from:0,to:25,color:'rgba(185,28,28,.07)'},{from:25,to:45,color:'rgba(217,119,6,.07)'},{from:45,to:70,color:'rgba(21,128,61,.07)'},{from:70,to:85,color:'rgba(37,99,235,.07)'},{from:85,to:100,color:'rgba(109,40,217,.07)'}].forEach(b=>{const yTop=scales.y.getPixelForValue(b.to),yBottom=scales.y.getPixelForValue(b.from);ctx.save();ctx.fillStyle=b.color;ctx.fillRect(chartArea.left,yTop,chartArea.right-chartArea.left,yBottom-yTop);ctx.restore()})}};
     function createSingleMoistureChart(id,label,data,labels,color,fill){const ctx=document.getElementById(id).getContext('2d');return new Chart(ctx,{type:'line',data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:fill,tension:.35,fill:true,pointRadius:3,pointHoverRadius:5,borderWidth:3}]},plugins:[thresholdBandPlugin],options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:0,max:100,title:{display:true,text:'Moisture (%)'},grid:{color:'rgba(255,255,255,.34)'}},x:{title:{display:true,text:'Time'},grid:{color:'rgba(255,255,255,.18)'}}}}})}
-    async function updateHistoryCharts(){try{const selectedRange=historyRange.value;const url=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=${selectedRange}&t=${Date.now()}`;const response=await fetch(url),data=await response.json();if(!data.feeds||data.feeds.length===0)return;selectedHistoryFeeds=data.feeds;const labels=data.feeds.map(f=>new Date(f.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));const treeData=data.feeds.map(f=>Number(f.field1)),cropData=data.feeds.map(f=>Number(f.field2));updateSummaryCards(treeData,cropData,data.feeds);updateAlertLists(data.feeds);if(!treeMoistureChart)treeMoistureChart=createSingleMoistureChart('treeMoistureChart','Tree Zone Moisture',treeData,labels,'#15803d','rgba(21,128,61,.12)');else{treeMoistureChart.data.labels=labels;treeMoistureChart.data.datasets[0].data=treeData;treeMoistureChart.update()}if(!cropMoistureChart)cropMoistureChart=createSingleMoistureChart('cropMoistureChart','Crop Alley Moisture',cropData,labels,'#2563eb','rgba(37,99,235,.12)');else{cropMoistureChart.data.labels=labels;cropMoistureChart.data.datasets[0].data=cropData;cropMoistureChart.update()}}catch(e){console.log('History chart error:',e)}}
+    async function updateHistoryCharts(){try{const selectedRange=historyRange.value;const url=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=${selectedRange}&t=${Date.now()}`;const response=await fetch(url),data=await response.json();if(!data.feeds||data.feeds.length===0)return;selectedHistoryFeeds=data.feeds;const labels=data.feeds.map(f=>new Date(f.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));const treeData=data.feeds.map(f=>Number(f.field1)),cropData=data.feeds.map(f=>Number(f.field2));updateSummaryCards(treeData,cropData,data.feeds);updateAlertLists(data.feeds);updateReportSummary();if(!treeMoistureChart)treeMoistureChart=createSingleMoistureChart('treeMoistureChart','Tree Zone Moisture',treeData,labels,'#15803d','rgba(21,128,61,.12)');else{treeMoistureChart.data.labels=labels;treeMoistureChart.data.datasets[0].data=treeData;treeMoistureChart.update()}if(!cropMoistureChart)cropMoistureChart=createSingleMoistureChart('cropMoistureChart','Crop Alley Moisture',cropData,labels,'#2563eb','rgba(37,99,235,.12)');else{cropMoistureChart.data.labels=labels;cropMoistureChart.data.datasets[0].data=cropData;cropMoistureChart.update()}}catch(e){console.log('History chart error:',e)}}
     function downloadHistoryCsv(){if(!selectedHistoryFeeds.length){alert('No history data available yet.');return}const rows=[['Time','Tree Moisture','Crop Moisture','Tree Alert','Crop Alert','DSS Code']];selectedHistoryFeeds.forEach(f=>rows.push([f.created_at,f.field1,f.field2,f.field3,f.field4,f.field5]));const csv=rows.map(r=>r.map(v=>`"${v??''}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const link=document.createElement('a');const url=URL.createObjectURL(blob);link.href=url;link.download='agroforestry_soil_moisture_latest_'+historyRange.value+'_readings.csv';document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url)}
     updateDashboard();updateHistoryCharts();setInterval(updateDashboard,5000);setInterval(updateHistoryCharts,15000);
   </script>
