@@ -3098,6 +3098,388 @@
       filter:none !important;
     }
 
+  
+    /* Compact ratio update: smaller boxes, less scrolling, cleaner spacing */
+    :root{
+      --shadow:0 14px 38px rgba(15,23,42,.10) !important;
+    }
+
+    .main{
+      padding:16px 24px 30px 0 !important;
+    }
+
+    .logos{
+      gap:16px !important;
+      margin-bottom:8px !important;
+      padding:2px 0 5px !important;
+    }
+
+    .logos img{
+      height:42px !important;
+      max-width:104px !important;
+      filter:drop-shadow(0 5px 8px rgba(15,23,42,.10)) !important;
+    }
+
+    .hero{
+      border-radius:28px !important;
+      padding:22px 26px !important;
+      margin-bottom:14px !important;
+    }
+
+    .hero h1{
+      font-size:clamp(30px,3.2vw,44px) !important;
+      line-height:1.08 !important;
+      letter-spacing:-1.2px !important;
+    }
+
+    .hero p{
+      margin-top:8px !important;
+      font-size:14px !important;
+      line-height:1.45 !important;
+      max-width:760px !important;
+    }
+
+    .hero-kicker{
+      padding:6px 10px !important;
+      margin-bottom:8px !important;
+      font-size:11px !important;
+    }
+
+    #overview .welcome-hero,
+    #overview .hero.welcome-hero{
+      min-height:190px !important;
+      padding:24px 28px 24px !important;
+      margin-bottom:14px !important;
+      border-radius:28px !important;
+    }
+
+    #overview .welcome-hero h1,
+    .welcome-hero h1{
+      font-size:clamp(48px,6.2vw,82px) !important;
+      line-height:1.12 !important;
+      margin-bottom:4px !important;
+      padding-bottom:.08em !important;
+      letter-spacing:-2.4px !important;
+    }
+
+    .welcome-grid,
+    .overview-grid,
+    .system-summary-grid,
+    .current-status-grid,
+    .chart-grid,
+    .planned-grid,
+    .info-grid,
+    .threshold-grid{
+      gap:12px !important;
+      margin-bottom:14px !important;
+    }
+
+    .welcome-card,
+    .system-card,
+    .card,
+    .current-card,
+    .mini-alert,
+    .decision-card,
+    .connection-card,
+    .threshold-card,
+    .threshold-hero{
+      border-radius:24px !important;
+      padding:16px !important;
+    }
+
+    .welcome-card{
+      min-height:122px !important;
+    }
+
+    .overview-grid .system-card,
+    .system-card{
+      min-height:138px !important;
+    }
+
+    .welcome-icon,
+    .system-icon,
+    .current-icon,
+    .mini-alert-icon{
+      width:42px !important;
+      height:42px !important;
+      font-size:22px !important;
+      border-radius:16px !important;
+      margin-bottom:8px !important;
+    }
+
+    .welcome-title,
+    .system-title{
+      font-size:18px !important;
+      line-height:1.18 !important;
+      margin-bottom:4px !important;
+      letter-spacing:-.5px !important;
+    }
+
+    .overview-grid .system-title{
+      font-size:22px !important;
+    }
+
+    .welcome-text,
+    .system-desc,
+    .module-details,
+    .small-text,
+    .card-note,
+    .chart-subtitle{
+      font-size:12.5px !important;
+      line-height:1.42 !important;
+    }
+
+    details summary,
+    .pill,
+    .action-button,
+    .tab-button,
+    .report-tab-button{
+      font-size:12.5px !important;
+      padding:8px 12px !important;
+    }
+
+    .section-heading{
+      font-size:18px !important;
+      margin:12px 0 10px !important;
+    }
+
+    .current-card{
+      min-height:175px !important;
+    }
+
+    .current-card-top{
+      margin-bottom:8px !important;
+    }
+
+    .current-kicker,
+    .card-label{
+      font-size:11px !important;
+      margin-bottom:4px !important;
+    }
+
+    .current-title{
+      font-size:17px !important;
+    }
+
+    .current-value,
+    .card-value,
+    .sensor-value{
+      font-size:34px !important;
+      line-height:1.05 !important;
+      letter-spacing:-1px !important;
+    }
+
+    .sensor-status,
+    .current-status{
+      font-size:13px !important;
+      margin-top:4px !important;
+    }
+
+    .track{
+      height:10px !important;
+      margin-top:10px !important;
+      border-radius:999px !important;
+    }
+
+    .alert-decision-grid{
+      grid-template-columns:.85fr 1.15fr !important;
+      gap:12px !important;
+      margin-bottom:14px !important;
+    }
+
+    .alert-stack{
+      gap:10px !important;
+    }
+
+    .mini-alert{
+      grid-template-columns:46px 1fr !important;
+      gap:12px !important;
+      min-height:92px !important;
+    }
+
+    .decision-card{
+      min-height:190px !important;
+    }
+
+    .decision-title{
+      font-size:26px !important;
+      line-height:1.08 !important;
+    }
+
+    .decision-code{
+      font-size:46px !important;
+    }
+
+    .decision-insights{
+      gap:10px !important;
+      margin-top:12px !important;
+    }
+
+    .decision-insight{
+      padding:10px !important;
+      border-radius:16px !important;
+    }
+
+    .low-priority-summary .card-value{
+      font-size:27px !important;
+    }
+
+    .chart-title{
+      font-size:17px !important;
+      line-height:1.2 !important;
+      margin-bottom:3px !important;
+    }
+
+    .chart-box{
+      height:210px !important;
+      min-height:210px !important;
+      margin-top:8px !important;
+    }
+
+    .history-alert-card{
+      margin-top:12px !important;
+    }
+
+    .alert-row{
+      padding:9px 10px !important;
+      font-size:12.5px !important;
+      gap:8px !important;
+    }
+
+    .threshold-hero{
+      padding:20px !important;
+      margin-bottom:12px !important;
+    }
+
+    .threshold-hero h2{
+      font-size:31px !important;
+      line-height:1.08 !important;
+      letter-spacing:-1.2px !important;
+    }
+
+    .threshold-hero p{
+      font-size:13.5px !important;
+      line-height:1.45 !important;
+      margin-top:8px !important;
+    }
+
+    .threshold-grid{
+      grid-template-columns:repeat(5,1fr) !important;
+    }
+
+    .threshold-card{
+      min-height:130px !important;
+      padding:15px !important;
+    }
+
+    .threshold-range{
+      font-size:23px !important;
+      margin-bottom:10px !important;
+      letter-spacing:-.8px !important;
+    }
+
+    .threshold-name{
+      font-size:16px !important;
+      margin-bottom:5px !important;
+    }
+
+    .threshold-action{
+      font-size:12px !important;
+      line-height:1.35 !important;
+    }
+
+    .report-panel{
+      gap:12px !important;
+    }
+
+    .report-line{
+      grid-template-columns:150px 1fr !important;
+      gap:8px !important;
+      padding:8px 0 !important;
+      font-size:13px !important;
+    }
+
+    .simulation-grid{
+      gap:12px !important;
+      margin-bottom:14px !important;
+    }
+
+    .test-case{
+      padding:10px !important;
+      border-radius:16px !important;
+      grid-template-columns:60px 1fr !important;
+    }
+
+    .test-code{
+      font-size:20px !important;
+    }
+
+    .last-update{
+      font-size:12.5px !important;
+      padding:10px 12px !important;
+      margin-top:10px !important;
+    }
+
+    .page.active{
+      animation:none !important;
+    }
+
+    .page.active .hero{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+    }
+
+    @media(max-width:1250px){
+      .threshold-grid{
+        grid-template-columns:repeat(3,1fr) !important;
+      }
+    }
+
+  
+    /* Dashboard Overview: show details automatically on hover, no clicking needed */
+    #overview .welcome-card details,
+    #overview .system-card details{
+      display:block !important;
+      margin-top:6px !important;
+      pointer-events:none !important;
+    }
+
+    #overview .welcome-card details summary,
+    #overview .system-card details summary{
+      display:none !important;
+    }
+
+    #overview .welcome-card .welcome-details,
+    #overview .system-card .module-details{
+      max-height:0 !important;
+      opacity:0 !important;
+      overflow:hidden !important;
+      margin-top:0 !important;
+      transform:translateY(-6px) !important;
+      filter:blur(3px) !important;
+      transition:
+        max-height .34s cubic-bezier(.22,1,.36,1),
+        opacity .28s ease,
+        transform .34s cubic-bezier(.22,1,.36,1),
+        filter .28s ease,
+        margin-top .28s ease !important;
+    }
+
+    #overview .welcome-card:hover .welcome-details,
+    #overview .system-card:hover .module-details{
+      max-height:130px !important;
+      opacity:1 !important;
+      margin-top:8px !important;
+      transform:translateY(0) !important;
+      filter:blur(0) !important;
+    }
+
+    #overview .welcome-card:hover,
+    #overview .system-card:hover{
+      transform:translateY(-3px) scale(1.006) !important;
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -3171,7 +3553,7 @@
             <div class="system-title">Agroforestry</div>
           </div>
           <span class="pill">Open dashboard</span>
-          <details onclick="event.stopPropagation()">
+          <details open onclick="event.stopPropagation()">
             <summary>Details</summary>
             <div class="module-details">Live soil moisture monitoring for tree zone and crop alley.</div>
           </details>
@@ -3183,7 +3565,7 @@
             <div class="system-title">AWD</div>
           </div>
           <span class="pill pending">Open module</span>
-          <details onclick="event.stopPropagation()">
+          <details open onclick="event.stopPropagation()">
             <summary>Details</summary>
             <div class="module-details">Prepared water level monitoring module for alternate wetting and drying plots.</div>
           </details>
@@ -3195,7 +3577,7 @@
             <div class="system-title">Rice-Fish</div>
           </div>
           <span class="pill pending">Open module</span>
-          <details onclick="event.stopPropagation()">
+          <details open onclick="event.stopPropagation()">
             <summary>Details</summary>
             <div class="module-details">Prepared water level and dissolved oxygen module for tilapia-based rice-fish plots.</div>
           </details>
