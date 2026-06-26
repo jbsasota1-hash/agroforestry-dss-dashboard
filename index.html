@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="icon" type="image/png" href="UPLB.png">
+  <link rel="apple-touch-icon" href="UPLB.png">
+  <meta name="theme-color" content="#0f3d22">
+  <meta property="og:title" content="AgRiFiS Smart Agriculture Dashboard">
+  <meta property="og:description" content="Agroforestry, AWD, and Rice-Fish monitoring dashboard.">
+  <meta property="og:image" content="UPLB.png">
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgRiFiS</title>
@@ -3940,6 +3947,83 @@
       }
     }
 
+  
+    /* Rice-Fish DO visual indicator: brighter when good, darker when poor */
+    .do-good-card,
+    .do-watch-card,
+    .do-bad-card{
+      transition:background .45s cubic-bezier(.22,1,.36,1), box-shadow .45s cubic-bezier(.22,1,.36,1), filter .45s ease !important;
+    }
+
+    .do-good-card{
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.86),transparent 34%),
+        linear-gradient(135deg,rgba(240,253,244,.88),rgba(220,252,231,.76)) !important;
+      box-shadow:0 18px 48px rgba(22,163,74,.16), inset 0 1px 0 rgba(255,255,255,.74) !important;
+      filter:saturate(1.08) brightness(1.04) !important;
+    }
+
+    .do-watch-card{
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.72),transparent 34%),
+        linear-gradient(135deg,rgba(255,251,235,.82),rgba(254,243,199,.72)) !important;
+      box-shadow:0 18px 48px rgba(217,119,6,.14), inset 0 1px 0 rgba(255,255,255,.65) !important;
+      filter:saturate(.98) brightness(.99) !important;
+    }
+
+    .do-bad-card{
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.40),transparent 34%),
+        linear-gradient(135deg,rgba(69,26,3,.34),rgba(127,29,29,.30)) !important;
+      box-shadow:0 18px 48px rgba(127,29,29,.22), inset 0 1px 0 rgba(255,255,255,.28) !important;
+      filter:saturate(.82) brightness(.90) !important;
+    }
+
+    .do-good-card .card-value,
+    .do-good-card .metric-value{
+      color:#16a34a !important;
+    }
+
+    .do-watch-card .card-value,
+    .do-watch-card .metric-value{
+      color:#b45309 !important;
+    }
+
+    .do-bad-card .card-value,
+    .do-bad-card .metric-value{
+      color:#7f1d1d !important;
+    }
+
+    .do-indicator{
+      margin-top:10px;
+      height:9px;
+      border-radius:999px;
+      background:linear-gradient(90deg,#7f1d1d,#d97706,#22c55e);
+      position:relative;
+      overflow:hidden;
+      opacity:.82;
+    }
+
+    .do-indicator::after{
+      content:"";
+      position:absolute;
+      top:50%;
+      left:var(--do-dot,65%);
+      width:16px;
+      height:16px;
+      border-radius:999px;
+      transform:translate(-50%,-50%);
+      background:#ffffff;
+      border:2px solid rgba(15,61,34,.28);
+      box-shadow:0 4px 12px rgba(15,23,42,.18);
+      transition:left .42s cubic-bezier(.22,1,.36,1);
+    }
+
+    .do-bad-card .card-note,
+    .do-bad-card .card-label{
+      color:#3f1d1d !important;
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -4497,10 +4581,11 @@
               <div class="card-value compact-value" id="rfLevelCard">15.0 cm</div>
               <div class="card-note">Target maximum depth is 20 cm</div>
             </div>
-            <div class="card glass">
+            <div class="card glass do-good-card" id="rfDoVisualCard">
               <div class="card-label">DO Reading</div>
               <div class="card-value compact-value" id="rfDoCard">6.5 mg/L</div>
-              <div class="card-note">Dissolved oxygen condition</div>
+              <div class="card-note" id="rfDoNote">Good for fish</div>
+              <div class="do-indicator" id="rfDoIndicator"></div>
             </div>
             <div class="card glass">
               <div class="card-label">Trench Depth</div>
@@ -5500,6 +5585,33 @@
       updateAwdViz();
     }
 
+    
+    function updateDoVisualState(dissolvedOxygen){
+      const card=document.getElementById('rfDoVisualCard');
+      const note=document.getElementById('rfDoNote');
+      const indicator=document.getElementById('rfDoIndicator');
+      if(!card)return;
+
+      card.classList.remove('do-good-card','do-watch-card','do-bad-card');
+
+      let noteText='Good for fish';
+      if(dissolvedOxygen < 4){
+        card.classList.add('do-bad-card');
+        noteText='Critical for fish';
+      }else if(dissolvedOxygen < 5.5){
+        card.classList.add('do-watch-card');
+        noteText='Monitor closely';
+      }else{
+        card.classList.add('do-good-card');
+      }
+
+      if(note)note.textContent=noteText;
+      if(indicator){
+        const dot=Math.max(0,Math.min(100,(dissolvedOxygen/10)*100));
+        indicator.style.setProperty('--do-dot',dot+'%');
+      }
+    }
+
     function updateRiceFishViz(){
       const waterSlider=document.getElementById('rfWaterSlider');
       const doSlider=document.getElementById('rfDoSlider');
@@ -5526,6 +5638,7 @@
 
       const levelText=fieldDepth.toFixed(1)+' cm';
       const doText=dissolvedOxygen.toFixed(1)+' mg/L';
+      updateDoVisualState(dissolvedOxygen);
 
       let systemStatus='Within target range';
       let alertSummary='Within target range';
