@@ -4024,6 +4024,29 @@
       color:#3f1d1d !important;
     }
 
+  
+    /* Rice-Fish actual water color changes with DO condition */
+    #refugeWaterRect,
+    #trenchWaterRect{
+      transition:
+        y .42s cubic-bezier(.22,1,.36,1),
+        height .42s cubic-bezier(.22,1,.36,1),
+        opacity .35s ease,
+        filter .35s ease !important;
+    }
+
+    .rf-water-good{
+      filter:drop-shadow(0 8px 14px rgba(56,189,248,.18));
+    }
+
+    .rf-water-watch{
+      filter:saturate(.82) brightness(.92) drop-shadow(0 8px 14px rgba(14,116,144,.14));
+    }
+
+    .rf-water-bad{
+      filter:saturate(.55) brightness(.72) drop-shadow(0 8px 14px rgba(15,23,42,.22));
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -4702,8 +4725,8 @@
                         <stop offset="100%" stop-color="#d9f0ff"/>
                       </linearGradient>
                       <linearGradient id="waterGrad2" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stop-color="rgba(81,170,255,.72)"/>
-                        <stop offset="100%" stop-color="rgba(23,103,204,.92)"/>
+                        <stop id="rfRefugeWaterTop" offset="0%" stop-color="#7dd3fc" stop-opacity=".78"/>
+                        <stop id="rfRefugeWaterBottom" offset="100%" stop-color="#2563eb" stop-opacity=".92"/>
                       </linearGradient>
                       <linearGradient id="soilGrad2" x1="0" x2="0" y1="0" y2="1">
                         <stop offset="0%" stop-color="#ac7d57"/>
@@ -4742,8 +4765,8 @@
                         <stop offset="100%" stop-color="#d9f0ff"/>
                       </linearGradient>
                       <linearGradient id="waterGrad3" x1="0" x2="0" y1="0" y2="1">
-                        <stop offset="0%" stop-color="rgba(81,170,255,.72)"/>
-                        <stop offset="100%" stop-color="rgba(23,103,204,.92)"/>
+                        <stop id="rfTrenchWaterTop" offset="0%" stop-color="#7dd3fc" stop-opacity=".78"/>
+                        <stop id="rfTrenchWaterBottom" offset="100%" stop-color="#2563eb" stop-opacity=".92"/>
                       </linearGradient>
                       <linearGradient id="soilGrad3" x1="0" x2="0" y1="0" y2="1">
                         <stop offset="0%" stop-color="#b18258"/>
@@ -5586,7 +5609,57 @@
     }
 
     
+    
+    function updateRiceFishWaterColor(dissolvedOxygen){
+      const refugeTop=document.getElementById('rfRefugeWaterTop');
+      const refugeBottom=document.getElementById('rfRefugeWaterBottom');
+      const trenchTop=document.getElementById('rfTrenchWaterTop');
+      const trenchBottom=document.getElementById('rfTrenchWaterBottom');
+      const refugeWater=document.getElementById('refugeWaterRect');
+      const trenchWater=document.getElementById('trenchWaterRect');
+
+      let topColor='#8ee7ff';
+      let bottomColor='#1d8fec';
+      let opacity='.90';
+      let waterClass='rf-water-good';
+
+      if(dissolvedOxygen < 4){
+        topColor='#64748b';
+        bottomColor='#1e293b';
+        opacity='.76';
+        waterClass='rf-water-bad';
+      }else if(dissolvedOxygen < 5.5){
+        topColor='#67b7c7';
+        bottomColor='#256f86';
+        opacity='.82';
+        waterClass='rf-water-watch';
+      }
+
+      [refugeTop,trenchTop].forEach(stop=>{
+        if(stop){
+          stop.setAttribute('stop-color',topColor);
+          stop.setAttribute('stop-opacity',opacity);
+        }
+      });
+
+      [refugeBottom,trenchBottom].forEach(stop=>{
+        if(stop){
+          stop.setAttribute('stop-color',bottomColor);
+          stop.setAttribute('stop-opacity','.94');
+        }
+      });
+
+      [refugeWater,trenchWater].forEach(water=>{
+        if(water){
+          water.classList.remove('rf-water-good','rf-water-watch','rf-water-bad');
+          water.classList.add(waterClass);
+          water.setAttribute('opacity', opacity);
+        }
+      });
+    }
+
     function updateDoVisualState(dissolvedOxygen){
+      updateRiceFishWaterColor(dissolvedOxygen);
       const card=document.getElementById('rfDoVisualCard');
       const note=document.getElementById('rfDoNote');
       const indicator=document.getElementById('rfDoIndicator');
