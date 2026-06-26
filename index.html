@@ -2918,6 +2918,142 @@
       overflow:visible !important;
     }
 
+  
+    /* Clean layout fix: remove the empty Back/title bar and balance the Overview title block */
+    .ios-main-bar,
+    .ios-back-button,
+    .ios-main-title{
+      display:none !important;
+      visibility:hidden !important;
+      height:0 !important;
+      min-height:0 !important;
+      margin:0 !important;
+      padding:0 !important;
+      overflow:hidden !important;
+    }
+
+    .main{
+      padding-top:18px !important;
+    }
+
+    .logos{
+      margin-bottom:14px !important;
+      padding:4px 0 6px !important;
+    }
+
+    #overview .welcome-hero,
+    #overview .hero.welcome-hero{
+      display:flex !important;
+      flex-direction:column !important;
+      justify-content:center !important;
+      min-height:250px !important;
+      padding:34px 32px 32px !important;
+      margin-top:0 !important;
+      margin-bottom:22px !important;
+      overflow:hidden !important;
+    }
+
+    #overview .welcome-hero .hero-kicker{
+      margin-bottom:8px !important;
+      align-self:flex-start !important;
+    }
+
+    #overview .welcome-hero h1{
+      display:block !important;
+      width:100% !important;
+      text-align:center !important;
+      line-height:1.14 !important;
+      padding-top:0 !important;
+      padding-bottom:.08em !important;
+      margin:0 0 8px !important;
+      overflow:visible !important;
+      vertical-align:top !important;
+      contain:none !important;
+    }
+
+    #overview .welcome-hero p{
+      margin-top:0 !important;
+      margin-bottom:0 !important;
+      max-width:900px !important;
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word,
+    .word-morph-clone.gradient-title-morph{
+      display:inline-block !important;
+      line-height:1.18 !important;
+      padding-bottom:.10em !important;
+      overflow:visible !important;
+      contain:none !important;
+      box-sizing:content-box !important;
+    }
+
+    .word-morph-clone.gradient-title-morph{
+      background-size:100% 100% !important;
+      background-position:center !important;
+      -webkit-background-clip:text !important;
+      background-clip:text !important;
+      color:transparent !important;
+      -webkit-text-fill-color:transparent !important;
+      text-shadow:none !important;
+    }
+
+  
+    /* Fix title morph landing: hero title stays exactly where the clone lands */
+    body.is-morphing .page.active,
+    body.is-morphing .page.active .hero,
+    body.is-morphing .page.active .hero h1,
+    body.is-page-cascading .page.active .hero,
+    body.is-page-cascading .page.active .hero h1,
+    .hero-title-morph-target{
+      animation:none !important;
+      transform:none !important;
+      translate:none !important;
+      filter:none !important;
+    }
+
+    .page.active .hero{
+      transform:none !important;
+    }
+
+    .page.active .hero.page-box-smooth,
+    body.page-transition-clean .page.active .hero.page-box-smooth,
+    body.is-page-cascading .page.active .hero.page-box-smooth{
+      animation:none !important;
+      transform:none !important;
+      filter:none !important;
+      opacity:1 !important;
+      visibility:visible !important;
+    }
+
+    .word-morph-clone.hero-word-morph.no-pitik-word,
+    .word-morph-clone.gradient-title-morph{
+      transform:none !important;
+      filter:none !important;
+      line-height:1.18 !important;
+      padding-bottom:.10em !important;
+      overflow:visible !important;
+      transition:
+        left .60s cubic-bezier(.25,.1,.25,1),
+        top .60s cubic-bezier(.25,.1,.25,1),
+        font-size .60s cubic-bezier(.25,.1,.25,1),
+        font-weight .60s cubic-bezier(.25,.1,.25,1),
+        letter-spacing .60s cubic-bezier(.25,.1,.25,1) !important;
+    }
+
+    /* Agroforestry Summary Report is now available as a module tab */
+    #agro-report .threshold-hero{
+      margin-top:0 !important;
+    }
+
+    #agro-report .report-panel{
+      margin-top:0 !important;
+    }
+
+    .tabs{
+      gap:10px !important;
+      flex-wrap:wrap !important;
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -3043,6 +3179,7 @@
         <button class="tab-button active" onclick="showAgroTab('agro-live',this)">Current Status</button>
         <button class="tab-button" onclick="showAgroTab('agro-history',this)">History</button>
         <button class="tab-button" onclick="showAgroTab('agro-guide',this)">Threshold Guide</button>
+        <button class="tab-button" onclick="showAgroTab('agro-report',this)">Summary Report</button>
       </div>
 
       <div class="tab-section active" id="agro-live">
@@ -3258,6 +3395,60 @@
               Thresholds should be refined using actual soil type, crop stage, root zone depth, rainfall condition, and field validation.
             </div>
           </div>
+        </div>
+      </div>
+
+      <div class="tab-section" id="agro-report">
+        <div class="threshold-hero glass">
+          <div>
+            <div class="hero-kicker">Live Report</div>
+            <h2>Agroforestry Summary Report</h2>
+            <p>This report uses the same live ThingSpeak readings shown in the Agroforestry dashboard.</p>
+          </div>
+        </div>
+
+        <div class="system-summary-grid">
+          <div class="card glass">
+            <div class="card-label">Latest DSS Decision</div>
+            <div class="card-value" id="agroReportDssCode">--</div>
+            <div class="card-note" id="agroReportDssText">Waiting for live data</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">Report Time</div>
+            <div class="card-value" style="font-size:26px;" id="agroReportGeneratedAt">--</div>
+            <div class="card-note">Auto-updated from the dashboard</div>
+          </div>
+          <div class="card glass">
+            <div class="card-label">History Range</div>
+            <div class="card-value" id="agroReportRange">--</div>
+            <div class="card-note">Based on selected graph range</div>
+          </div>
+        </div>
+
+        <div class="report-panel">
+          <div class="card glass">
+            <div class="chart-title">Current Reading Summary</div>
+            <div class="report-line"><div class="report-label">Tree Zone Moisture</div><div class="report-value" id="agroReportTree">--</div></div>
+            <div class="report-line"><div class="report-label">Crop Alley Moisture</div><div class="report-value" id="agroReportCrop">--</div></div>
+            <div class="report-line"><div class="report-label">Tree Alert</div><div class="report-value" id="agroReportTreeAlert">--</div></div>
+            <div class="report-line"><div class="report-label">Crop Alert</div><div class="report-value" id="agroReportCropAlert">--</div></div>
+            <div class="report-line"><div class="report-label">Latest Upload</div><div class="report-value" id="agroReportLatestUpload">--</div></div>
+          </div>
+
+          <div class="card glass">
+            <div class="chart-title">Historical Summary</div>
+            <div class="report-line"><div class="report-label">Average Tree Moisture</div><div class="report-value" id="agroReportAvgTree">--</div></div>
+            <div class="report-line"><div class="report-label">Average Crop Moisture</div><div class="report-value" id="agroReportAvgCrop">--</div></div>
+            <div class="report-line"><div class="report-label">Lowest Tree Reading</div><div class="report-value" id="agroReportLowestTree">--</div></div>
+            <div class="report-line"><div class="report-label">Lowest Crop Reading</div><div class="report-value" id="agroReportLowestCrop">--</div></div>
+            <div class="report-line"><div class="report-label">Recommendation</div><div class="report-value" id="agroReportRecommendation">Waiting for data</div></div>
+          </div>
+        </div>
+
+        <div class="card glass" style="margin-top:18px;">
+          <div class="chart-title">Downloadable Report</div>
+          <div class="small-text" style="margin-bottom:14px;">Generate a quick PDF based on the current live Agroforestry dashboard values.</div>
+          <button class="action-button" onclick="downloadPdfReport()">Download Agroforestry PDF Summary</button>
         </div>
       </div>
 
@@ -3552,7 +3743,7 @@
 
     function getPageCascadeItems(page){
       if(!page)return [];
-      return Array.from(page.querySelectorAll('.hero,.welcome-grid > *,.overview-grid > *,.current-status-grid > *,.alert-stack > *,.decision-card,.low-priority-summary > *,.chart-grid > *,.history-alert-card,.threshold-grid > *,.info-grid > *,.planned-grid > *,.system-summary-grid > *,.report-panel > *,.simulation-grid > *,.glass.card,.connection-card'));
+      return Array.from(page.querySelectorAll('.welcome-grid > *,.overview-grid > *,.current-status-grid > *,.alert-stack > *,.decision-card,.low-priority-summary > *,.chart-grid > *,.history-alert-card,.threshold-grid > *,.info-grid > *,.planned-grid > *,.system-summary-grid > *,.report-panel > *,.simulation-grid > *,.glass.card,.connection-card'));
     }
 
     function preparePageCascade(pageId){
@@ -3710,6 +3901,11 @@
     function average(values){return values.length?values.reduce((s,v)=>s+v,0)/values.length:0}
     function updateConnectionStatus(createdAt){const latestTime=new Date(createdAt),ageSeconds=Math.floor((new Date()-latestTime)/1000);let status='Connected',note='ThingSpeak is receiving recent data from the monitoring system.';if(ageSeconds>300){status='Disconnected';note='ThingSpeak has not received a new update for more than 5 minutes. Check if the Wokwi simulation, Wi-Fi connection, or upload process is still running.'}else if(ageSeconds>60){status='Waiting';note='ThingSpeak has not received a new update for more than 1 minute. The dashboard is still showing the last valid reading.'}connectionStatus.textContent=status;connectionStatus.style.color=status==='Connected'?'#16a34a':status==='Waiting'?'#d97706':'#b91c1c';connectionText.textContent=note+' Last recorded update: '+latestTime.toLocaleString();overviewConnection.textContent=status;overviewConnection.style.color=connectionStatus.style.color;overviewConnectionNote.textContent='Last update: '+latestTime.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
     
+    function setText(id,value){
+      const el=document.getElementById(id);
+      if(el)el.textContent=value;
+    }
+
     function updateReportSummary(){
       if(!latestSnapshot)return;
       const range=historyRange?historyRange.value:'--';
@@ -3718,23 +3914,31 @@
       const lowestTreeText=lowestTreeReading?lowestTreeReading.textContent:'--';
       const lowestCropText=lowestCropReading?lowestCropReading.textContent:'--';
       const uploadTime=new Date(latestSnapshot.createdAt).toLocaleString();
+      const generatedTime=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      const decisionCode='Code '+latestSnapshot.dssCode;
+      const decisionText=getDssDecision(latestSnapshot.dssCode);
+      const recommendation=getDecisionNote(latestSnapshot.dssCode);
+      const treeText=latestSnapshot.treeMoisture+'%';
+      const cropText=latestSnapshot.cropMoisture+'%';
+      const treeAlertText=latestSnapshot.treeAlert===1?'ON':'OFF';
+      const cropAlertText=latestSnapshot.cropAlert===1?'ON':'OFF';
 
-      reportDssCode.textContent='Code '+latestSnapshot.dssCode;
-      reportDssText.textContent=getDssDecision(latestSnapshot.dssCode);
-      reportGeneratedAt.textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-      reportRange.textContent=range+' readings';
-
-      reportTree.textContent=latestSnapshot.treeMoisture+'%';
-      reportCrop.textContent=latestSnapshot.cropMoisture+'%';
-      reportTreeAlert.textContent=latestSnapshot.treeAlert===1?'ON':'OFF';
-      reportCropAlert.textContent=latestSnapshot.cropAlert===1?'ON':'OFF';
-      reportLatestUpload.textContent=uploadTime;
-
-      reportAvgTree.textContent=avgTreeText;
-      reportAvgCrop.textContent=avgCropText;
-      reportLowestTree.textContent=lowestTreeText;
-      reportLowestCrop.textContent=lowestCropText;
-      reportRecommendation.textContent=getDecisionNote(latestSnapshot.dssCode);
+      [
+        ['reportDssCode',decisionCode],['agroReportDssCode',decisionCode],
+        ['reportDssText',decisionText],['agroReportDssText',decisionText],
+        ['reportGeneratedAt',generatedTime],['agroReportGeneratedAt',generatedTime],
+        ['reportRange',range+' readings'],['agroReportRange',range+' readings'],
+        ['reportTree',treeText],['agroReportTree',treeText],
+        ['reportCrop',cropText],['agroReportCrop',cropText],
+        ['reportTreeAlert',treeAlertText],['agroReportTreeAlert',treeAlertText],
+        ['reportCropAlert',cropAlertText],['agroReportCropAlert',cropAlertText],
+        ['reportLatestUpload',uploadTime],['agroReportLatestUpload',uploadTime],
+        ['reportAvgTree',avgTreeText],['agroReportAvgTree',avgTreeText],
+        ['reportAvgCrop',avgCropText],['agroReportAvgCrop',avgCropText],
+        ['reportLowestTree',lowestTreeText],['agroReportLowestTree',lowestTreeText],
+        ['reportLowestCrop',lowestCropText],['agroReportLowestCrop',lowestCropText],
+        ['reportRecommendation',recommendation],['agroReportRecommendation',recommendation]
+      ].forEach(([id,value])=>setText(id,value));
     }
 
     function downloadPdfReport(){
