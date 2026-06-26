@@ -3480,6 +3480,466 @@
       transform:translateY(-3px) scale(1.006) !important;
     }
 
+  
+    /* Fix Overview hover details including the top three cards */
+    #overview .welcome-card details,
+    #overview .system-card details{
+      display:block !important;
+      margin-top:5px !important;
+      pointer-events:none !important;
+    }
+
+    #overview .welcome-card details summary,
+    #overview .system-card details summary{
+      display:none !important;
+    }
+
+    #overview .welcome-card .welcome-details,
+    #overview .system-card .module-details{
+      max-height:0 !important;
+      opacity:0 !important;
+      overflow:hidden !important;
+      margin-top:0 !important;
+      transform:translateY(-5px) !important;
+      filter:blur(3px) !important;
+      transition:
+        max-height .34s cubic-bezier(.22,1,.36,1),
+        opacity .28s ease,
+        transform .34s cubic-bezier(.22,1,.36,1),
+        filter .28s ease,
+        margin-top .28s ease !important;
+    }
+
+    #overview .welcome-card:hover .welcome-details,
+    #overview .system-card:hover .module-details{
+      max-height:120px !important;
+      opacity:1 !important;
+      margin-top:7px !important;
+      transform:translateY(0) !important;
+      filter:blur(0) !important;
+    }
+
+    /* Harmonized section headings */
+    .section-heading{
+      width:fit-content !important;
+      display:flex !important;
+      align-items:center !important;
+      gap:9px !important;
+      margin:14px 0 10px !important;
+      padding:7px 12px !important;
+      border-radius:999px !important;
+      color:#0f3d22 !important;
+      background:rgba(255,255,255,.50) !important;
+      border:1px solid rgba(255,255,255,.55) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.76),0 10px 24px rgba(21,128,61,.08) !important;
+      font-size:14px !important;
+      font-weight:950 !important;
+      letter-spacing:.55px !important;
+      text-transform:uppercase !important;
+      line-height:1 !important;
+    }
+
+    .section-heading::before{
+      content:"" !important;
+      width:9px !important;
+      height:9px !important;
+      border-radius:999px !important;
+      background:linear-gradient(135deg,#16a34a,#2563eb) !important;
+      box-shadow:0 0 0 5px rgba(22,163,74,.10) !important;
+      flex:0 0 auto !important;
+    }
+
+    .chart-title,
+    .connection-title,
+    .decision-title{
+      letter-spacing:-.25px !important;
+    }
+
+    .decision-title{
+      color:#166534 !important;
+      font-size:13px !important;
+      font-weight:950 !important;
+      text-transform:uppercase !important;
+      letter-spacing:.65px !important;
+    }
+
+    /* DSS decision box state colors */
+    .decision-card{
+      transition:border-color .28s ease, background .28s ease, box-shadow .28s ease !important;
+    }
+
+    .decision-card.decision-ok{
+      border-left-color:#16a34a !important;
+      background:rgba(240,253,244,.66) !important;
+    }
+
+    .decision-card.decision-warn{
+      border-left-color:#d97706 !important;
+      background:rgba(255,251,235,.66) !important;
+    }
+
+    .decision-card.decision-danger{
+      border-left-color:#b91c1c !important;
+      background:rgba(254,242,242,.68) !important;
+    }
+
+    .decision-card.decision-waterlog{
+      border-left-color:#6d28d9 !important;
+      background:rgba(245,243,255,.68) !important;
+    }
+
+    .decision-card.decision-waiting{
+      border-left-color:#64748b !important;
+    }
+
+    .decision-card.decision-ok .code-box strong{color:#16a34a !important}
+    .decision-card.decision-warn .code-box strong{color:#d97706 !important}
+    .decision-card.decision-danger .code-box strong{color:#b91c1c !important}
+    .decision-card.decision-waterlog .code-box strong{color:#6d28d9 !important}
+
+    body.is-morphing .nav-button,
+    body.is-page-cascading .nav-button,
+    body.is-morphing .system-card,
+    body.is-page-cascading .system-card{
+      pointer-events:none !important;
+    }
+
+  
+    /* AWD and Rice-Fish animated cross-section visuals */
+    .viz-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .single-viz-grid{
+      grid-template-columns:1fr;
+    }
+
+    .viz-card{
+      overflow:hidden;
+    }
+
+    .viz-controls{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:4px;
+    }
+
+    .control-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      font-size:13px;
+      color:#35566e;
+      font-weight:700;
+    }
+
+    .control-row strong{
+      color:#0f3d22;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+
+    .viz-slider{
+      width:100%;
+      appearance:none;
+      height:10px;
+      border-radius:999px;
+      background:linear-gradient(90deg,rgba(56,189,248,.22),rgba(34,197,94,.22));
+      outline:none;
+    }
+
+    .viz-slider::-webkit-slider-thumb{
+      appearance:none;
+      width:20px;
+      height:20px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#ffffff,#dbeafe);
+      border:2px solid rgba(59,130,246,.55);
+      box-shadow:0 6px 16px rgba(37,99,235,.25);
+      cursor:pointer;
+    }
+
+    .viz-slider::-moz-range-thumb{
+      width:20px;
+      height:20px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#ffffff,#dbeafe);
+      border:2px solid rgba(59,130,246,.55);
+      box-shadow:0 6px 16px rgba(37,99,235,.25);
+      cursor:pointer;
+    }
+
+    .viz-canvas{
+      margin-top:12px;
+      padding:10px;
+      border-radius:24px;
+      background:rgba(255,255,255,.42);
+      border:1px solid rgba(255,255,255,.5);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+    }
+
+    .cross-svg{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .viz-caption{
+      margin-top:10px;
+      color:#3a596f;
+      font-size:13px;
+      line-height:1.5;
+    }
+
+    .legend-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      margin-top:2px;
+    }
+
+    .legend-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.56);
+      border:1px solid rgba(255,255,255,.46);
+      color:#32556f;
+      font-size:11.5px;
+      font-weight:800;
+    }
+
+    .legend-dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      flex:0 0 auto;
+    }
+
+    .legend-dot.water{background:linear-gradient(135deg,#38bdf8,#2563eb)}
+    .legend-dot.soil{background:linear-gradient(135deg,#a97b53,#6d4c32)}
+    .legend-dot.threshold{background:#f59e0b}
+    .legend-dot.do-good{background:linear-gradient(135deg,#22c55e,#15803d)}
+
+    @media(max-width:980px){
+      .viz-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+  
+
+    /* Added layout cleanup for AWD and Rice-Fish */
+    .module-tab-shell{display:grid;gap:16px}
+    .module-tab-section{display:none}
+    .module-tab-section.active{display:block}
+    .card.compact-card{padding:18px}
+    .viz-layout-split{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:16px;margin-bottom:14px}
+    .module-side-stack{display:grid;gap:16px}
+    .module-alert-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .simulation-meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+    .status-banner{border-radius:20px;padding:14px 16px;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.48);color:var(--forest);font-size:18px;font-weight:900;margin-bottom:12px}
+    .module-note{font-size:13px;line-height:1.6;color:#4c6478}
+    .module-list{display:grid;gap:10px;margin-top:12px}
+    .module-list-item{display:grid;grid-template-columns:118px 1fr;gap:12px;padding:11px 12px;border-radius:16px;background:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.38);font-size:13px;color:#35566e;align-items:start}
+    .module-list-item strong{color:var(--forest);font-size:13px}
+    .spec-pill-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    .spec-pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 13px;background:rgba(255,255,255,.56);border:1px solid rgba(255,255,255,.48);font-size:12px;font-weight:900;color:#244d32}
+    .spec-pill span{display:inline-block;width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,#34d399,#2563eb)}
+    .soft-kicker{font-size:11px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;color:#587487;margin-bottom:6px}
+    .metrics-inline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+    .metric-box{border-radius:18px;padding:14px;background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.4)}
+    .metric-box .metric-label{font-size:11px;font-weight:900;letter-spacing:.6px;text-transform:uppercase;color:#63809a;margin-bottom:6px}
+    .metric-box .metric-value{font-size:22px;font-weight:900;color:var(--forest);line-height:1.05}
+    .metric-box .metric-note{font-size:12px;line-height:1.45;color:#557085;margin-top:4px}
+    .system-summary-grid.four-up{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .card-value.compact-value{font-size:24px!important}
+    .guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+    .guide-chip{border-radius:18px;padding:13px 14px;background:rgba(255,255,255,.44);border:1px solid rgba(255,255,255,.4)}
+    .guide-chip strong{display:block;color:var(--forest);font-size:13px;margin-bottom:5px}
+    .guide-chip span{font-size:12px;color:#557085;line-height:1.45}
+    .rf-water-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+    .rf-mini-banner{border-radius:18px;padding:12px 14px;background:rgba(255,255,255,.46);border:1px solid rgba(255,255,255,.42);font-size:13px;color:#35566e}
+    .rf-mini-banner strong{display:block;color:var(--forest);font-size:13px;margin-bottom:5px}
+    .data-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(110,140,123,.35),transparent);margin:14px 0}
+    .sim-readout{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px;font-weight:800;color:#35566e}
+    .sim-readout strong{font-size:15px;color:var(--forest)}
+    .tab-callout{margin-top:10px;padding:10px 14px;border-radius:16px;background:rgba(255,255,255,.42);border:1px solid rgba(255,255,255,.36);font-size:12.5px;color:#4f687e;line-height:1.55}
+    .simulation-grid.three-up{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .simulation-grid.four-up{grid-template-columns:repeat(4,minmax(0,1fr))}
+
+
+    /* User-friendly polish: animated title blocks and balanced color hierarchy */
+    .user-help-strip{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 15px;
+      border-radius:20px;
+      margin:0 0 14px;
+      color:#3c5f72;
+      font-size:13px;
+      line-height:1.45;
+      background:rgba(255,255,255,.50);
+      border:1px solid rgba(255,255,255,.46);
+    }
+
+    .user-help-strip strong{
+      color:#0f5132;
+      white-space:nowrap;
+    }
+
+    .current-summary-layout{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .ricefish-sim-layout{
+      grid-template-columns:minmax(310px,.75fr) minmax(0,1.25fr) !important;
+      align-items:start;
+    }
+
+    .sim-control-block{
+      margin-top:14px;
+      padding:12px;
+      border-radius:18px;
+      background:rgba(255,255,255,.43);
+      border:1px solid rgba(255,255,255,.38);
+    }
+
+    .polished-viz{
+      background:
+        radial-gradient(circle at 18% 12%,rgba(255,255,255,.72),transparent 26%),
+        linear-gradient(135deg,rgba(240,253,244,.58),rgba(224,242,254,.52)) !important;
+    }
+
+    .section-heading,
+    .hero-kicker,
+    .chart-title,
+    .status-banner,
+    .user-help-strip{
+      will-change:transform,opacity,filter;
+    }
+
+    .page-box-smooth.section-heading,
+    .page-box-smooth.user-help-strip,
+    .smooth-box-enter.section-heading,
+    .smooth-box-enter.user-help-strip{
+      animation:headingChipEnter .58s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,var(--smooth-delay,0ms)) !important;
+    }
+
+    @keyframes headingChipEnter{
+      0%{opacity:0;transform:translateX(-14px) scale(.985);filter:blur(5px)}
+      100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}
+    }
+
+    .card:nth-child(4n+1) .card-label,
+    .system-summary-grid > *:nth-child(4n+1) .card-label,
+    .metric-box:nth-child(2n+1) .metric-label{
+      color:#0f766e !important;
+    }
+
+    .card:nth-child(4n+2) .card-label,
+    .system-summary-grid > *:nth-child(4n+2) .card-label,
+    .metric-box:nth-child(2n+2) .metric-label{
+      color:#1d4f91 !important;
+    }
+
+    .card:nth-child(4n+3) .card-label,
+    .system-summary-grid > *:nth-child(4n+3) .card-label{
+      color:#2f6f3e !important;
+    }
+
+    .card:nth-child(4n+4) .card-label,
+    .system-summary-grid > *:nth-child(4n+4) .card-label{
+      color:#6b5f1d !important;
+    }
+
+    .system-summary-grid > *:nth-child(4n+1) .card-value,
+    .current-status-grid > *:nth-child(2n+1) .current-value{
+      color:#0f766e !important;
+    }
+
+    .system-summary-grid > *:nth-child(4n+2) .card-value,
+    .current-status-grid > *:nth-child(2n+2) .current-value{
+      color:#1d4ed8 !important;
+    }
+
+    .system-summary-grid > *:nth-child(4n+3) .card-value{
+      color:#15803d !important;
+    }
+
+    .system-summary-grid > *:nth-child(4n+4) .card-value{
+      color:#64748b !important;
+    }
+
+    .chart-title{
+      color:#105c3a !important;
+    }
+
+    .viz-card:nth-child(2n) .chart-title,
+    .module-side-stack .viz-card:nth-child(2n) .chart-title{
+      color:#0f5f7a !important;
+    }
+
+    .module-list-item strong{
+      color:#0f6042 !important;
+    }
+
+    .module-list-item:nth-child(2n) strong{
+      color:#1d5f8f !important;
+    }
+
+    .rf-mini-banner strong{
+      color:#0f766e !important;
+    }
+
+    .rf-mini-banner:nth-child(2n) strong{
+      color:#1d4ed8 !important;
+    }
+
+    #rfStatusCard.status-banner,
+    #rfAlertSummary.status-banner,
+    #awdAlertSummary.status-banner,
+    #awdAlertsDecisionBanner.status-banner{
+      background:linear-gradient(135deg,rgba(240,253,244,.72),rgba(219,234,254,.58));
+      color:#0f5132;
+      border:1px solid rgba(255,255,255,.58);
+    }
+
+    .viz-slider{
+      cursor:pointer;
+    }
+
+    .viz-slider:focus-visible{
+      box-shadow:0 0 0 4px rgba(37,99,235,.18);
+    }
+
+    .cross-svg rect[id$="WaterRect"],
+    #awdPondWater,
+    #awdTubeWater{
+      transition:y .42s cubic-bezier(.22,1,.36,1),height .42s cubic-bezier(.22,1,.36,1),opacity .32s ease;
+    }
+
+    @media(max-width:1250px){
+      .current-summary-layout,
+      .ricefish-sim-layout,
+      .viz-layout-split{
+        grid-template-columns:1fr !important;
+      }
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -3513,14 +3973,14 @@
       <div class="hero glass welcome-hero">
         <div class="hero-kicker">Integrated Smart Agriculture Monitoring</div>
         <h1>AgRiFiS</h1>
-        <p> A decision-support dashboard for Agroforestry, AWD, and Rice-Fish systems in Siniloan, Laguna.</p>
+        <p>A simplified decision-support website for Agroforestry, AWD, and Rice-Fish monitoring.</p>
       </div>
 
       <div class="welcome-grid">
         <div class="welcome-card glass">
           <div class="welcome-icon ios-icon icon-leaf"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M48 12C30 13 16 25 14 43c17 2 31-7 37-28" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 44c9-11 18-18 30-24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div>
           <div class="welcome-title">Choose a monitoring system</div>
-          <details>
+          <details open>
             <summary>More details</summary>
             <div class="welcome-details">Open only the monitoring component needed for review so the dashboard does not show too much information at once.</div>
           </details>
@@ -3529,7 +3989,7 @@
         <div class="welcome-card glass">
           <div class="welcome-icon ios-icon icon-bell"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 28c0-8 5-15 12-15s12 7 12 15v11l6 7H14l6-7V28z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M27 51c2 3 8 3 10 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></div>
           <div class="welcome-title">Review important alerts</div>
-          <details>
+          <details open>
             <summary>More details</summary>
             <div class="welcome-details">Telegram notifications are reserved for irrigation and waterlogging alerts, while normal readings remain visible in the dashboard.</div>
           </details>
@@ -3538,7 +3998,7 @@
         <div class="welcome-card glass">
           <div class="welcome-icon ios-icon icon-report"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 10h19l9 9v35H20z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M38 10v11h10M27 31h14M27 41h14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           <div class="welcome-title">Generate a quick report</div>
-          <details>
+          <details open>
             <summary>More details</summary>
             <div class="welcome-details">Use the Summary Report section to review real-time status summaries for Agroforestry, AWD, and Rice-Fish modules.</div>
           </details>
@@ -3826,8 +4286,411 @@
       <div class="last-update" id="lastUpdate">Waiting for latest data...</div>
     </section>
 
-    <section class="page" id="awd"><div class="hero glass"><h1>AWD Water Level Dashboard</h1><p>Prepared interface for alternate wetting and drying water level monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon ios-icon icon-water"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8c10 14 18 25 18 35 0 10-8 17-18 17s-18-7-18-17c0-10 8-21 18-35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M25 45c3 4 11 4 14 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div><div class="card-label">Current Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for water level sensor connection</div></div><div class="card glass"><div class="system-icon ios-icon icon-crop"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 54V17" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M32 25c-9 0-15-5-17-13 9 0 15 5 17 13zM32 36c9 0 15-5 17-13-9 0-15 5-17 13zM32 44c-8 0-13-4-16-10 8 0 13 4 16 10z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg></div><div class="card-label">AWD Status</div><div class="card-value">Pending</div><div class="card-note">Flooded, safe drying, or re-irrigation status</div></div><div class="card glass"><div class="system-icon ios-icon icon-bell"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 28c0-8 5-15 12-15s12 7 12 15v11l6 7H14l6-7V28z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M27 51c2 3 8 3 10 0" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/></svg></div><div class="card-label">Re-irrigation Alert</div><div class="card-value">--</div><div class="card-note">Alert logic to be activated after sensor setup</div></div></div><div class="card glass"><div class="chart-title">Water Level Trend</div><div class="placeholder">Water level trend graph will appear here once the AWD water level sensor is connected to a ThingSpeak field.</div></div></section>
-    <section class="page" id="ricefish"><div class="hero glass"><h1>Rice-Fish Water Quality Dashboard</h1><p>Prepared interface for rice-fish water level and dissolved oxygen monitoring.</p></div><div class="planned-grid"><div class="card glass"><div class="system-icon ios-icon icon-water"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8c10 14 18 25 18 35 0 10-8 17-18 17s-18-7-18-17c0-10 8-21 18-35z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M25 45c3 4 11 4 14 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg></div><div class="card-label">Water Level</div><div class="card-value">-- cm</div><div class="card-note">Waiting for rice-fish water level sensor</div></div><div class="card glass"><div class="system-icon ios-icon icon-fish"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 33c9-13 27-16 39 0-12 16-30 13-39 0z" fill="none" stroke="currentColor" stroke-width="5" stroke-linejoin="round"/><path d="M12 33 5 24v18zM46 25l9-8M46 41l9 8" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="40" cy="31" r="2.5" fill="currentColor"/></svg></div><div class="card-label">Dissolved Oxygen</div><div class="card-value">-- mg/L</div><div class="card-note">Waiting for DO sensor integration</div></div><div class="card glass"><div class="system-icon ios-icon icon-check"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" stroke-width="5"/><path d="M21 33l8 8 15-18" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="card-label">Fish Safety Status</div><div class="card-value">Pending</div><div class="card-note">Tilapia safety decision support to be activated</div></div></div><div class="card glass"><div class="chart-title">Rice-Fish Trend Graphs</div><div class="placeholder">Water level and dissolved oxygen trends will appear here once the rice-fish sensors are connected to ThingSpeak fields.</div></div></section>
+    
+    <section class="page" id="awd">
+      <div class="hero glass">
+        <div class="hero-kicker">Water-Saving Irrigation Module</div>
+        <h1>AWD Water Level Dashboard</h1>
+        <p>This layout now keeps the AWD view cleaner and more structured. The current status appears first, while the alert interpretation and simulation are placed in separate tabs with the same smooth box transitions used in the other modules.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-button active" onclick="showModuleTab('awdTabs','awd-live',this)">Current Status</button>
+        <button class="tab-button" onclick="showModuleTab('awdTabs','awd-alerts',this)">Alerts</button>
+        <button class="tab-button" onclick="showModuleTab('awdTabs','awd-sim',this)">Simulation</button>
+      </div>
+
+      <div class="module-tab-shell" id="awdTabs">
+        <div class="module-tab-section active" id="awd-live">
+          <div class="section-heading">Current AWD Status</div>
+          <div class="system-summary-grid">
+            <div class="card glass">
+              <div class="card-label">Water Level</div>
+              <div class="card-value" id="awdLevelCard">+2.0 cm</div>
+              <div class="card-note">Relative to the soil surface</div>
+            </div>
+            <div class="card glass">
+              <div class="card-label">Field Status</div>
+              <div class="card-value compact-value" id="awdStatusCard">Shallow ponding</div>
+              <div class="card-note">Compared with AWD operating range</div>
+            </div>
+            <div class="card glass">
+              <div class="card-label">Irrigation Action</div>
+              <div class="card-value compact-value" id="awdActionCard">No irrigation yet</div>
+              <div class="card-note">Decision-support recommendation</div>
+            </div>
+          </div>
+
+          <div class="viz-layout-split">
+            <div class="card glass viz-card">
+              <div class="chart-title">Animated AWD Soil Profile</div>
+              <div class="viz-controls">
+                <div class="control-row">
+                  <span>Current AWD level</span>
+                  <strong id="awdWaterValue">+2.0 cm</strong>
+                </div>
+                <input id="awdWaterSlider" class="viz-slider" type="range" min="-15" max="5" step="0.5" value="2" oninput="updateAwdViz()">
+                <div class="legend-row">
+                  <span class="legend-pill"><span class="legend-dot water"></span>Standing or tube water</span>
+                  <span class="legend-pill"><span class="legend-dot soil"></span>Soil profile</span>
+                  <span class="legend-pill"><span class="legend-dot threshold"></span>Irrigation threshold</span>
+                </div>
+              </div>
+
+              <div class="viz-canvas">
+                <svg id="awdSvg" class="cross-svg" viewBox="0 0 560 310" aria-label="AWD soil cross-section illustration">
+                  <defs>
+                    <linearGradient id="skyGradAwd" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#eef8ff"/>
+                      <stop offset="100%" stop-color="#d9f0ff"/>
+                    </linearGradient>
+                    <linearGradient id="waterGradAwd" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(88,182,255,.72)"/>
+                      <stop offset="100%" stop-color="rgba(18,112,219,.95)"/>
+                    </linearGradient>
+                    <linearGradient id="soilGradAwd" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#a97b53"/>
+                      <stop offset="100%" stop-color="#6d4c32"/>
+                    </linearGradient>
+                  </defs>
+
+                  <rect x="18" y="18" width="524" height="274" rx="28" fill="url(#skyGradAwd)"/>
+                  <rect id="awdPondWater" x="60" y="124" width="372" height="22" rx="12" fill="url(#waterGradAwd)" opacity=".86"/>
+                  <rect x="50" y="146" width="390" height="102" fill="url(#soilGradAwd)"/>
+                  <rect x="50" y="140" width="390" height="10" rx="5" fill="#5ba352"/>
+
+                  <rect x="455" y="88" width="26" height="162" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                  <rect id="awdTubeWater" x="459" y="130" width="18" height="116" rx="6" fill="url(#waterGradAwd)" opacity=".92"/>
+                  <circle cx="468" cy="236" r="2.2" fill="#64748b"/>
+                  <circle cx="468" cy="224" r="2.2" fill="#64748b"/>
+                  <circle cx="468" cy="212" r="2.2" fill="#64748b"/>
+                  <circle cx="468" cy="200" r="2.2" fill="#64748b"/>
+                  <text x="425" y="76" font-size="12" font-weight="700" fill="#334155">AWD tube</text>
+
+                  <line x1="40" x2="40" y1="92" y2="250" stroke="#94a3b8" stroke-width="1.2"/>
+                  <line x1="34" x2="46" y1="146" y2="146" stroke="#475569" stroke-width="2"/>
+                  <line x1="34" x2="46" y1="133" y2="133" stroke="#475569" stroke-width="2"/>
+                  <line x1="34" x2="46" y1="120" y2="120" stroke="#475569" stroke-width="2"/>
+                  <line x1="34" x2="46" y1="172" y2="172" stroke="#475569" stroke-width="2"/>
+                  <line x1="34" x2="46" y1="198" y2="198" stroke="#475569" stroke-width="2"/>
+                  <line x1="34" x2="46" y1="224" y2="224" stroke="#475569" stroke-width="2"/>
+                  <text x="12" y="150" font-size="11" fill="#334155">0 cm</text>
+                  <text x="8" y="137" font-size="11" fill="#334155">+5</text>
+                  <text x="10" y="176" font-size="11" fill="#334155">-5</text>
+                  <text x="6" y="202" font-size="11" fill="#334155">-10</text>
+                  <text x="6" y="228" font-size="11" fill="#334155">-15</text>
+                  <text x="58" y="266" font-size="14" font-weight="700" fill="#f8fafc">Soil profile</text>
+                  <text x="58" y="136" font-size="12" font-weight="700" fill="#234b24">Soil surface</text>
+
+                  <line id="awdThresholdLine" x1="451" x2="485" y1="224" y2="224" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8 7"/>
+                  <text x="400" y="220" font-size="12" font-weight="700" fill="#9a5b00">Irrigate near -15 cm</text>
+                  <text id="awdWaterLabel" x="58" y="116" font-size="13" font-weight="700" fill="#0f3d5c">Water level: +2.0 cm</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="module-side-stack">
+              <div class="card glass compact-card">
+                <div class="chart-title">Operating Range</div>
+                <div class="module-note">AWD normally starts with shallow ponding, then allows the field to dry gradually until the water level in the tube reaches approximately 15 cm below the soil surface.</div>
+                <div class="guide-grid">
+                  <div class="guide-chip"><strong>+5 to 0 cm</strong><span>Ponded water is still present above the soil surface.</span></div>
+                  <div class="guide-chip"><strong>0 to -10 cm</strong><span>Acceptable drying phase. Continue monitoring.</span></div>
+                  <div class="guide-chip"><strong>-10 to -15 cm</strong><span>Approaching threshold. Prepare irrigation.</span></div>
+                </div>
+              </div>
+              <div class="card glass compact-card">
+                <div class="chart-title">Current Interpretation</div>
+                <div class="status-banner" id="awdAlertSummary">No irrigation yet</div>
+                <div class="module-note" id="awdNarrative">The field still has shallow standing water above the soil surface, so irrigation is not yet needed.</div>
+                <div class="spec-pill-grid">
+                  <span class="spec-pill"><span></span>Maximum ponding: +5 cm</span>
+                  <span class="spec-pill"><span></span>Irrigation trigger: -15 cm</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-tab-section" id="awd-alerts">
+          <div class="section-heading">Alerts and Decision Support</div>
+          <div class="module-alert-grid">
+            <div class="card glass compact-card">
+              <div class="chart-title">AWD Alert Logic</div>
+              <div class="module-list">
+                <div class="module-list-item"><strong>Normal hold</strong><span>If the level is still above 0 cm, irrigation is not needed yet.</span></div>
+                <div class="module-list-item"><strong>Drying phase</strong><span>From 0 to about -10 cm, the field is drying normally under AWD.</span></div>
+                <div class="module-list-item"><strong>Prepare irrigation</strong><span>At around -10 to -14.5 cm, the system should warn the operator.</span></div>
+                <div class="module-list-item"><strong>Irrigate now</strong><span>At -15 cm, irrigation should be triggered based on the AWD guideline.</span></div>
+              </div>
+            </div>
+            <div class="card glass compact-card">
+              <div class="chart-title">Live AWD Decision</div>
+              <div class="status-banner" id="awdAlertsDecisionBanner">No irrigation yet</div>
+              <div class="metrics-inline">
+                <div class="metric-box">
+                  <div class="metric-label">Current phase</div>
+                  <div class="metric-value" id="awdPhaseMetric">Shallow ponding</div>
+                  <div class="metric-note">Live interpretation of the current AWD level.</div>
+                </div>
+                <div class="metric-box">
+                  <div class="metric-label">Recommended action</div>
+                  <div class="metric-value" id="awdActionMetric">Hold</div>
+                  <div class="metric-note">This updates with the same value used in the cross-section.</div>
+                </div>
+              </div>
+              <div class="tab-callout">You can adjust the simulated water level in the <strong>Simulation</strong> tab and this decision panel will update automatically.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-tab-section" id="awd-sim">
+          <div class="section-heading">Simulation Controls</div>
+          <div class="module-alert-grid">
+            <div class="card glass compact-card">
+              <div class="chart-title">AWD Level Simulator</div>
+              <div class="sim-readout"><span>Simulated level</span><strong id="awdSimReadout">+2.0 cm</strong></div>
+              <input id="awdWaterSliderMirror" class="viz-slider" type="range" min="-15" max="5" step="0.5" value="2" oninput="syncAwdSlider(this.value)">
+              <div class="spec-pill-grid">
+                <span class="spec-pill"><span></span>+5 cm = upper ponding range</span>
+                <span class="spec-pill"><span></span>0 cm = no standing water</span>
+                <span class="spec-pill"><span></span>-15 cm = irrigate</span>
+              </div>
+            </div>
+            <div class="card glass compact-card">
+              <div class="chart-title">How to Read the Simulation</div>
+              <div class="module-list">
+                <div class="module-list-item"><strong>Above soil</strong><span>The blue layer remains above the soil surface while water is still ponded.</span></div>
+                <div class="module-list-item"><strong>Below soil</strong><span>When the value becomes negative, the ponded layer disappears and the tube becomes the reference.</span></div>
+                <div class="module-list-item"><strong>Threshold</strong><span>The dashed line marks the irrigation trigger level near 15 cm below the soil surface.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="ricefish">
+      <div class="hero glass">
+        <div class="hero-kicker">Integrated Rice-Fish Module</div>
+        <h1>Rice-Fish Water and DO Dashboard</h1>
+        <p>Water depth, trench depth, refuge depth, and dissolved oxygen are separated into clear tabs. The simulation controller and cross-section visualization are now kept together so the response of the system is easier to understand.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-button active" onclick="showModuleTab('rfTabs','rf-live',this)">Current Status</button>
+        <button class="tab-button" onclick="showModuleTab('rfTabs','rf-alerts',this)">Alerts and Decision</button>
+        <button class="tab-button" onclick="showModuleTab('rfTabs','rf-sim',this)">Simulation and Visualization</button>
+      </div>
+
+      <div class="module-tab-shell" id="rfTabs">
+        <div class="module-tab-section active" id="rf-live">
+          <div class="section-heading">Current Rice-Fish Status</div>
+          <div class="user-help-strip glass">
+            <strong>How to read this module:</strong>
+            <span>Keep the rice-field water depth within 10 to 20 cm, maintain refuge depth at 1.0 m, and monitor DO for fish safety.</span>
+          </div>
+
+          <div class="system-summary-grid four-up">
+            <div class="card glass">
+              <div class="card-label">Field Water Depth</div>
+              <div class="card-value compact-value" id="rfLevelCard">15.0 cm</div>
+              <div class="card-note">Target maximum depth is 20 cm</div>
+            </div>
+            <div class="card glass">
+              <div class="card-label">DO Reading</div>
+              <div class="card-value compact-value" id="rfDoCard">6.5 mg/L</div>
+              <div class="card-note">Dissolved oxygen condition</div>
+            </div>
+            <div class="card glass">
+              <div class="card-label">Trench Depth</div>
+              <div class="card-value compact-value" id="rfTrenchDepthCard">50 cm</div>
+              <div class="card-note">Fixed side trench depth</div>
+            </div>
+            <div class="card glass">
+              <div class="card-label">Refuge Depth</div>
+              <div class="card-value compact-value" id="rfRefugeDepthCard">1.0 m</div>
+              <div class="card-note">Fixed pond refuge depth</div>
+            </div>
+          </div>
+
+          <div class="current-summary-layout">
+            <div class="card glass compact-card">
+              <div class="chart-title">Live Interpretation</div>
+              <div class="status-banner" id="rfStatusCard">Within target range</div>
+              <div class="module-note" id="rfLiveNarrative">The current settings are within the desired water-depth range and DO is acceptable.</div>
+              <div class="spec-pill-grid">
+                <span class="spec-pill"><span></span>Field water: 10 to 20 cm</span>
+                <span class="spec-pill"><span></span>Trench depth: 50 cm</span>
+                <span class="spec-pill"><span></span>Refuge depth: 1.0 m</span>
+              </div>
+            </div>
+
+            <div class="card glass compact-card">
+              <div class="chart-title">Water Storage Context</div>
+              <div class="rf-water-grid">
+                <div class="rf-mini-banner"><strong>Current trench total</strong><span id="rfTrenchTotalText">65.0 cm</span></div>
+                <div class="rf-mini-banner"><strong>Current refuge total</strong><span id="rfRefugeTotalText">115.0 cm</span></div>
+              </div>
+              <div class="tab-callout">The trench and refuge values include the rice-field water depth plus their fixed design depths.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-tab-section" id="rf-alerts">
+          <div class="section-heading">Alerts and Decision</div>
+          <div class="module-alert-grid">
+            <div class="card glass compact-card">
+              <div class="chart-title">Water and DO Alert Logic</div>
+              <div class="status-banner" id="rfAlertSummary">Within target range</div>
+              <div class="module-list">
+                <div class="module-list-item"><strong>Water below 10 cm</strong><span>Flag possible low field water depth and check inflow requirement.</span></div>
+                <div class="module-list-item"><strong>Water at 20 cm</strong><span>Maximum target field depth has been reached. Avoid increasing water further.</span></div>
+                <div class="module-list-item"><strong>DO below 5.5 mg/L</strong><span>Monitor fish stress and prepare aeration or water refresh action.</span></div>
+                <div class="module-list-item"><strong>DO below 4.0 mg/L</strong><span>Critical alert. Immediate intervention is recommended.</span></div>
+              </div>
+            </div>
+
+            <div class="card glass compact-card">
+              <div class="chart-title">Depth Reference for Alerts</div>
+              <div class="metrics-inline">
+                <div class="metric-box">
+                  <div class="metric-label">Trench depth</div>
+                  <div class="metric-value">50 cm</div>
+                  <div class="metric-note">Used as the side trench depth for the alert context.</div>
+                </div>
+                <div class="metric-box">
+                  <div class="metric-label">Refuge depth</div>
+                  <div class="metric-value">1.0 m</div>
+                  <div class="metric-note">Fixed refuge depth for fish shelter and safety interpretation.</div>
+                </div>
+              </div>
+              <div class="data-divider"></div>
+              <div class="module-note" id="rfDepthAlertNote">Depth values are included in the alert context so water level readings can be interpreted with the trench and refuge capacity.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module-tab-section" id="rf-sim">
+          <div class="section-heading">Simulation and Visualization</div>
+          <div class="user-help-strip glass">
+            <strong>Use this tab:</strong>
+            <span>Move the sliders and watch the refuge and trench water layers change in the same view.</span>
+          </div>
+
+          <div class="viz-layout-split ricefish-sim-layout">
+            <div class="card glass viz-card">
+              <div class="chart-title">Simulation Controller</div>
+              <div class="module-note">The rice-field water slider is limited to a maximum of 20 cm to match the target rice-fish water depth.</div>
+
+              <div class="sim-control-block">
+                <div class="sim-readout"><span>Rice-field water depth</span><strong id="rfWaterValue">15.0 cm</strong></div>
+                <input id="rfWaterSlider" class="viz-slider" type="range" min="0" max="20" step="0.5" value="15" oninput="updateRiceFishViz()">
+              </div>
+
+              <div class="sim-control-block">
+                <div class="sim-readout"><span>Dissolved oxygen</span><strong id="rfDoValue">6.5 mg/L</strong></div>
+                <input id="rfDoSlider" class="viz-slider" type="range" min="0" max="10" step="0.1" value="6.5" oninput="updateRiceFishViz()">
+              </div>
+
+              <div class="spec-pill-grid">
+                <span class="spec-pill"><span></span>Target field water: 10 to 20 cm</span>
+                <span class="spec-pill"><span></span>Trench depth: 50 cm</span>
+                <span class="spec-pill"><span></span>Refuge depth: 1.0 m</span>
+              </div>
+
+              <div class="data-divider"></div>
+              <div class="rf-water-grid">
+                <div class="rf-mini-banner"><strong>Trench total water</strong><span id="rfTrenchTotalTextSim">65.0 cm</span></div>
+                <div class="rf-mini-banner"><strong>Refuge total water</strong><span id="rfRefugeTotalTextSim">115.0 cm</span></div>
+              </div>
+            </div>
+
+            <div class="module-side-stack">
+              <div class="card glass viz-card">
+                <div class="chart-title">Pond Refuge Cross-Section</div>
+                <div class="viz-canvas polished-viz">
+                  <svg id="refugeSvg" class="cross-svg" viewBox="0 0 560 300" aria-label="Rice-fish refuge cross-section illustration">
+                    <defs>
+                      <linearGradient id="skyGrad2" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#eef8ff"/>
+                        <stop offset="100%" stop-color="#d9f0ff"/>
+                      </linearGradient>
+                      <linearGradient id="waterGrad2" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="rgba(81,170,255,.72)"/>
+                        <stop offset="100%" stop-color="rgba(23,103,204,.92)"/>
+                      </linearGradient>
+                      <linearGradient id="soilGrad2" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#ac7d57"/>
+                        <stop offset="100%" stop-color="#755138"/>
+                      </linearGradient>
+                    </defs>
+
+                    <rect x="18" y="18" width="524" height="264" rx="28" fill="url(#skyGrad2)"/>
+                    <rect id="refugeWaterRect" x="58" y="129" width="444" height="113" rx="14" fill="url(#waterGrad2)" opacity=".86"/>
+                    <path d="M58 242 L58 156 L180 156 L220 222 L340 222 L380 156 L502 156 L502 242 Z" fill="url(#soilGrad2)"/>
+                    <rect x="58" y="150" width="444" height="10" rx="5" fill="#63ab5d"/>
+
+                    <line x1="44" x2="44" y1="92" y2="242" stroke="#94a3b8" stroke-width="1.2"/>
+                    <line x1="38" x2="50" y1="150" y2="150" stroke="#475569" stroke-width="2"/>
+                    <line x1="38" x2="50" y1="136" y2="136" stroke="#475569" stroke-width="2"/>
+                    <line x1="38" x2="50" y1="122" y2="122" stroke="#475569" stroke-width="2"/>
+                    <text x="14" y="154" font-size="11" fill="#334155">0 cm</text>
+                    <text x="10" y="140" font-size="11" fill="#334155">10</text>
+                    <text x="10" y="126" font-size="11" fill="#334155">20</text>
+
+                    <text x="86" y="146" font-size="12" font-weight="700" fill="#234b24">Rice field platform</text>
+                    <text x="232" y="214" font-size="12" font-weight="700" fill="#f8fafc">Refuge depth: 1.0 m</text>
+                    <text id="refugeWaterLabel" x="62" y="104" font-size="13" font-weight="700" fill="#0f3d5c">Field water: 15.0 cm | Refuge total: 115.0 cm</text>
+                  </svg>
+                </div>
+                <div class="viz-caption" id="refugeNarrative">The rice-field water is within the desired range, and the 1.0 m refuge remains deep enough for fish shelter.</div>
+              </div>
+
+              <div class="card glass viz-card">
+                <div class="chart-title">Single Side Trench Cross-Section</div>
+                <div class="viz-canvas polished-viz">
+                  <svg id="trenchSvg" class="cross-svg" viewBox="0 0 560 300" aria-label="Rice-fish trench cross-section illustration">
+                    <defs>
+                      <linearGradient id="skyGrad3" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#eef8ff"/>
+                        <stop offset="100%" stop-color="#d9f0ff"/>
+                      </linearGradient>
+                      <linearGradient id="waterGrad3" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="rgba(81,170,255,.72)"/>
+                        <stop offset="100%" stop-color="rgba(23,103,204,.92)"/>
+                      </linearGradient>
+                      <linearGradient id="soilGrad3" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0%" stop-color="#b18258"/>
+                        <stop offset="100%" stop-color="#78533b"/>
+                      </linearGradient>
+                    </defs>
+
+                    <rect x="18" y="18" width="524" height="264" rx="28" fill="url(#skyGrad3)"/>
+                    <rect id="trenchWaterRect" x="58" y="129" width="444" height="113" rx="14" fill="url(#waterGrad3)" opacity=".86"/>
+                    <path d="M58 242 L58 156 L256 156 L282 176 L350 176 L376 156 L502 156 L502 242 Z" fill="url(#soilGrad3)"/>
+                    <rect x="58" y="150" width="444" height="10" rx="5" fill="#63ab5d"/>
+
+                    <line x1="44" x2="44" y1="92" y2="242" stroke="#94a3b8" stroke-width="1.2"/>
+                    <line x1="38" x2="50" y1="150" y2="150" stroke="#475569" stroke-width="2"/>
+                    <line x1="38" x2="50" y1="136" y2="136" stroke="#475569" stroke-width="2"/>
+                    <line x1="38" x2="50" y1="122" y2="122" stroke="#475569" stroke-width="2"/>
+                    <text x="14" y="154" font-size="11" fill="#334155">0 cm</text>
+                    <text x="10" y="140" font-size="11" fill="#334155">10</text>
+                    <text x="10" y="126" font-size="11" fill="#334155">20</text>
+
+                    <text x="82" y="146" font-size="12" font-weight="700" fill="#234b24">Rice field</text>
+                    <text x="262" y="170" font-size="12" font-weight="700" fill="#f8fafc">Trench depth: 50 cm</text>
+                    <text id="trenchWaterLabel" x="62" y="104" font-size="13" font-weight="700" fill="#0f3d5c">Field water: 15.0 cm | Trench total: 65.0 cm</text>
+                  </svg>
+                </div>
+                <div class="viz-caption" id="trenchNarrative">The side trench still retains enough water beside the rice field.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section class="page" id="report">
       <div class="hero glass">
@@ -3946,34 +4809,47 @@
     <section class="page" id="simulation">
       <div class="hero glass">
         <h1>Simulation Guide</h1>
-        <p>This section is for demonstration only. It explains which Wokwi sensor positions should trigger each DSS code and Telegram alert. The buttons are intentionally not connected to the sensors to avoid confusing the live monitoring workflow.</p>
+        <p>This page summarizes the main test logic for Agroforestry, AWD, and Rice-Fish. It keeps the simulation references compact while matching the cleaner layout used in the rest of the dashboard.</p>
       </div>
 
-      <div class="simulation-grid">
-        <div class="card glass">
-          <div class="chart-title">Agroforestry Test Cases</div>
-          <div class="test-case"><div class="test-code">0</div><div><strong>Soil moisture acceptable</strong><br><span class="main-safe-note">Tree and crop readings are within the acceptable range. No Telegram alert is needed.</span></div></div>
-          <div class="test-case"><div class="test-code">1</div><div><strong>Tree zone irrigation recommended</strong><br><span class="main-safe-note">Set tree zone dry while crop alley remains normal.</span></div></div>
-          <div class="test-case"><div class="test-code">2</div><div><strong>Crop alley irrigation recommended</strong><br><span class="main-safe-note">Set crop alley dry while tree zone remains normal.</span></div></div>
-          <div class="test-case"><div class="test-code">3</div><div><strong>Both zones irrigation recommended</strong><br><span class="main-safe-note">Set both tree zone and crop alley to dry condition.</span></div></div>
-          <div class="test-case"><div class="test-code">4</div><div><strong>Possible waterlogging</strong><br><span class="main-safe-note">Set both zones to saturated condition.</span></div></div>
+      <div class="simulation-grid four-up">
+        <div class="card glass compact-card">
+          <div class="chart-title">Agroforestry DSS</div>
+          <div class="module-list">
+            <div class="module-list-item"><strong>Code 0</strong><span>Soil moisture acceptable. No Telegram alert needed.</span></div>
+            <div class="module-list-item"><strong>Code 1</strong><span>Tree zone irrigation recommended.</span></div>
+            <div class="module-list-item"><strong>Code 2</strong><span>Crop alley irrigation recommended.</span></div>
+            <div class="module-list-item"><strong>Code 3</strong><span>Both zones irrigation recommended.</span></div>
+            <div class="module-list-item"><strong>Code 4</strong><span>Possible waterlogging condition.</span></div>
+          </div>
         </div>
 
-        <div class="card glass">
-          <div class="chart-title">Notification Logic</div>
-          <div class="small-text">
-            Telegram should only send alerts for DSS Codes 1, 2, 3, and 4. DSS Code 0 is intentionally shown only on the dashboard so the group chat will not be flooded with normal-status messages.
-            <br><br>
-            Recommended setup:
-            <br><strong>React Code 1</strong> to Tree Telegram Alert
-            <br><strong>React Code 2</strong> to Crop Telegram Alert
-            <br><strong>React Code 3</strong> to Both Zones Telegram Alert
-            <br><strong>React Code 4</strong> to Waterlogging Telegram Alert
+        <div class="card glass compact-card">
+          <div class="chart-title">AWD Guide</div>
+          <div class="module-list">
+            <div class="module-list-item"><strong>+5 to 0 cm</strong><span>Water is still ponded above the soil surface.</span></div>
+            <div class="module-list-item"><strong>0 to -10 cm</strong><span>Normal drying phase under AWD.</span></div>
+            <div class="module-list-item"><strong>-10 to -15 cm</strong><span>Prepare irrigation.</span></div>
+            <div class="module-list-item"><strong>-15 cm</strong><span>Irrigate according to the threshold rule.</span></div>
           </div>
+        </div>
+
+        <div class="card glass compact-card">
+          <div class="chart-title">Rice-Fish Guide</div>
+          <div class="module-list">
+            <div class="module-list-item"><strong>Field water</strong><span>Maintain about 10 to 20 cm in the rice field.</span></div>
+            <div class="module-list-item"><strong>Trench depth</strong><span>Fixed at 50 cm in this dashboard layout.</span></div>
+            <div class="module-list-item"><strong>Refuge depth</strong><span>Fixed at 1.0 m in this dashboard layout.</span></div>
+            <div class="module-list-item"><strong>DO alert</strong><span>Watch closely below 5.5 mg/L and act immediately below 4.0 mg/L.</span></div>
+          </div>
+        </div>
+
+        <div class="card glass compact-card">
+          <div class="chart-title">Notification Logic</div>
+          <div class="small-text">Telegram should send alerts only for actionable conditions so the chat will not be flooded by normal readings.<br><br><strong>Agroforestry:</strong> send Codes 1, 2, 3, and 4.<br><strong>AWD:</strong> alert near -15 cm and upon irrigation trigger.<br><strong>Rice-Fish:</strong> alert for out-of-range water depth or low dissolved oxygen.</div>
         </div>
       </div>
     </section>
-
     <section class="page" id="alerts"><div class="hero glass"><h1>Alert Center</h1><p>Centralized alert view for Agroforestry, AWD, and Rice-Fish monitoring components.</p></div><div class="card glass"><div class="chart-title">Current Active Alerts</div><div class="chart-subtitle">Agroforestry is live. AWD and Rice-Fish alerts are placeholders until sensors are connected.</div><span class="pill" id="alertCenterCount">Checking alerts</span><div class="alert-list" id="alertCenterList" style="margin-top:14px"><div class="alert-row"><strong>Waiting</strong><span>Agroforestry</span><span class="chip chip-ok">Loading</span><span>Checking recent DSS records.</span></div></div></div></section>
     <section class="page" id="project"><div class="hero glass"><h1>Project Information</h1><p>System layout prepared for a ridge-to-reef smart agriculture monitoring and decision-support platform.</p></div><div class="info-grid"><div class="card glass"><div class="chart-title">Monitoring Components</div><div class="small-text">The website separates the system into Agroforestry, AWD, and Rice-Fish monitoring sections to reduce data overload. Only the selected system is shown in detail, making the interface easier to understand during demonstrations.</div></div><div class="card glass"><div class="chart-title">Integration Status</div><div class="small-text">Agroforestry soil moisture is currently connected to ThingSpeak. AWD water level and Rice-Fish water level and dissolved oxygen sections are prepared as layout modules and can be connected once the sensor fields are finalized.</div></div></div></section>
   </main>
@@ -3982,7 +4858,7 @@
     const channelID='3414691';
     const readAPIKey='URH4MTXR9YCKIGUM';
     const latestUrl=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=1`;
-    let treeMoistureChart,cropMoistureChart,selectedHistoryFeeds=[];let latestSnapshot=null;
+    let treeMoistureChart,cropMoistureChart,selectedHistoryFeeds=[];let latestSnapshot=null;let pageTransitionLocked=false;
     const pageTitles={
       overview:'AgRiFiS',
       agroforestry:'Agroforestry Soil Moisture Dashboard',
@@ -4127,7 +5003,7 @@
 
     function getPageCascadeItems(page){
       if(!page)return [];
-      return Array.from(page.querySelectorAll('.welcome-grid > *,.overview-grid > *,.current-status-grid > *,.alert-stack > *,.decision-card,.low-priority-summary > *,.chart-grid > *,.history-alert-card,.threshold-grid > *,.info-grid > *,.planned-grid > *,.system-summary-grid > *,.report-panel > *,.simulation-grid > *,.glass.card,.connection-card'));
+      return Array.from(page.querySelectorAll('.section-heading,.user-help-strip,.tabs,.welcome-grid > *,.overview-grid > *,.current-status-grid > *,.alert-stack > *,.decision-card,.status-banner,.low-priority-summary > *,.chart-grid > *,.history-alert-card,.threshold-grid > *,.info-grid > *,.planned-grid > *,.system-summary-grid > *,.report-panel > *,.simulation-grid > *,.module-tab-section.active .card,.module-tab-section.active .module-list-item,.module-tab-section.active .guide-chip,.module-tab-section.active .metric-box,.module-tab-section.active .rf-mini-banner,.viz-layout-split > *,.viz-grid > *,.glass.card,.connection-card'));
     }
 
     function preparePageCascade(pageId){
@@ -4179,6 +5055,8 @@
     }
 
     function runSoftTransition(callback,sourceElement,targetTitle,pageId){
+      if(pageTransitionLocked)return;
+      pageTransitionLocked=true;
       document.body.classList.add('is-morphing','is-page-cascading');
 
       createSourcePulse(sourceElement);
@@ -4194,16 +5072,22 @@
 
       setTimeout(()=>{
         document.body.classList.remove('is-morphing','is-page-cascading');
+        pageTransitionLocked=false;
       },1180);
     }
 
     function showPage(pageId,btn){
+      if(pageTransitionLocked)return;
+      const targetPage=document.getElementById(pageId);
+      if(!targetPage)return;
+      if(targetPage.classList.contains('active') && btn && btn.classList.contains('active'))return;
+
       const title=pageTitles[pageId] || getCleanLabel(btn);
       runSoftTransition(()=>{
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
+        targetPage.classList.add('active');
         document.querySelectorAll('.nav-button').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
+        if(btn)btn.classList.add('active');
         document.body.classList.remove('page-overview','page-agroforestry','page-awd','page-ricefish','page-report','page-simulation','page-project','page-alerts');
         document.body.classList.add('page-'+pageId);
       },btn,title,pageId);
@@ -4220,12 +5104,16 @@
     }
 
     function openFromCard(pageId,sourceElement){
+      if(pageTransitionLocked)return;
+      const targetPage=document.getElementById(pageId);
       const btn=document.querySelector(`.nav-button[onclick*="${pageId}"]`);
-      if(!btn)return;
+      if(!targetPage || !btn)return;
+      if(targetPage.classList.contains('active') && btn.classList.contains('active'))return;
+
       const title=pageTitles[pageId] || getCleanLabel(sourceElement);
       runSoftTransition(()=>{
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.getElementById(pageId).classList.add('active');
+        targetPage.classList.add('active');
         document.querySelectorAll('.nav-button').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         document.body.classList.remove('page-overview','page-agroforestry','page-awd','page-ricefish','page-report','page-simulation','page-project','page-alerts');
@@ -4239,13 +5127,19 @@
     }
 
     function showReportTab(tabId,btn){
+      if(pageTransitionLocked)return;
+      const targetTab=document.getElementById(tabId);
+      if(!targetTab)return;
+      if(targetTab.classList.contains('active') && btn && btn.classList.contains('active'))return;
+
       const title=getCleanLabel(btn);
       runSoftTransition(()=>{
         document.querySelectorAll(".report-tab-section").forEach(tab=>tab.classList.remove("active"));
-        document.getElementById(tabId).classList.add("active");
+        targetTab.classList.add("active");
         document.querySelectorAll(".report-tab-button").forEach(button=>button.classList.remove("active"));
-        btn.classList.add("active");
+        if(btn)btn.classList.add("active");
       },btn,title,'report');
+      refreshReportLiveData();
     }
 
     function smoothRevealTab(targetSection){
@@ -4255,7 +5149,7 @@
       void targetSection.offsetWidth;
       targetSection.classList.add('smooth-data-enter');
 
-      const items=targetSection.querySelectorAll('.card,.current-card,.mini-alert,.connection-card,.decision-card,.threshold-card,.threshold-hero,.tools,.history-alert-card');
+      const items=targetSection.querySelectorAll('.section-heading,.user-help-strip,.tabs,.card,.current-card,.mini-alert,.connection-card,.decision-card,.status-banner,.threshold-card,.threshold-hero,.tools,.history-alert-card,.module-list-item,.guide-chip,.metric-box,.rf-mini-banner,.viz-card,.viz-layout-split > *');
       items.forEach((item,index)=>{
         item.style.setProperty('--smooth-delay',(index*55)+'ms');
         item.classList.remove('smooth-box-enter');
@@ -4265,22 +5159,39 @@
     }
 
     function showAgroTab(tabId,btn){
+      const agroPage=document.getElementById('agroforestry');
       const targetSection=document.getElementById(tabId);
+      if(!agroPage || !targetSection || !btn)return;
 
-      document.querySelectorAll('.tab-section').forEach(t=>{
-        t.classList.remove('active','ios-tab-drop','smooth-data-enter');
+      agroPage.querySelectorAll('.tab-section').forEach(section=>{
+        section.classList.remove('active','ios-tab-drop','smooth-data-enter');
       });
 
-      document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+      agroPage.querySelectorAll('.tabs .tab-button').forEach(button=>button.classList.remove('active'));
       btn.classList.add('active');
       targetSection.classList.add('active');
-
       smoothRevealTab(targetSection);
 
       setTimeout(()=>{
         if(treeMoistureChart)treeMoistureChart.resize();
         if(cropMoistureChart)cropMoistureChart.resize();
       },360);
+    }
+
+    function showModuleTab(groupId,tabId,btn){
+      const group=document.getElementById(groupId);
+      const targetSection=document.getElementById(tabId);
+      if(!group || !targetSection || !btn)return;
+
+      group.querySelectorAll('.module-tab-section').forEach(section=>{
+        section.classList.remove('active','smooth-data-enter');
+      });
+
+      const tabsWrapper=btn.closest('.tabs');
+      if(tabsWrapper)tabsWrapper.querySelectorAll('.tab-button').forEach(button=>button.classList.remove('active'));
+      btn.classList.add('active');
+      targetSection.classList.add('active');
+      smoothRevealTab(targetSection);
     }
 
     function getMoistureStatus(v){if(v<=25)return'Very Dry';if(v<=45)return'Dry';if(v<=70)return'Normal';if(v<=85)return'Wet';return'Saturated'}
@@ -4447,7 +5358,26 @@
       ['treeMoisture','cropMoisture','treeAlert','cropAlert','dssDecision','dssCode','connectionStatus'].forEach(pulseValue);
     }
 
-    async function updateDashboard(){try{const response=await fetch(latestUrl+'&t='+Date.now()),data=await response.json();if(!data.feeds||data.feeds.length===0){dssDecision.textContent='No data received yet';connectionStatus.textContent='Disconnected';connectionText.textContent='No valid ThingSpeak record was received by the dashboard.';return}const latest=data.feeds[0],tree=Number(latest.field1),crop=Number(latest.field2),ta=Number(latest.field3),ca=Number(latest.field4),code=Number(latest.field5);treeMoisture.textContent=tree+'%';cropMoisture.textContent=crop+'%';overviewTree.textContent=tree+'%';overviewCrop.textContent=crop+'%';treeStatus.textContent=getMoistureStatus(tree);cropStatus.textContent=getMoistureStatus(crop);treeStatus.className='sensor-status '+getStatusClass(tree);cropStatus.className='sensor-status '+getStatusClass(crop);treeBar.style.width=tree+'%';cropBar.style.width=crop+'%';treeBar.className=getBarClass(tree);cropBar.className=getBarClass(crop);treeAlert.textContent=ta===1?'ON':'OFF';cropAlert.textContent=ca===1?'ON':'OFF';treeAlert.className=ta===1?'sensor-value alert-on':'sensor-value alert-off';cropAlert.className=ca===1?'sensor-value alert-on':'sensor-value alert-off';dssDecision.textContent=getDssDecision(code);dssCode.textContent=code;decisionNote.textContent=getDecisionNote(code);decisionBox.style.borderLeftColor=getDecisionBorder(code);
+
+    function setDecisionVisual(code){
+      const box=document.getElementById('decisionBox');
+      if(!box)return;
+      box.classList.remove('decision-ok','decision-warn','decision-danger','decision-waterlog','decision-waiting');
+
+      let className='decision-waiting';
+      if(code===0)className='decision-ok';
+      else if(code===1 || code===2)className='decision-warn';
+      else if(code===3)className='decision-danger';
+      else if(code===4)className='decision-waterlog';
+
+      box.classList.add(className);
+      box.style.borderLeftColor=getDecisionBorder(code);
+
+      const codeEl=document.getElementById('dssCode');
+      if(codeEl)codeEl.textContent=Number.isNaN(Number(code))?'--':code;
+    }
+
+    async function updateDashboard(){try{const response=await fetch(latestUrl+'&t='+Date.now()),data=await response.json();if(!data.feeds||data.feeds.length===0){dssDecision.textContent='No data received yet';connectionStatus.textContent='Disconnected';connectionText.textContent='No valid ThingSpeak record was received by the dashboard.';return}const latest=data.feeds[0],tree=Number(latest.field1),crop=Number(latest.field2),ta=Number(latest.field3),ca=Number(latest.field4),code=Number(latest.field5);treeMoisture.textContent=tree+'%';cropMoisture.textContent=crop+'%';overviewTree.textContent=tree+'%';overviewCrop.textContent=crop+'%';treeStatus.textContent=getMoistureStatus(tree);cropStatus.textContent=getMoistureStatus(crop);treeStatus.className='sensor-status '+getStatusClass(tree);cropStatus.className='sensor-status '+getStatusClass(crop);treeBar.style.width=tree+'%';cropBar.style.width=crop+'%';treeBar.className=getBarClass(tree);cropBar.className=getBarClass(crop);treeAlert.textContent=ta===1?'ON':'OFF';cropAlert.textContent=ca===1?'ON':'OFF';treeAlert.className=ta===1?'sensor-value alert-on':'sensor-value alert-off';cropAlert.className=ca===1?'sensor-value alert-on':'sensor-value alert-off';dssDecision.textContent=getDssDecision(code);dssCode.textContent=code;decisionNote.textContent=getDecisionNote(code);setDecisionVisual(code);
         if(document.getElementById('decisionPriority'))decisionPriority.textContent=getDecisionPriority(code);
         if(document.getElementById('decisionFocusArea'))decisionFocusArea.textContent=getDecisionFocusArea(code);
         if(document.getElementById('decisionNextStep'))decisionNextStep.textContent=getDecisionNextStep(code);overviewDssCode.textContent='Code '+code;overviewDssText.textContent=getDssDecision(code);lastUpdate.textContent='Last ThingSpeak update: '+new Date(latest.created_at).toLocaleString();updateConnectionStatus(latest.created_at);latestSnapshot={treeMoisture:tree,cropMoisture:crop,treeAlert:ta,cropAlert:ca,dssCode:code,createdAt:latest.created_at};updateReportSummary();pulseLiveValues()}catch(error){dssDecision.textContent='Error loading ThingSpeak data';connectionStatus.textContent='Disconnected';connectionStatus.style.color='#b91c1c';connectionText.textContent='The dashboard cannot connect to ThingSpeak at the moment.';console.log(error)}}
@@ -4457,7 +5387,216 @@
     function createSingleMoistureChart(id,label,data,labels,color,fill){const ctx=document.getElementById(id).getContext('2d');return new Chart(ctx,{type:'line',data:{labels,datasets:[{label,data,borderColor:color,backgroundColor:fill,tension:.35,fill:true,pointRadius:3,pointHoverRadius:5,borderWidth:3}]},plugins:[thresholdBandPlugin],options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:0,max:100,title:{display:true,text:'Moisture (%)'},grid:{color:'rgba(255,255,255,.34)'}},x:{title:{display:true,text:'Time'},grid:{color:'rgba(255,255,255,.18)'}}}}})}
     async function updateHistoryCharts(){try{const selectedRange=historyRange.value;const url=`https://api.thingspeak.com/channels/${channelID}/feeds.json?api_key=${readAPIKey}&results=${selectedRange}&t=${Date.now()}`;const response=await fetch(url),data=await response.json();if(!data.feeds||data.feeds.length===0)return;selectedHistoryFeeds=data.feeds;const labels=data.feeds.map(f=>new Date(f.created_at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));const treeData=data.feeds.map(f=>Number(f.field1)),cropData=data.feeds.map(f=>Number(f.field2));updateSummaryCards(treeData,cropData,data.feeds);updateAlertLists(data.feeds);updateReportSummary();if(!treeMoistureChart)treeMoistureChart=createSingleMoistureChart('treeMoistureChart','Tree Zone Moisture',treeData,labels,'#15803d','rgba(21,128,61,.12)');else{treeMoistureChart.data.labels=labels;treeMoistureChart.data.datasets[0].data=treeData;treeMoistureChart.update()}if(!cropMoistureChart)cropMoistureChart=createSingleMoistureChart('cropMoistureChart','Crop Alley Moisture',cropData,labels,'#2563eb','rgba(37,99,235,.12)');else{cropMoistureChart.data.labels=labels;cropMoistureChart.data.datasets[0].data=cropData;cropMoistureChart.update()}}catch(e){console.log('History chart error:',e)}}
     function downloadHistoryCsv(){if(!selectedHistoryFeeds.length){alert('No history data available yet.');return}const rows=[['Time','Tree Moisture','Crop Moisture','Tree Alert','Crop Alert','DSS Code']];selectedHistoryFeeds.forEach(f=>rows.push([f.created_at,f.field1,f.field2,f.field3,f.field4,f.field5]));const csv=rows.map(r=>r.map(v=>`"${v??''}"`).join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const link=document.createElement('a');const url=URL.createObjectURL(blob);link.href=url;link.download='agroforestry_soil_moisture_latest_'+historyRange.value+'_readings.csv';document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(url)}
-    updateDashboard();updateHistoryCharts();setInterval(updateDashboard,5000);setInterval(updateHistoryCharts,15000);
+
+    function clamp(value,min,max){
+      return Math.min(max,Math.max(min,value));
+    }
+
+    function setSvgWater(rectId,labelId,topY,maxTopY,baseY,value,maxValue,prefix){
+      const rect=document.getElementById(rectId);
+      const label=document.getElementById(labelId);
+      if(!rect || !label)return;
+      const ratio=clamp(value/maxValue,0,1);
+      const y=baseY - ((baseY - maxTopY) * ratio);
+      rect.setAttribute('y', y.toFixed(1));
+      rect.setAttribute('height', (242 - y).toFixed(1));
+      label.textContent = `${prefix}: ${value.toFixed(1)} cm`;
+      label.setAttribute('y', Math.max(32,y-8).toFixed(1));
+    }
+
+    function updateAwdViz(){
+      const slider=document.getElementById('awdWaterSlider');
+      const mirror=document.getElementById('awdWaterSliderMirror');
+      if(!slider)return;
+      const level=parseFloat(slider.value || '0');
+      const levelText=(level>0?'+':'') + level.toFixed(1) + ' cm';
+
+      const pond=document.getElementById('awdPondWater');
+      const tube=document.getElementById('awdTubeWater');
+      const label=document.getElementById('awdWaterLabel');
+
+      const surfaceY=146;
+      const tubeTop=92;
+      const tubeBottom=246;
+
+      if(level >= 0){
+        const h=(level/5)*26;
+        const y=surfaceY - h;
+        if(pond){
+          pond.setAttribute('y', y.toFixed(1));
+          pond.setAttribute('height', Math.max(8,h).toFixed(1));
+          pond.style.opacity='0.88';
+        }
+      } else if(pond){
+        pond.setAttribute('y', surfaceY.toFixed(1));
+        pond.setAttribute('height', '0');
+        pond.style.opacity='0';
+      }
+
+      const ratio=(5-level)/20;
+      const tubeWaterY=tubeTop + ratio*(tubeBottom-tubeTop);
+      if(tube){
+        tube.setAttribute('y', tubeWaterY.toFixed(1));
+        tube.setAttribute('height', Math.max(0,tubeBottom-tubeWaterY).toFixed(1));
+      }
+      if(label){
+        label.textContent=`Water level: ${levelText}`;
+        label.setAttribute('y', Math.max(86, (level>=0 ? surfaceY - (level/5)*26 - 10 : 118)).toFixed(1));
+      }
+
+      let status='Shallow ponding';
+      let action='No irrigation yet';
+      let actionShort='Hold';
+      let narrative='The field still has shallow standing water above the soil surface, so irrigation is not yet needed.';
+
+      if(level > 3){
+        status='Maximum ponding';
+        action='Observe field condition';
+        actionShort='Observe';
+        narrative='The field is near the upper AWD water depth of about 5 cm above the soil surface.';
+      } else if(level >= 0){
+        status='Shallow ponding';
+        action='No irrigation yet';
+        actionShort='Hold';
+        narrative='The field still has shallow standing water above the soil surface, so irrigation is not yet needed.';
+      } else if(level > -10){
+        status='Drying phase';
+        action='Continue monitoring';
+        actionShort='Monitor';
+        narrative='The ponded water has disappeared and the field is now in the AWD drying phase, which is still acceptable.';
+      } else if(level > -15){
+        status='Near threshold';
+        action='Prepare irrigation';
+        actionShort='Prepare';
+        narrative='The water level in the AWD tube is approaching the irrigation threshold near 15 cm below the soil surface.';
+      } else {
+        status='Threshold reached';
+        action='Irrigate now';
+        actionShort='Irrigate';
+        narrative='The AWD water level has reached about 15 cm below the soil surface, so irrigation should now be applied.';
+      }
+
+      const mappings={
+        awdLevelCard:levelText,
+        awdStatusCard:status,
+        awdActionCard:action,
+        awdWaterValue:levelText,
+        awdNarrative:narrative,
+        awdAlertSummary:action,
+        awdAlertsDecisionBanner:action,
+        awdPhaseMetric:status,
+        awdActionMetric:actionShort,
+        awdSimReadout:levelText
+      };
+      Object.entries(mappings).forEach(([id,value])=>{ const el=document.getElementById(id); if(el)el.textContent=value; });
+      if(mirror && mirror.value !== slider.value)mirror.value=slider.value;
+    }
+
+    function syncAwdSlider(value){
+      const slider=document.getElementById('awdWaterSlider');
+      const mirror=document.getElementById('awdWaterSliderMirror');
+      if(slider)slider.value=value;
+      if(mirror)mirror.value=value;
+      updateAwdViz();
+    }
+
+    function updateRiceFishViz(){
+      const waterSlider=document.getElementById('rfWaterSlider');
+      const doSlider=document.getElementById('rfDoSlider');
+      if(!waterSlider || !doSlider)return;
+
+      const fieldDepth=parseFloat(waterSlider.value || '0');
+      const dissolvedOxygen=parseFloat(doSlider.value || '0');
+      const refugeFixedDepth=100;
+      const trenchFixedDepth=50;
+      const refugeTotal=fieldDepth + refugeFixedDepth;
+      const trenchTotal=fieldDepth + trenchFixedDepth;
+
+      const topY=150 - (fieldDepth/20)*28;
+      const refugeWaterRect=document.getElementById('refugeWaterRect');
+      const trenchWaterRect=document.getElementById('trenchWaterRect');
+      if(refugeWaterRect){
+        refugeWaterRect.setAttribute('y', topY.toFixed(1));
+        refugeWaterRect.setAttribute('height', (242-topY).toFixed(1));
+      }
+      if(trenchWaterRect){
+        trenchWaterRect.setAttribute('y', topY.toFixed(1));
+        trenchWaterRect.setAttribute('height', (242-topY).toFixed(1));
+      }
+
+      const levelText=fieldDepth.toFixed(1)+' cm';
+      const doText=dissolvedOxygen.toFixed(1)+' mg/L';
+
+      let systemStatus='Within target range';
+      let alertSummary='Within target range';
+      let liveNarrative='The current settings are within the desired water-depth range and DO is acceptable.';
+      let refugeNarrative='The rice-field water is within the desired range, and the 1.0 m refuge remains deep enough for fish shelter.';
+      let trenchNarrative='The side trench still retains enough water beside the rice field.';
+      let depthAlertNote='Depth values are included in the alert context so water level readings can be interpreted with the trench and refuge capacity.';
+
+      if(fieldDepth < 10){
+        systemStatus='Below target water depth';
+        alertSummary='Low field water depth';
+        liveNarrative='Field water is below the 10 cm lower target, so water addition should be considered.';
+        refugeNarrative='Rice-field water is below the recommended 10 to 20 cm range, but the 1.0 m refuge still provides fish shelter.';
+        trenchNarrative='The side trench still stores water, but field depth is lower than the recommended operating range.';
+      } else if(fieldDepth >= 20){
+        systemStatus='At maximum target depth';
+        alertSummary='Maximum target depth reached';
+        liveNarrative='Field water has reached the 20 cm maximum target depth. Avoid increasing the water level further.';
+        refugeNarrative='The refuge remains deep, but the rice field is already at the maximum target depth.';
+        trenchNarrative='The side trench and field are carrying the maximum intended field water level.';
+      }
+
+      if(dissolvedOxygen < 4){
+        systemStatus='Critical DO condition';
+        alertSummary='Critical low dissolved oxygen';
+        liveNarrative='DO is critically low. Immediate field intervention is recommended.';
+        depthAlertNote='The geometry remains fixed, but the current DO level suggests urgent field action is needed.';
+      } else if(dissolvedOxygen < 5.5){
+        if(systemStatus === 'Within target range')systemStatus='Monitor DO condition';
+        alertSummary='Monitor dissolved oxygen';
+        liveNarrative='Water depth is acceptable, but DO should be monitored closely.';
+      }
+
+      const mappings={
+        rfLevelCard:levelText,
+        rfDoCard:doText,
+        rfStatusCard:systemStatus,
+        rfLiveNarrative:liveNarrative,
+        rfWaterValue:levelText,
+        rfDoValue:doText,
+        refugeNarrative:refugeNarrative,
+        trenchNarrative:trenchNarrative,
+        refugeWaterLabel:`Field water: ${fieldDepth.toFixed(1)} cm | Refuge total: ${refugeTotal.toFixed(1)} cm`,
+        trenchWaterLabel:`Field water: ${fieldDepth.toFixed(1)} cm | Trench total: ${trenchTotal.toFixed(1)} cm`,
+        rfAlertSummary:alertSummary,
+        rfDepthAlertNote:depthAlertNote,
+        rfTrenchTotalText:`${trenchTotal.toFixed(1)} cm`,
+        rfRefugeTotalText:`${refugeTotal.toFixed(1)} cm`,
+        rfTrenchTotalTextSim:`${trenchTotal.toFixed(1)} cm`,
+        rfRefugeTotalTextSim:`${refugeTotal.toFixed(1)} cm`
+      };
+      Object.entries(mappings).forEach(([id,value])=>{ const el=document.getElementById(id); if(el)el.textContent=value; });
+    }
+
+    function setAwdLiveWaterLevel(cm){
+      const slider=document.getElementById('awdWaterSlider');
+      if(!slider)return;
+      slider.value=cm;
+      updateAwdViz();
+    }
+
+    function setRiceFishLiveValues(levelCm,doMgL){
+      const waterSlider=document.getElementById('rfWaterSlider');
+      const doSlider=document.getElementById('rfDoSlider');
+      if(waterSlider)waterSlider.value=levelCm;
+      if(doSlider)doSlider.value=doMgL;
+      updateRiceFishViz();
+    }
+
+
+    updateDashboard();updateHistoryCharts();updateAwdViz();updateRiceFishViz();setInterval(updateDashboard,5000);setInterval(updateHistoryCharts,15000);
   </script>
 </body>
 </html>
