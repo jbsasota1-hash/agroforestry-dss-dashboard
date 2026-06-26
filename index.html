@@ -4047,6 +4047,75 @@
       filter:saturate(.55) brightness(.72) drop-shadow(0 8px 14px rgba(15,23,42,.22));
     }
 
+  
+    /* Unified delayed box animation for all major pages */
+    body.page-transition-clean .page.page-smooth-reveal{
+      animation:pageSoftSettleUnified .54s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    body.page-transition-clean .page-box-smooth,
+    body.is-morphing .page-box-smooth{
+      animation:unifiedBoxCascadeIn .76s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,0ms) !important;
+      will-change:transform,opacity,filter;
+    }
+
+    .smooth-data-enter{
+      animation:pageSoftSettleUnified .42s cubic-bezier(.22,1,.36,1) both !important;
+    }
+
+    .smooth-box-enter{
+      animation:unifiedBoxCascadeIn .72s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--smooth-delay,0ms) !important;
+      will-change:transform,opacity,filter;
+    }
+
+    @keyframes pageSoftSettleUnified{
+      0%{opacity:.92;transform:translateY(5px);filter:blur(2px)}
+      100%{opacity:1;transform:translateY(0);filter:blur(0)}
+    }
+
+    @keyframes unifiedBoxCascadeIn{
+      0%{opacity:0;transform:translateY(18px) scale(.988);filter:blur(7px)}
+      64%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+      100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .page-box-prep{
+      opacity:0 !important;
+      transform:translateY(16px) scale(.992) !important;
+      filter:blur(6px) !important;
+    }
+
+    .section-heading.page-box-smooth,
+    .section-heading.smooth-box-enter,
+    .user-help-strip.page-box-smooth,
+    .user-help-strip.smooth-box-enter,
+    .tabs.page-box-smooth,
+    .tabs.smooth-box-enter,
+    .report-tabs.page-box-smooth,
+    .report-tabs.smooth-box-enter{
+      animation:unifiedTitleChipIn .68s cubic-bezier(.22,1,.36,1) both !important;
+      animation-delay:var(--page-delay,var(--smooth-delay,0ms)) !important;
+    }
+
+    @keyframes unifiedTitleChipIn{
+      0%{opacity:0;transform:translateX(-16px) translateY(4px) scale(.988);filter:blur(6px)}
+      100%{opacity:1;transform:translateX(0) translateY(0) scale(1);filter:blur(0)}
+    }
+
+    .report-tab-section.active .card,
+    #simulation .card,
+    #project .card,
+    #overview .welcome-card,
+    #overview .system-card,
+    #agroforestry .card,
+    #agroforestry .current-card,
+    #agroforestry .mini-alert,
+    #agroforestry .decision-card{
+      transform-origin:center top;
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -5111,7 +5180,45 @@
 
     function getPageCascadeItems(page){
       if(!page)return [];
-      return Array.from(page.querySelectorAll('.section-heading,.user-help-strip,.tabs,.welcome-grid > *,.overview-grid > *,.current-status-grid > *,.alert-stack > *,.decision-card,.status-banner,.low-priority-summary > *,.chart-grid > *,.history-alert-card,.threshold-grid > *,.info-grid > *,.planned-grid > *,.system-summary-grid > *,.report-panel > *,.simulation-grid > *,.module-tab-section.active .card,.module-tab-section.active .module-list-item,.module-tab-section.active .guide-chip,.module-tab-section.active .metric-box,.module-tab-section.active .rf-mini-banner,.viz-layout-split > *,.viz-grid > *,.glass.card,.connection-card'));
+
+      const selector=[
+        '.section-heading',
+        '.user-help-strip',
+        '.tabs',
+        '.report-tabs',
+        '.welcome-grid > *',
+        '.overview-grid > *',
+        '.system-summary-grid > *',
+        '.current-status-grid > *',
+        '.alert-stack > *',
+        '.decision-card',
+        '.connection-card',
+        '.low-priority-summary > *',
+        '.chart-grid > *',
+        '.history-alert-card',
+        '.threshold-hero',
+        '.threshold-grid > *',
+        '.info-grid > *',
+        '.planned-grid > *',
+        '.report-panel > *',
+        '.report-tab-section.active > .card',
+        '.report-tab-section.active .system-summary-grid > *',
+        '.report-tab-section.active .report-panel > *',
+        '.simulation-grid > *',
+        '.module-tab-section.active > .card',
+        '.module-tab-section.active .card',
+        '.module-tab-section.active .module-list-item',
+        '.module-tab-section.active .guide-chip',
+        '.module-tab-section.active .metric-box',
+        '.module-tab-section.active .rf-mini-banner',
+        '.module-tab-section.active .status-banner',
+        '.viz-layout-split > *',
+        '.viz-grid > *',
+        '.glass.card'
+      ].join(',');
+
+      const items=Array.from(page.querySelectorAll(selector));
+      return [...new Set(items)].filter(item=>!item.closest('.page:not(.active)'));
     }
 
     function preparePageCascade(pageId){
@@ -5122,7 +5229,7 @@
       page.classList.add('page-cascade-prep');
 
       getPageCascadeItems(page).forEach((item,index)=>{
-        item.style.setProperty('--page-delay',(Math.min(index,14)*56)+'ms');
+        item.style.setProperty('--page-delay',(Math.min(index,18)*68)+'ms');
         item.classList.remove('page-box-smooth','source-revealed','burst-box-final');
         item.classList.add('page-box-prep');
       });
@@ -5154,7 +5261,7 @@
       page.classList.add('page-smooth-reveal');
 
       getPageCascadeItems(page).forEach((item,index)=>{
-        item.style.setProperty('--page-delay',(Math.min(index,14)*56)+'ms');
+        item.style.setProperty('--page-delay',(Math.min(index,18)*68)+'ms');
         item.classList.remove('page-box-prep');
         item.classList.remove('page-box-smooth');
         void item.offsetWidth;
@@ -5257,9 +5364,9 @@
       void targetSection.offsetWidth;
       targetSection.classList.add('smooth-data-enter');
 
-      const items=targetSection.querySelectorAll('.section-heading,.user-help-strip,.tabs,.card,.current-card,.mini-alert,.connection-card,.decision-card,.status-banner,.threshold-card,.threshold-hero,.tools,.history-alert-card,.module-list-item,.guide-chip,.metric-box,.rf-mini-banner,.viz-card,.viz-layout-split > *');
+      const items=targetSection.querySelectorAll('.section-heading,.user-help-strip,.tabs,.report-tabs,.card,.current-card,.mini-alert,.connection-card,.decision-card,.status-banner,.threshold-card,.threshold-hero,.tools,.history-alert-card,.module-list-item,.guide-chip,.metric-box,.rf-mini-banner,.viz-card,.viz-layout-split > *,.chart-grid > *,.system-summary-grid > *,.report-panel > *');
       items.forEach((item,index)=>{
-        item.style.setProperty('--smooth-delay',(index*55)+'ms');
+        item.style.setProperty('--smooth-delay',(Math.min(index,18)*68)+'ms');
         item.classList.remove('smooth-box-enter');
         void item.offsetWidth;
         item.classList.add('smooth-box-enter');
