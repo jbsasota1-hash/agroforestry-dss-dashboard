@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- AgRiFiS PWA setup -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="application-name" content="AgRiFiS">
+  <meta name="apple-mobile-web-app-title" content="AgRiFiS">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0f3d22">
+  <link rel="icon" type="image/png" sizes="192x192" href="agrifis-icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="agrifis-icon-512.png">
+  <link rel="apple-touch-icon" href="agrifis-icon-192.png">
+
   <link rel="icon" type="image/png" href="UPLB.png">
   <link rel="apple-touch-icon" href="UPLB.png">
   <meta name="theme-color" content="#0f3d22">
@@ -11,7 +23,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgRiFiS</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js">
+    // AgRiFiS PWA install support
+    let agrifisDeferredPrompt=null;
+    const installAppBtn=document.getElementById('installAppBtn');
+
+    if('serviceWorker' in navigator){
+      window.addEventListener('load',()=>{
+        navigator.serviceWorker.register('./sw.js').catch(error=>{
+          console.log('Service worker registration failed:',error);
+        });
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt',(event)=>{
+      event.preventDefault();
+      agrifisDeferredPrompt=event;
+      if(installAppBtn)installAppBtn.style.display='block';
+    });
+
+    if(installAppBtn){
+      installAppBtn.addEventListener('click',async()=>{
+        if(!agrifisDeferredPrompt)return;
+        agrifisDeferredPrompt.prompt();
+        await agrifisDeferredPrompt.userChoice;
+        agrifisDeferredPrompt=null;
+        installAppBtn.style.display='none';
+      });
+    }
+
+    window.addEventListener('appinstalled',()=>{
+      if(installAppBtn)installAppBtn.style.display='none';
+      agrifisDeferredPrompt=null;
+    });
+
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     *{box-sizing:border-box}
@@ -4116,6 +4162,13 @@
       transform-origin:center top;
     }
 
+  
+    .install-app-button{
+      background:linear-gradient(135deg,rgba(240,253,244,.72),rgba(219,234,254,.62)) !important;
+      border:1px solid rgba(255,255,255,.58) !important;
+      color:#0f3d22 !important;
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -4132,6 +4185,8 @@
     <button class="nav-button" onclick="showPage('report',this)">Summary Report <span class="nav-dot live"></span></button>
     <button class="nav-button" onclick="showPage('simulation',this)">Simulation Guide <span class="nav-dot pending"></span></button>
     <button class="nav-button" onclick="showPage('project',this)">Project Information <span class="nav-dot pending"></span></button>
+    
+    <button class="nav-button install-app-button" id="installAppBtn" type="button" style="display:none;">Install AgRiFiS App <span class="nav-dot live"></span></button>
     <div class="sidebar-note"><strong>Welcome mode:</strong> Start with the overview, then open only the monitoring system needed for review.</div>
   </aside>
 
@@ -5592,10 +5647,108 @@
       if(codeEl)codeEl.textContent=Number.isNaN(Number(code))?'--':code;
     }
 
-    async function updateDashboard(){try{const response=await fetch(latestUrl+'&t='+Date.now()),data=await response.json();if(!data.feeds||data.feeds.length===0){dssDecision.textContent='No data received yet';connectionStatus.textContent='Disconnected';connectionText.textContent='No valid ThingSpeak record was received by the dashboard.';return}const latest=data.feeds[0],tree=Number(latest.field1),crop=Number(latest.field2),ta=Number(latest.field3),ca=Number(latest.field4),code=Number(latest.field5);treeMoisture.textContent=tree+'%';cropMoisture.textContent=crop+'%';overviewTree.textContent=tree+'%';overviewCrop.textContent=crop+'%';treeStatus.textContent=getMoistureStatus(tree);cropStatus.textContent=getMoistureStatus(crop);treeStatus.className='sensor-status '+getStatusClass(tree);cropStatus.className='sensor-status '+getStatusClass(crop);treeBar.style.width=tree+'%';cropBar.style.width=crop+'%';treeBar.className=getBarClass(tree);cropBar.className=getBarClass(crop);treeAlert.textContent=ta===1?'ON':'OFF';cropAlert.textContent=ca===1?'ON':'OFF';treeAlert.className=ta===1?'sensor-value alert-on':'sensor-value alert-off';cropAlert.className=ca===1?'sensor-value alert-on':'sensor-value alert-off';dssDecision.textContent=getDssDecision(code);dssCode.textContent=code;decisionNote.textContent=getDecisionNote(code);setDecisionVisual(code);
-        if(document.getElementById('decisionPriority'))decisionPriority.textContent=getDecisionPriority(code);
-        if(document.getElementById('decisionFocusArea'))decisionFocusArea.textContent=getDecisionFocusArea(code);
-        if(document.getElementById('decisionNextStep'))decisionNextStep.textContent=getDecisionNextStep(code);overviewDssCode.textContent='Code '+code;overviewDssText.textContent=getDssDecision(code);lastUpdate.textContent='Last ThingSpeak update: '+new Date(latest.created_at).toLocaleString();updateConnectionStatus(latest.created_at);latestSnapshot={treeMoisture:tree,cropMoisture:crop,treeAlert:ta,cropAlert:ca,dssCode:code,createdAt:latest.created_at};updateReportSummary();pulseLiveValues()}catch(error){dssDecision.textContent='Error loading ThingSpeak data';connectionStatus.textContent='Disconnected';connectionStatus.style.color='#b91c1c';connectionText.textContent='The dashboard cannot connect to ThingSpeak at the moment.';console.log(error)}}
+    async function updateDashboard(){
+      const q=id=>document.getElementById(id);
+      const setTextSafe=(id,value)=>{const node=q(id); if(node)node.textContent=value;};
+      const setClassSafe=(id,value)=>{const node=q(id); if(node)node.className=value;};
+      const setColorSafe=(id,value)=>{const node=q(id); if(node)node.style.color=value;};
+      const setWidthSafe=(id,value)=>{const node=q(id); if(node)node.style.width=value;};
+      const safeNum=value=>{
+        const n=Number(value);
+        return Number.isFinite(n)?n:null;
+      };
+      const percentText=value=>value===null?'--%':value+'%';
+      const boundedPercent=value=>Math.max(0,Math.min(100,value===null?0:value))+'%';
+
+      fetch(latestUrl+'&t='+Date.now(),{cache:'no-store'})
+        .then(response=>{
+          if(!response.ok)throw new Error('ThingSpeak request failed: '+response.status);
+          return response.json();
+        })
+        .then(data=>{
+          if(!data.feeds||data.feeds.length===0){
+            setTextSafe('dssDecision','No data received yet');
+            setTextSafe('connectionStatus','Disconnected');
+            setTextSafe('connectionText','No valid ThingSpeak record was received by the dashboard.');
+            setColorSafe('connectionStatus','#b91c1c');
+            return;
+          }
+
+          const latest=data.feeds[0] || {};
+          const tree=safeNum(latest.field1);
+          const crop=safeNum(latest.field2);
+          const ta=safeNum(latest.field3)===1?1:0;
+          const ca=safeNum(latest.field4)===1?1:0;
+          const rawCode=safeNum(latest.field5);
+          const code=rawCode===null?0:rawCode;
+
+          setTextSafe('treeMoisture',percentText(tree));
+          setTextSafe('cropMoisture',percentText(crop));
+          setTextSafe('overviewTree',percentText(tree));
+          setTextSafe('overviewCrop',percentText(crop));
+
+          setTextSafe('treeStatus',tree===null?'Waiting for data':getMoistureStatus(tree));
+          setTextSafe('cropStatus',crop===null?'Waiting for data':getMoistureStatus(crop));
+          setClassSafe('treeStatus','sensor-status '+(tree===null?'normal':getStatusClass(tree)));
+          setClassSafe('cropStatus','sensor-status '+(crop===null?'normal':getStatusClass(crop)));
+
+          setWidthSafe('treeBar',boundedPercent(tree));
+          setWidthSafe('cropBar',boundedPercent(crop));
+          setClassSafe('treeBar',tree===null?'bar normal':getBarClass(tree));
+          setClassSafe('cropBar',crop===null?'bar normal':getBarClass(crop));
+
+          setTextSafe('treeAlert',ta===1?'ON':'OFF');
+          setTextSafe('cropAlert',ca===1?'ON':'OFF');
+          setClassSafe('treeAlert',ta===1?'sensor-value alert-on':'sensor-value alert-off');
+          setClassSafe('cropAlert',ca===1?'sensor-value alert-on':'sensor-value alert-off');
+
+          setTextSafe('dssDecision',getDssDecision(code));
+          setTextSafe('dssCode',code);
+          setTextSafe('decisionNote',getDecisionNote(code));
+
+          if(typeof setDecisionVisual==='function')setDecisionVisual(code);
+          setTextSafe('decisionPriority',getDecisionPriority(code));
+          setTextSafe('decisionFocusArea',getDecisionFocusArea(code));
+          setTextSafe('decisionNextStep',getDecisionNextStep(code));
+          setTextSafe('overviewDssCode','Code '+code);
+          setTextSafe('overviewDssText',getDssDecision(code));
+
+          const uploadDate=latest.created_at?new Date(latest.created_at):new Date();
+          setTextSafe('lastUpdate','Last ThingSpeak update: '+uploadDate.toLocaleString());
+
+          if(typeof updateConnectionStatus==='function'){
+            updateConnectionStatus(latest.created_at);
+          }
+
+          latestSnapshot={
+            treeMoisture:tree===null?'--':tree,
+            cropMoisture:crop===null?'--':crop,
+            treeAlert:ta,
+            cropAlert:ca,
+            dssCode:code,
+            createdAt:latest.created_at
+          };
+
+          try{
+            if(typeof updateReportSummary==='function')updateReportSummary();
+          }catch(reportError){
+            console.log('Report summary update skipped:',reportError);
+          }
+
+          try{
+            if(typeof pulseLiveValues==='function')pulseLiveValues();
+          }catch(pulseError){
+            console.log('Pulse animation skipped:',pulseError);
+          }
+        })
+        .catch(error=>{
+          setTextSafe('dssDecision','Error loading ThingSpeak data');
+          setTextSafe('connectionStatus','Disconnected');
+          setColorSafe('connectionStatus','#b91c1c');
+          setTextSafe('connectionText','The dashboard cannot connect to ThingSpeak at the moment.');
+          console.log(error);
+        });
+    }
     function updateSummaryCards(treeData,cropData,feeds){const t=treeData.filter(v=>!Number.isNaN(v)),c=cropData.filter(v=>!Number.isNaN(v));avgTree.textContent=Math.round(average(t))+'%';avgCrop.textContent=Math.round(average(c))+'%';const tr=feeds.map(f=>({value:Number(f.field1),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));const cr=feeds.map(f=>({value:Number(f.field2),time:new Date(f.created_at)})).filter(x=>!Number.isNaN(x.value));if(tr.length){const m=tr.reduce((a,b)=>b.value<a.value?b:a,tr[0]);lowestTreeReading.textContent=m.value+'%';lowestTreeTime.textContent='Lowest at '+m.time.toLocaleString()}if(cr.length){const m=cr.reduce((a,b)=>b.value<a.value?b:a,cr[0]);lowestCropReading.textContent=m.value+'%';lowestCropTime.textContent='Lowest at '+m.time.toLocaleString()}}
     function updateAlertLists(feeds){const alerts=feeds.map(f=>{const ta=Number(f.field3),ca=Number(f.field4),code=Number(f.field5),time=new Date(f.created_at);let zone='System';if(ta===1&&ca===1)zone='Tree and Crop';else if(ta===1)zone='Tree Zone';else if(ca===1)zone='Crop Alley';else if(code===4)zone='Both Zones';return{time,zone,code,ta,ca,action:getDssActionText(code)}}).filter(x=>x.code!==0||x.ta===1||x.ca===1).slice(-15).reverse();const normal=`<div class="alert-row"><strong>Normal</strong><span>Agroforestry</span><span class="chip chip-ok">No alert</span><span>No irrigation or waterlogging alert in the selected records.</span></div>`;if(!alerts.length){alertCount.textContent='No recent alerts';alertCenterCount.textContent='No active alert';alertList.innerHTML=normal;alertCenterList.innerHTML=normal;return}const rows=alerts.map(x=>`<div class="alert-row"><strong>${x.time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</strong><span>${x.zone}</span><span class="chip chip-on">DSS Code ${x.code}</span><span>${x.action}</span></div>`).join('');alertCount.textContent=alerts.length+' recent alert event'+(alerts.length>1?'s':'');alertCenterCount.textContent=alerts.length+' agroforestry alert'+(alerts.length>1?'s':'');alertList.innerHTML=rows;alertCenterList.innerHTML=rows+`<div class="alert-row"><strong>Pending</strong><span>AWD and Rice-Fish</span><span class="chip chip-ok">Not connected</span><span>Alert records will appear after sensor fields are connected.</span></div>`}
     const thresholdBandPlugin={id:'thresholdBandPlugin',beforeDraw(chart){const{ctx,chartArea,scales}=chart;if(!chartArea||!scales.y)return;[{from:0,to:25,color:'rgba(185,28,28,.07)'},{from:25,to:45,color:'rgba(217,119,6,.07)'},{from:45,to:70,color:'rgba(21,128,61,.07)'},{from:70,to:85,color:'rgba(37,99,235,.07)'},{from:85,to:100,color:'rgba(109,40,217,.07)'}].forEach(b=>{const yTop=scales.y.getPixelForValue(b.to),yBottom=scales.y.getPixelForValue(b.from);ctx.save();ctx.fillStyle=b.color;ctx.fillRect(chartArea.left,yTop,chartArea.right-chartArea.left,yBottom-yTop);ctx.restore()})}};
