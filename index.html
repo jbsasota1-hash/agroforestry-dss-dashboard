@@ -5472,8 +5472,36 @@
     function getDecisionBorder(c){if(c===0)return'#16a34a';if(c===1||c===2)return'#d97706';if(c===3)return'#b91c1c';if(c===4)return'#6d28d9';return'#64748b'}
     function getDssActionText(c){if(c===0)return'No irrigation alert';if(c===1)return'Tree zone irrigation recommended';if(c===2)return'Crop alley irrigation recommended';if(c===3)return'Both zones irrigation recommended';if(c===4)return'Check possible waterlogging';return'No action available'}
     function average(values){return values.length?values.reduce((s,v)=>s+v,0)/values.length:0}
-    function updateConnectionStatus(createdAt){const latestTime=new Date(createdAt),ageSeconds=Math.floor((new Date()-latestTime)/1000);let status='Connected',note='ThingSpeak is receiving recent data from the monitoring system.';if(ageSeconds>300){status='Disconnected';note='ThingSpeak has not received a new update for more than 5 minutes. Check if the Wokwi simulation, Wi-Fi connection, or upload process is still running.'}else if(ageSeconds>60){status='Waiting';note='ThingSpeak has not received a new update for more than 1 minute. The dashboard is still showing the last valid reading.'}connectionStatus.textContent=status;connectionStatus.style.color=status==='Connected'?'#16a34a':status==='Waiting'?'#d97706':'#b91c1c';connectionText.textContent=note+' Last recorded update: '+latestTime.toLocaleString();overviewConnection.textContent=status;overviewConnection.style.color=connectionStatus.style.color;overviewConnectionNote.textContent='Last update: '+latestTime.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
-    
+    function updateConnectionStatus(createdAt){
+      const q=id=>document.getElementById(id);
+      const setTextSafe=(id,value)=>{const node=q(id); if(node)node.textContent=value;};
+      const setColorSafe=(id,value)=>{const node=q(id); if(node)node.style.color=value;};
+
+      const latestTime=createdAt?new Date(createdAt):new Date();
+      const ageSeconds=Math.floor((new Date()-latestTime)/1000);
+
+      let status='Connected';
+      let note='ThingSpeak is receiving recent data from the monitoring system.';
+
+      if(ageSeconds>300){
+        status='Disconnected';
+        note='ThingSpeak has not received a new update for more than 5 minutes. Check if the Wokwi simulation, Wi-Fi connection, or upload process is still running.';
+      }else if(ageSeconds>60){
+        status='Waiting';
+        note='ThingSpeak has not received a new update for more than 1 minute. The dashboard is still showing the last valid reading.';
+      }
+
+      const color=status==='Connected'?'#16a34a':status==='Waiting'?'#d97706':'#b91c1c';
+
+      setTextSafe('connectionStatus',status);
+      setColorSafe('connectionStatus',color);
+      setTextSafe('connectionText',note+' Last recorded update: '+latestTime.toLocaleString());
+
+      setTextSafe('overviewConnection',status);
+      setColorSafe('overviewConnection',color);
+      setTextSafe('overviewConnectionNote','Last update: '+latestTime.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
+    }
+
     function setText(id,value){
       const el=document.getElementById(id);
       if(el)el.textContent=value;
@@ -5481,12 +5509,24 @@
 
     function updateReportSummary(){
       if(!latestSnapshot)return;
-      const range=historyRange?historyRange.value:'--';
-      const avgTreeText=avgTree?avgTree.textContent:'--';
-      const avgCropText=avgCrop?avgCrop.textContent:'--';
-      const lowestTreeText=lowestTreeReading?lowestTreeReading.textContent:'--';
-      const lowestCropText=lowestCropReading?lowestCropReading.textContent:'--';
-      const uploadTime=new Date(latestSnapshot.createdAt).toLocaleString();
+
+      const getText=(id,fallback='--')=>{
+        const node=document.getElementById(id);
+        return node && node.textContent ? node.textContent : fallback;
+      };
+
+      const getValue=(id,fallback='--')=>{
+        const node=document.getElementById(id);
+        return node && node.value ? node.value : fallback;
+      };
+
+      const range=getValue('historyRange','--');
+      const avgTreeText=getText('avgTree','--');
+      const avgCropText=getText('avgCrop','--');
+      const lowestTreeText=getText('lowestTreeReading','--');
+      const lowestCropText=getText('lowestCropReading','--');
+
+      const uploadTime=latestSnapshot.createdAt?new Date(latestSnapshot.createdAt).toLocaleString():'--';
       const generatedTime=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       const decisionCode='Code '+latestSnapshot.dssCode;
       const decisionText=getDssDecision(latestSnapshot.dssCode);
@@ -5503,6 +5543,8 @@
         ['reportRange',range+' readings'],['agroReportRange',range+' readings'],
         ['reportTree',treeText],['agroReportTree',treeText],
         ['reportCrop',cropText],['agroReportCrop',cropText],
+        ['reportTreeCurrent',treeText],['agroReportTreeCurrent',treeText],
+        ['reportCropCurrent',cropText],['agroReportCropCurrent',cropText],
         ['reportTreeAlert',treeAlertText],['agroReportTreeAlert',treeAlertText],
         ['reportCropAlert',cropAlertText],['agroReportCropAlert',cropAlertText],
         ['reportLatestUpload',uploadTime],['agroReportLatestUpload',uploadTime],
@@ -5653,10 +5695,12 @@
       const setClassSafe=(id,value)=>{const node=q(id); if(node)node.className=value;};
       const setColorSafe=(id,value)=>{const node=q(id); if(node)node.style.color=value;};
       const setWidthSafe=(id,value)=>{const node=q(id); if(node)node.style.width=value;};
+
       const safeNum=value=>{
         const n=Number(value);
         return Number.isFinite(n)?n:null;
       };
+
       const percentText=value=>value===null?'--%':value+'%';
       const boundedPercent=value=>Math.max(0,Math.min(100,value===null?0:value))+'%';
 
@@ -5706,7 +5750,10 @@
           setTextSafe('dssCode',code);
           setTextSafe('decisionNote',getDecisionNote(code));
 
-          if(typeof setDecisionVisual==='function')setDecisionVisual(code);
+          if(typeof setDecisionVisual==='function'){
+            try{setDecisionVisual(code);}catch(visualError){console.log('Decision visual skipped:',visualError);}
+          }
+
           setTextSafe('decisionPriority',getDecisionPriority(code));
           setTextSafe('decisionFocusArea',getDecisionFocusArea(code));
           setTextSafe('decisionNextStep',getDecisionNextStep(code));
@@ -5717,7 +5764,17 @@
           setTextSafe('lastUpdate','Last ThingSpeak update: '+uploadDate.toLocaleString());
 
           if(typeof updateConnectionStatus==='function'){
-            updateConnectionStatus(latest.created_at);
+            try{
+              updateConnectionStatus(latest.created_at);
+            }catch(connectionError){
+              console.log('Connection status update skipped:',connectionError);
+              setTextSafe('connectionStatus','Connected');
+              setColorSafe('connectionStatus','#16a34a');
+              setTextSafe('connectionText','ThingSpeak data was received. Last recorded update: '+uploadDate.toLocaleString());
+              setTextSafe('overviewConnection','Connected');
+              setColorSafe('overviewConnection','#16a34a');
+              setTextSafe('overviewConnectionNote','Last update: '+uploadDate.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
+            }
           }
 
           latestSnapshot={
