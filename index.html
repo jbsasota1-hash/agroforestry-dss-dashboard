@@ -4169,6 +4169,150 @@
       color:#0f3d22 !important;
     }
 
+  
+    /* Rice-Fish dissolved oxygen wavelength legend */
+    .do-spectrum-card{
+      margin-top:12px;
+      padding:12px;
+      border-radius:22px;
+      background:linear-gradient(135deg,rgba(255,255,255,.58),rgba(255,255,255,.28));
+      border:1px solid rgba(255,255,255,.58);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.66), 0 14px 34px rgba(15,23,42,.08);
+    }
+
+    .do-spectrum-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+      color:#466176;
+    }
+
+    .do-spectrum-head strong{
+      color:#0f3d22;
+      letter-spacing:0;
+      text-transform:none;
+      font-size:13px;
+      white-space:nowrap;
+    }
+
+    .do-spectrum-track{
+      position:relative;
+      height:16px;
+      border-radius:999px;
+      background:
+        linear-gradient(90deg,
+          #312e81 0%,
+          #7f1d1d 18%,
+          #ea580c 40%,
+          #facc15 54%,
+          #14b8a6 69%,
+          #38bdf8 84%,
+          #2563eb 100%);
+      box-shadow:inset 0 2px 5px rgba(15,23,42,.16), 0 8px 18px rgba(14,116,144,.12);
+      overflow:visible;
+    }
+
+    .do-spectrum-pointer{
+      position:absolute;
+      top:50%;
+      left:65%;
+      width:22px;
+      height:22px;
+      border-radius:999px;
+      transform:translate(-50%,-50%);
+      background:#ffffff;
+      border:3px solid rgba(15,61,34,.48);
+      box-shadow:0 8px 22px rgba(15,23,42,.20);
+      transition:left .42s cubic-bezier(.22,1,.36,1), border-color .35s ease;
+    }
+
+    .do-spectrum-ticks{
+      display:flex;
+      justify-content:space-between;
+      gap:4px;
+      margin-top:8px;
+      font-size:10px;
+      font-weight:800;
+      color:#64748b;
+    }
+
+    .do-spectrum-legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-top:10px;
+    }
+
+    .do-spectrum-legend span{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      padding:5px 8px;
+      border-radius:999px;
+      background:rgba(255,255,255,.52);
+      border:1px solid rgba(255,255,255,.58);
+      font-size:10.5px;
+      font-weight:800;
+      color:#334155;
+    }
+
+    .do-dot{
+      width:9px;
+      height:9px;
+      border-radius:999px;
+      display:inline-block;
+      box-shadow:0 0 0 2px rgba(255,255,255,.65);
+    }
+
+    .do-dot.critical{background:#312e81}
+    .do-dot.low{background:#ea580c}
+    .do-dot.acceptable{background:#14b8a6}
+    .do-dot.good{background:#38bdf8}
+    .do-dot.high{background:#2563eb}
+
+    .do-spectrum-note{
+      margin-top:9px;
+      font-size:12px;
+      line-height:1.45;
+      color:#466176;
+      font-weight:650;
+    }
+
+    #refugeWaterRect,
+    #trenchWaterRect{
+      transition:
+        y .42s cubic-bezier(.22,1,.36,1),
+        height .42s cubic-bezier(.22,1,.36,1),
+        opacity .35s ease,
+        filter .35s ease !important;
+    }
+
+    .rf-water-critical{
+      filter:saturate(.56) brightness(.66) drop-shadow(0 8px 18px rgba(49,46,129,.26));
+    }
+
+    .rf-water-low{
+      filter:saturate(.78) brightness(.82) drop-shadow(0 8px 16px rgba(234,88,12,.16));
+    }
+
+    .rf-water-acceptable{
+      filter:saturate(.96) brightness(.94) drop-shadow(0 8px 16px rgba(20,184,166,.14));
+    }
+
+    .rf-water-good{
+      filter:saturate(1.08) brightness(1.03) drop-shadow(0 8px 16px rgba(56,189,248,.18));
+    }
+
+    .rf-water-high{
+      filter:saturate(1.16) brightness(1.08) drop-shadow(0 8px 18px rgba(37,99,235,.18));
+    }
+
   </style>
 </head>
 <body class="page-overview page-transition-clean">
@@ -4823,6 +4967,32 @@
               <div class="sim-control-block">
                 <div class="sim-readout"><span>Dissolved oxygen</span><strong id="rfDoValue">6.5 mg/L</strong></div>
                 <input id="rfDoSlider" class="viz-slider" type="range" min="0" max="10" step="0.1" value="6.5" oninput="updateRiceFishViz()">
+              </div>
+
+              <div class="do-spectrum-card" aria-label="Dissolved oxygen color wavelength legend">
+                <div class="do-spectrum-head">
+                  <span>DO color wavelength scale</span>
+                  <strong id="rfDoBandLabel">Good DO</strong>
+                </div>
+                <div class="do-spectrum-track">
+                  <span class="do-spectrum-pointer" id="rfDoSpectrumPointer"></span>
+                </div>
+                <div class="do-spectrum-ticks">
+                  <span>0</span>
+                  <span>4.0</span>
+                  <span>5.5</span>
+                  <span>7.0</span>
+                  <span>8.5</span>
+                  <span>10 mg/L</span>
+                </div>
+                <div class="do-spectrum-legend">
+                  <span><i class="do-dot critical"></i>Critical</span>
+                  <span><i class="do-dot low"></i>Low</span>
+                  <span><i class="do-dot acceptable"></i>Acceptable</span>
+                  <span><i class="do-dot good"></i>Good</span>
+                  <span><i class="do-dot high"></i>High</span>
+                </div>
+                <div class="do-spectrum-note" id="rfDoBandText">Good oxygen condition for fish activity.</div>
               </div>
 
               <div class="spec-pill-grid">
@@ -5927,6 +6097,73 @@
 
     
     
+    function getDoWavelengthPalette(dissolvedOxygen){
+      const doValue=Math.max(0,Math.min(10,Number(dissolvedOxygen)||0));
+
+      if(doValue < 4){
+        return {
+          className:'rf-water-critical',
+          top:'#6d5dfc',
+          middle:'#7f1d1d',
+          bottom:'#1e1b4b',
+          opacity:'.74',
+          label:'Critical DO',
+          note:'Critical oxygen condition. Immediate aeration or water refresh is recommended.',
+          pointerColor:'#312e81'
+        };
+      }
+
+      if(doValue < 5.5){
+        return {
+          className:'rf-water-low',
+          top:'#facc15',
+          middle:'#ea580c',
+          bottom:'#7c2d12',
+          opacity:'.80',
+          label:'Low DO',
+          note:'Low oxygen condition. Monitor fish stress and prepare intervention.',
+          pointerColor:'#ea580c'
+        };
+      }
+
+      if(doValue < 7){
+        return {
+          className:'rf-water-acceptable',
+          top:'#99f6e4',
+          middle:'#14b8a6',
+          bottom:'#0f766e',
+          opacity:'.84',
+          label:'Acceptable DO',
+          note:'Acceptable oxygen condition, but continue monitoring the water quality.',
+          pointerColor:'#14b8a6'
+        };
+      }
+
+      if(doValue < 8.5){
+        return {
+          className:'rf-water-good',
+          top:'#dff8ff',
+          middle:'#38bdf8',
+          bottom:'#0284c7',
+          opacity:'.88',
+          label:'Good DO',
+          note:'Good oxygen condition for fish activity.',
+          pointerColor:'#38bdf8'
+        };
+      }
+
+      return {
+        className:'rf-water-high',
+        top:'#e0f2fe',
+        middle:'#60a5fa',
+        bottom:'#2563eb',
+        opacity:'.92',
+        label:'High DO',
+        note:'High oxygenation condition. Water appears bright in the simulation.',
+        pointerColor:'#2563eb'
+      };
+    }
+
     function updateRiceFishWaterColor(dissolvedOxygen){
       const refugeTop=document.getElementById('rfRefugeWaterTop');
       const refugeBottom=document.getElementById('rfRefugeWaterBottom');
@@ -5934,45 +6171,41 @@
       const trenchBottom=document.getElementById('rfTrenchWaterBottom');
       const refugeWater=document.getElementById('refugeWaterRect');
       const trenchWater=document.getElementById('trenchWaterRect');
-
-      let topColor='#8ee7ff';
-      let bottomColor='#1d8fec';
-      let opacity='.90';
-      let waterClass='rf-water-good';
-
-      if(dissolvedOxygen < 4){
-        topColor='#64748b';
-        bottomColor='#1e293b';
-        opacity='.76';
-        waterClass='rf-water-bad';
-      }else if(dissolvedOxygen < 5.5){
-        topColor='#67b7c7';
-        bottomColor='#256f86';
-        opacity='.82';
-        waterClass='rf-water-watch';
-      }
+      const pointer=document.getElementById('rfDoSpectrumPointer');
+      const bandLabel=document.getElementById('rfDoBandLabel');
+      const bandText=document.getElementById('rfDoBandText');
+      const palette=getDoWavelengthPalette(dissolvedOxygen);
+      const doValue=Math.max(0,Math.min(10,Number(dissolvedOxygen)||0));
+      const pointerPercent=(doValue/10)*100;
 
       [refugeTop,trenchTop].forEach(stop=>{
         if(stop){
-          stop.setAttribute('stop-color',topColor);
-          stop.setAttribute('stop-opacity',opacity);
+          stop.setAttribute('stop-color',palette.top);
+          stop.setAttribute('stop-opacity',palette.opacity);
         }
       });
 
       [refugeBottom,trenchBottom].forEach(stop=>{
         if(stop){
-          stop.setAttribute('stop-color',bottomColor);
-          stop.setAttribute('stop-opacity','.94');
+          stop.setAttribute('stop-color',palette.bottom);
+          stop.setAttribute('stop-opacity','.96');
         }
       });
 
       [refugeWater,trenchWater].forEach(water=>{
         if(water){
-          water.classList.remove('rf-water-good','rf-water-watch','rf-water-bad');
-          water.classList.add(waterClass);
-          water.setAttribute('opacity', opacity);
+          water.classList.remove('rf-water-good','rf-water-watch','rf-water-bad','rf-water-critical','rf-water-low','rf-water-acceptable','rf-water-high');
+          water.classList.add(palette.className);
+          water.setAttribute('opacity',palette.opacity);
         }
       });
+
+      if(pointer){
+        pointer.style.left=pointerPercent+'%';
+        pointer.style.borderColor=palette.pointerColor;
+      }
+      if(bandLabel)bandLabel.textContent=palette.label;
+      if(bandText)bandText.textContent=palette.note;
     }
 
     function updateDoVisualState(dissolvedOxygen){
@@ -5984,18 +6217,16 @@
 
       card.classList.remove('do-good-card','do-watch-card','do-bad-card');
 
-      let noteText='Good for fish';
+      const palette=getDoWavelengthPalette(dissolvedOxygen);
       if(dissolvedOxygen < 4){
         card.classList.add('do-bad-card');
-        noteText='Critical for fish';
       }else if(dissolvedOxygen < 5.5){
         card.classList.add('do-watch-card');
-        noteText='Monitor closely';
       }else{
         card.classList.add('do-good-card');
       }
 
-      if(note)note.textContent=noteText;
+      if(note)note.textContent=palette.label;
       if(indicator){
         const dot=Math.max(0,Math.min(100,(dissolvedOxygen/10)*100));
         indicator.style.setProperty('--do-dot',dot+'%');
